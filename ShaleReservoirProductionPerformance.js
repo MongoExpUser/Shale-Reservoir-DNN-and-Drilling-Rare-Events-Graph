@@ -7,7 +7,6 @@
  * @License Ends
  *
  *
- *
  * This module is a Tensorflow-Based DNN Models for Hydraulically-Fractures-Driven Production Performance Prediction of Shale Reservoirs in the Cloud.
  *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
@@ -18,16 +17,14 @@
  *     c) Oil in M barrel
  * 4) Target inputs:
  *     a) Richness/OHIP-Related: so, phi, h, TOC
- *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro, nano,pico)
+ *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro,nano and pico)
  *     c) Drive-Related: TVD/pressure,
  *     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
  *     e) Fluid TYpe-Related: SG/Density/API, Ro/maturity level,
  *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular too the directions of min. principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
- *
  */
-
 
 class ShaleReservoirProductionPerformance
 {
@@ -47,18 +44,15 @@ class ShaleReservoirProductionPerformance
         console.log("=========================================================>")
     }
     
-
     static commonModules()
     {
         const fs = require('fs');
         const util = require('util');
-        const tfvis = require('@tensorflow/tfjs-vis');
         const tf = require('@tensorflow/tfjs');
         
         if(this.gpuOption === true)
         {
             require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
-            
         }
         else
         {
@@ -66,9 +60,8 @@ class ShaleReservoirProductionPerformance
         }
         
         const model = tf.sequential();
-        return {tf: tf, tfvis: tfvis, fs:fs,  util: util, model: model};
+        return {tf: tf, fs:fs,  util: util, model: model};
     }
-    
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize)
     {
@@ -78,7 +71,6 @@ class ShaleReservoirProductionPerformance
             //import module(s) and create model
             const commonModules = ShaleReservoirProductionPerformance.commonModules()
             const tf = commonModules.tf;
-            const tfvis = commonModules.tfvis;
             const util = commonModules.util;
             const model = commonModules.model;
                             
@@ -94,7 +86,6 @@ class ShaleReservoirProductionPerformance
                 console.log("=================================================>")
                 console.log("Using manually or randomly generated dataset.");
                 console.log("=================================================>")
-                
                 x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.3, "float32", 0.5);
                 y = tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.5);
             }
@@ -111,7 +102,6 @@ class ShaleReservoirProductionPerformance
                 const fileNameY = this.inputTensorFromCSVFileY;
                 //xx = readDataInputCSVfile(fileNameX, pathTofileX)
                 //yy = readDataInputCSVfile(fileNameY, pathTofileY)
-     
             }
                             
             //create model
@@ -155,7 +145,6 @@ class ShaleReservoirProductionPerformance
             }).then(function()
             {
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
-      
                 // begin prediction: use the model to do inference on a data point the model hasn't seen before and time it
                 var beginPredictingTime = new Date();
                 var predictions = reModel.predict(x);
@@ -166,14 +155,12 @@ class ShaleReservoirProductionPerformance
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary()
-                
             }).catch(function(err)
             {
                 if(err) {console.log(err, " : Tensor flow rejection error successfully handled.");};
             });
         }
     }
-    
     
     testProductionPerformace(xInputTensor, yInputTensor)
     {
@@ -188,7 +175,6 @@ class ShaleReservoirProductionPerformance
         const verbose = 0;
         const inputSize = 13;
         const inputDim = 100;
-        
         //invoke dnn for Shale Reservoir Production Performace
         const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, xInputTensor, yInputTensor);
         test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize);
