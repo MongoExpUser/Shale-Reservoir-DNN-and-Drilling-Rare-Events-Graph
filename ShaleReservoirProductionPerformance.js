@@ -8,8 +8,6 @@
  *
  *
  *
- **********************************************************************************************************************************************************
- *
  * This module is a Tensorflow-Based DNN Models for Hydraulically-Fractures-Driven Production Performance Prediction of Shale Reservoirs in the Cloud.
  *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
@@ -28,8 +26,7 @@
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular too the directions of min. principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  *
- **********************************************************************************************************************************************************
-*/
+ */
 
 
 class ShaleReservoirProductionPerformance
