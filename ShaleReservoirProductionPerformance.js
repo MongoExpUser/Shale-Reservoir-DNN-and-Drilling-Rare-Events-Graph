@@ -133,7 +133,7 @@ class ShaleReservoirProductionPerformance
                 batchSize: batchSize,
                 epochs: epochs,
                 validationSplit: validationSplit,   // for large dataset, set about 10% (0.1) aside
-                verbose: verbose,                   // 1 full logging verbosity, 0 for none
+                verbose: verbose,                   // 1 for full logging verbosity and 0 for none
                 callbacks:                          // customized logging verbosity
                 {
                     onEpochEnd: async function (epoch, logs)
