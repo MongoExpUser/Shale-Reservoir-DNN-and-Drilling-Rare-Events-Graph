@@ -32,13 +32,17 @@
 
 class ShaleReservoirProductionPerformance
 {
-    constructor(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY)
+    constructor(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
+                mongDBCollectionName, mongDBSpecifiedDataArrayX, mongDBSpecifiedDataArrayY)
     {
         this.modelingOption = modelingOption;
         this.fileOption  = fileOption;
         this.gpuOption = gpuOption;
         this.inputTensorFromCSVFileX = inputTensorFromCSVFileX;
         this.inputTensorFromCSVFileY = inputTensorFromCSVFileY;
+        this.mongDBCollectionName = mongDBCollectionName;
+        this.mongDBSpecifiedDataArrayX = mongDBSpecifiedDataArrayX;
+        this.mongDBSpecifiedDataArrayY = mongDBSpecifiedDataArrayY;
     }
     
     static runTimeDNN(beginTime, timeOption)
@@ -123,8 +127,9 @@ class ShaleReservoirProductionPerformance
                     //then:
                     // (1) pass in data extracted (with query/MapReduce) from MongoDB server
                     // (2) load into arrays and displayed in console to check using readDataInputMongoDBD() method
-                    const fileNameX = this.inputTensorFromCSVFileX;
-                    const fileNameY = this.inputTensorFromCSVFileY;
+                    const collectionName = this.mongDBCollectionName;
+                    const specifiedDataArrayX = this.mongDBSpecifiedDataArrayX;
+                    const specifiedDataArrayY = this.mongDBSpecifiedDataArrayY;
                     //xx = readDataInputMongoDBD(collectionName, specifiedDataArrayX)
                     //yy = readDataInputMongoDBD(collectionName, specifiedDataArrayY)
                 }
@@ -194,8 +199,6 @@ class ShaleReservoirProductionPerformance
         const modelingOption = "dnn";
         const fileOption  = "default";
         const gpuOption = true;
-        const inputTensorFromCSVFileX = xInputTensor;
-        const inputTensorFromCSVFileY = yInputTensor;
         const batchSize = 32;
         const epochs = 100;
         const validationSplit = 0.1;
@@ -208,6 +211,6 @@ class ShaleReservoirProductionPerformance
     }
 }
 
-new ShaleReservoirProductionPerformance("dnn", "csv", true, null, null).testProductionPerformace(null, null)
+new ShaleReservoirProductionPerformance("dnn", "csv", true, null, null, null, null, null).testProductionPerformace(null, null)
 
 module.exports = {ShaleReservoirProductionPerformance}
