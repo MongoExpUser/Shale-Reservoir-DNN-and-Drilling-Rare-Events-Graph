@@ -271,15 +271,21 @@ class ShaleReservoirProductionPerformance
     const tf = commonModules.tf;
     const inputSize = 13;
     const inputDim = 100;
-    const testTensorX  = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.01); //(shape, mean?, stdDev?, dtype?, seed?);
-    const testTensorY  = tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05);         //(shape, mean?, stdDev?, dtype?, seed?);
-    const xInputTensor = [testTensorX, testTensorX, testTensorX, testTensorX, testTensorX];
-    const yInputTensor = [testTensorY, testTensorY, testTensorY, testTensorY, testTensorY];
-    //
     const modelingOption = "dnn";
     const fileOption  = "default";
     const gpuOption = true;
+   
+    //input tensors
+    let xInputTensor = [];
+    let yInputTensor = [];
     
+    for(let i = 0; i < timeStep; i++)
+    {
+        xInputTensor.push(tf.truncatedNormal([inputDim, inputSize], 1, 0.1, "float32", 0.01)); //(shape, mean?, stdDev?, dtype?, seed?);)
+        xInputTensor.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));        //(shape, mean?, stdDev?, dtype?, seed?);)
+    }
+    
+    //run model by timeStep
     for(let i = 0; i < timeStep; i++)
     {
         const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, null, null, null, null, null);
