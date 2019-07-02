@@ -1,3 +1,35 @@
+/* @License Starts
+ *
+ * Copyright © 2015 - present. MongoExpUser
+ *
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ *
+ * @License Ends
+ *
+ *
+ * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+ * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
+ * It is based on Node.js with option to use either gpu or cpu.
+ * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
+ *
+ * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
+ * 2) Then (s) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
+ * 3) Target output: Cumulative production @ time (t, 30, 180, 365, 720,...1825)
+ *     a) BOE in MBoe
+ *     b) Gas in MMScf
+ *     c) Oil in M barrel
+ * 4) Target inputs:
+ *     a) Richness/OHIP-Related: so, phi, h, TOC
+ *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro, nano and pico)
+ *     c) Drive-Related: TVD/pressure,
+ *     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
+ *     e) Fluid TYpe-Related: SG/Density/API, Ro/maturity level,
+ *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
+ *         Note: Hydraulic fractures tend to propagate in direction perpendicular too the directions of min. principal stress.
+ *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
+ */
+
+
 class ShaleReservoirProductionPerformance
 {
     constructor(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
@@ -152,14 +184,15 @@ class ShaleReservoirProductionPerformance
                                 
             }).then(function()
             {
+                console.log("........Training Ends......................................")
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
                 // begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
                 var predictions = reModel.predict(x);
                 // print outputs
-                console.log("Expected result in TF format:");
+                console.log("Expected result in Tensor format:");
                 y.print(true);
-                console.log("Actual result in TF format :")
+                console.log("Actual result in Tensor format :")
                 reModel.predict(x).print(true);
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
