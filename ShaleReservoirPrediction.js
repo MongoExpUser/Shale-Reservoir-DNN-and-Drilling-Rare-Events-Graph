@@ -69,7 +69,7 @@ class ShaleReservoirProductionPerformance
         }
         
         const model = tf.sequential();
-        return {tf: tf, tfvis: tfvis, fs:fs,  util: util, model: model};
+        return {tf: tf, tfvis: tfvis, fs:fs, util: util, model: model};
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate,
@@ -122,6 +122,8 @@ class ShaleReservoirProductionPerformance
                     // note: readDataInputCSVfile() is accessible from a module on the Node.js server hosting the application
                     const fileNameX = this.inputTensorFromCSVFileX;
                     const fileNameY = this.inputTensorFromCSVFileY;
+                    const pathTofileX = "./";
+                    const pathTofileY = "./"
                     //x = readDataInputCSVfile(fileNameX, pathTofileX)
                     //y = readDataInputCSVfile(fileNameY, pathTofileY)
                 }
@@ -162,7 +164,7 @@ class ShaleReservoirProductionPerformance
                 }
                 model.add(tf.layers.dense(outputLayer));
                 
-                //speficy compilation options....
+                //specify compilation options....
                 const compileOptions = {optimizer: optimizer, loss: loss, metrics: [metrics]};
                 
                 //compile model
@@ -173,7 +175,7 @@ class ShaleReservoirProductionPerformance
             }());
                             
                         
-            // begin training: train the model using the data and time it
+            // begin training: train the model using the data and time the training
             const beginTrainingTime = new Date();
             console.log(" ")
             console.log("...............Training Begins.................................")
@@ -207,16 +209,16 @@ class ShaleReservoirProductionPerformance
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary()
-            }).catch(function(err)
+            }).catch(function(error)
             {
-                if(err) {console.log(err, " : Tensor flow rejection error successfully handled.");};
+                if(err) {console.log(error, " : TensorFlow rejection error successfully handled.");};
             });
         }
     }
 
     testProductionPerformace(xInputTensor, yInputTensor)
     {
-        //algorithm type, omputer processing option and data loading parameters
+        //algorithm type, computer processing option and data loading parameters
         const modelingOption = "dnn";
         const fileOption  = "default";
         const gpuOption = false;
@@ -256,6 +258,7 @@ class ShaleReservoirProductionPerformance
                                   hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     }
 }
+
 
 //test with IIFE
 (function testObject()
