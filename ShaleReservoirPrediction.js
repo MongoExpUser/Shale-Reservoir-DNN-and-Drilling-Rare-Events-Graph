@@ -1,35 +1,3 @@
-/* @License Starts
- *
- * Copyright © 2015 - present. MongoExpUser
- *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
- *
- * @License Ends
- *
- *
- * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
- * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
- * It is based on Node.js with option to use either gpu or cpu.
- * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
- *
- * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
- * 2) Then (s) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
- * 3) Target output: Cumulative production @ time (t, 30, 180, 365, 720,...1825)
- *     a) BOE in MBoe
- *     b) Gas in MMScf
- *     c) Oil in M barrel
- * 4) Target inputs:
- *     a) Richness/OHIP-Related: so, phi, h, TOC
- *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro, nano and pico)
- *     c) Drive-Related: TVD/pressure,
- *     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
- *     e) Fluid TYpe-Related: SG/Density/API, Ro/maturity level,
- *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
- *         Note: Hydraulic fractures tend to propagate in direction perpendicular too the directions of min. principal stress.
- *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
- */
-
-
 class ShaleReservoirProductionPerformance
 {
     constructor(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
@@ -85,7 +53,7 @@ class ShaleReservoirProductionPerformance
                             
             ///configure input tensor
             //option 1: create default, manually or randomly generated dataset
-            //option 2: import dataset from external file
+            //option 2: import dataset from external csv file or database (MongoDB)
             var x = null;
             var y = null;
                             
@@ -100,7 +68,7 @@ class ShaleReservoirProductionPerformance
             }
             else
             {
-                //use data from (a) "csv" file  or (b) data extracted from MongoDBData
+                //use data from (a) "csv" file  or (b) data extracted from MongoDB server
                 console.log("")
                 console.log("=======================================================================>")
                 console.log("Using dataset from externally loaded 'csv' file or 'MongoDB' server.")
@@ -114,43 +82,51 @@ class ShaleReservoirProductionPerformance
                     console.log("Not using default dataset, but dataset from externally loaded file.")
                     console.log("=======================================================================>")
                     
-                    //then
                     // (1) pass in csv files,
-                    // (2) load into arrays and displayed in console to check using readDataInputCSVfile() method
+                    // (2) load into arrays and display in console, using readDataInputCSVfile() method
+                    // note: readDataInputCSVfile() is a an optimised method for reading CSV data into "Tensor"
                     const fileNameX = this.inputTensorFromCSVFileX;
                     const fileNameY = this.inputTensorFromCSVFileY;
-                    //xx = readDataInputCSVfile(fileNameX, pathTofileX)
-                    //yy = readDataInputCSVfile(fileNameY, pathTofileY)
+                    //x = readDataInputCSVfile(fileNameX, pathTofileX)
+                    //y = readDataInputCSVfile(fileNameY, pathTofileY)
                 }
                 else if(this.fileOption === "MongoDB")
                 {
-                    //then:
                     // (1) pass in data extracted (with query/MapReduce) from MongoDB server
-                    // (2) load into arrays and displayed in console to check using readDataInputMongoDBD() method
+                    // (2) load into arrays and display in console, using readDataInputMongoDB() method
+                    // note: readDataInputMongoDB() is an optimised method for reading MongoDB data into "Tensor"
                     const collectionName = this.mongDBCollectionName;
                     const specifiedDataArrayX = this.mongDBSpecifiedDataArrayX;
                     const specifiedDataArrayY = this.mongDBSpecifiedDataArrayY;
-                    //xx = readDataInputMongoDBD(collectionName, specifiedDataArrayX)
-                    //yy = readDataInputMongoDBD(collectionName, specifiedDataArrayY)
+                    //x = readDataInputMongoDB(collectionName, specifiedDataArrayX)
+                    //y = readDataInputMongoDB(collectionName, specifiedDataArrayY)
                 }
                 
             }
                             
-            //create model
-            const reModel = (function createRegressionModel()
+            //create model (main engine) with IIFE
+            const reModel = (function createDNNRegressionModel()
             {
+                //create layers
                 const layerOptionsOne = {units: 100, inputShape: [inputSize], activation: 'softmax'};
                 const layerOptionsTwo = {units: 100, activation: 'tanh'};
                 const layerOptionsThree = {units: 1, activation: 'linear'};
                 const dropoutRate = 0.02;
+                
                 // add layers and dropouts
                 model.add(tf.layers.dense(layerOptionsOne));
                 model.add(tf.layers.dropout(dropoutRate));
                 model.add(tf.layers.dense(layerOptionsTwo));
                 model.add(tf.layers.dropout(dropoutRate));
                 model.add(tf.layers.dense(layerOptionsThree));
+                
+                //speficy options
                 const compileOptions = {optimizer: 'adam', loss: 'meanSquaredError', metrics: ['accuracy']};
+                
+                //compile model
                 model.compile(compileOptions);
+                
+                //return model
                 return model;
             }());
                             
@@ -165,7 +141,7 @@ class ShaleReservoirProductionPerformance
                 batchSize: batchSize,
                 epochs: epochs,
                 validationSplit: validationSplit,   // for large dataset, set about 10% (0.1) aside
-                verbose: verbose,                   // 1 full logging verbosity, 0 for none
+                verbose: verbose,                   // 1 for full logging verbosity, and 0 for none
                 callbacks:                          // customized logging verbosity
                 {
                     onEpochEnd: async function (epoch, logs)
@@ -177,9 +153,10 @@ class ShaleReservoirProductionPerformance
             }).then(function()
             {
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
-                // begin prediction: use the model to do inference on a data point the model hasn't seen before and time it
+                // begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
                 var predictions = reModel.predict(x);
+                // print outputs
                 console.log("Expected result in TF format:");
                 y.print(true);
                 console.log("Actual result in TF format :")
@@ -198,7 +175,7 @@ class ShaleReservoirProductionPerformance
     {
         const modelingOption = "dnn";
         const fileOption  = "default";
-        const gpuOption = true;
+        const gpuOption = false;
         const batchSize = 32;
         const epochs = 100;
         const validationSplit = 0.1;
