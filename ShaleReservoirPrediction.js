@@ -267,9 +267,15 @@ class ShaleReservoirProductionPerformance
     //generalize to each time step: say  90, 365, 720 and i095 days
     //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and i095 days, respectively
     const timeStep = 5;
-    let xInputTensor = [[], [], [], [], []];
-    let yInputTensor = [[], [], [], [], []];
-    
+    const commonModules = ShaleReservoirProductionPerformance.commonModules()
+    const tf = commonModules.tf;
+    const inputSize = 13;
+    const inputDim = 100;
+    const testTensorX  = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.01); //(shape, mean?, stdDev?, dtype?, seed?);
+    const testTensorY  = tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05);         //(shape, mean?, stdDev?, dtype?, seed?);
+    const xInputTensor = [testTensorX, testTensorX, testTensorX, testTensorX, testTensorX];
+    const yInputTensor = [testTensorY, testTensorY, testTensorY, testTensorY, testTensorY];
+    //
     const modelingOption = "dnn";
     const fileOption  = "default";
     const gpuOption = true;
