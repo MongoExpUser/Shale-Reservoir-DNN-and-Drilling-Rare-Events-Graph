@@ -72,7 +72,9 @@ class ShaleReservoirProductionPerformance
         return {tf: tf, tfvis: tfvis, fs:fs,  util: util, model: model};
     }
     
-    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize)
+    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate,
+                         unitsPerHiddenLayer, inputLayerActivation, outputLayerActivation,
+                         hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     {
         
         if(this.modelingOption === "dnn")
@@ -100,7 +102,7 @@ class ShaleReservoirProductionPerformance
             }
             else
             {
-                //use data from (a) "csv" file  or (b) data extracted from MongoDB server
+                //use data from (a) "csv" file or (b) data extracted from MongoDB server
                 console.log("")
                 console.log("=======================================================================>")
                 console.log("Using dataset from externally loaded 'csv' file or 'MongoDB' server.")
@@ -139,26 +141,32 @@ class ShaleReservoirProductionPerformance
             //create model (main engine) with IIFE
             const reModel = (function createDNNRegressionModel()
             {
-                //create layers
-                const layerOptionsOne = {units: 100, inputShape: [inputSize], activation: 'softmax'};
-                const layerOptionsTwo = {units: 100, activation: 'tanh'};
-                const layerOptionsThree = {units: 1, activation: 'linear'};
-                const dropoutRate = 0.02;
+                //create layers.....
+                const inputLayer = {units: unitsPerHiddenLayer, inputShape: [inputSize], activation: inputLayerActivation};
+                let hiddenLayers = [];
+                for(let i = 0; i < numberOfHiddenLayers; i ++)
+                {
+                    hiddenLayers.push({units: unitsPerHiddenLayer, activation: hiddenLayersActivation})
+                }
+                const outputLayer = {units: 1, activation: outputLayerActivation};
                 
-                // add layers and dropouts
-                model.add(tf.layers.dense(layerOptionsOne));
+                //add layers and dropouts......
+                model.add(tf.layers.dense(inputLayer));
                 model.add(tf.layers.dropout(dropoutRate));
-                model.add(tf.layers.dense(layerOptionsTwo));
-                model.add(tf.layers.dropout(dropoutRate));
-                model.add(tf.layers.dense(layerOptionsThree));
+                for(let eachLayer in hiddenLayers)
+                {
+                    model.add(tf.layers.dense(hiddenLayers[eachLayer]));
+                    model.add(tf.layers.dropout(dropoutRate));
+                }
+                model.add(tf.layers.dense(outputLayer));
                 
-                //speficy options
-                const compileOptions = {optimizer: 'adam', loss: 'meanSquaredError', metrics: ['accuracy']};
+                //speficy compilation options....
+                const compileOptions = {optimizer: optimizer, loss: loss, metrics: [metrics]};
                 
                 //compile model
                 model.compile(compileOptions);
                 
-                //return model
+                //return model.....
                 return model;
             }());
                             
@@ -206,21 +214,46 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(xInputTensor, yInputTensor)
     {
+        //algorithm type, data loading option and computer processing option
         const modelingOption = "dnn";
         const fileOption  = "default";
         const gpuOption = false;
+        
+        //training input
         const batchSize = 32;
         const epochs = 100;
         const validationSplit = 0.1;
         const verbose = 0;
+        
+        //model contruction parameters
         const inputSize = 13;
         const inputDim = 100;
-        //invoke dnn for Shale Reservoir Production Performace
+        const dropoutRate = 0.02;
+        const unitsPerHiddenLayer = 100;
+        const inputLayerActivation = "softmax";
+        const outputLayerActivation = "linear";
+        const hiddenLayersActivation = "tanh"
+        const numberOfHiddenLayers = 5;
+        const optimizer = "adam";
+        const loss = "meanSquaredError";
+        const metrics = "accuracy";
+    
+        //create a new isntance of ShaleReservoirProductionPerformance() class for testing
         const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, xInputTensor, yInputTensor);
-        test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize);
+        
+        //invoke dnn  method (productionPerformace()) on test object
+        test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
+                                  unitsPerHiddenLayer, inputLayerActivation, outputLayerActivation,
+                                  hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     }
 }
 
-new ShaleReservoirProductionPerformance("dnn", "csv", true, null, null, null, null, null).testProductionPerformace(null, null)
+
+//test with IIFE function
+(function testObject()
+{
+    new ShaleReservoirProductionPerformance("dnn", "csv", true, null, null, null, null, null).testProductionPerformace(null, null)
+}());
+
 
 module.exports = {ShaleReservoirProductionPerformance}
