@@ -8,9 +8,9 @@
  *
  *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
- * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction ofin shale reservoirs in the cloud.
+ * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
  * It is based on Node.js with option to use either gpu or cpu.
- * It can also adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
+ * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
  * 2) Then (s) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
