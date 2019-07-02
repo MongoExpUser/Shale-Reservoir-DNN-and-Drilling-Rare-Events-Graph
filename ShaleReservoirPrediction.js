@@ -7,15 +7,17 @@
  * @License Ends
  *
  *
- * ...EcotertShaleReservoirPrediction.js implements:
+ * ...Ecotert's ShaleReservoirPrediction.js (released as open-source under MIT License) implements:
  *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+ *
  * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
  * It is based on Node.js with option to use either gpu or cpu.
  * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
+ *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
- * 2) Then (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
+ * 2) Then: (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
  * 3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, ...1825 days)
  *     a) BOE in MBoe
  *     b) Gas in MMScf
@@ -264,8 +266,8 @@ class ShaleReservoirProductionPerformance
 //test with IIFE
 (function testObject()
 {
-    //generalize to each time step: say  90, 365, 720 and i095 days
-    //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and i095 days, respectively
+    //generalize to each time step: say  90, 365, 720 and 1095 days
+    //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and 1095 days, respectively
     const timeStep = 5;
     const commonModules = ShaleReservoirProductionPerformance.commonModules()
     const tf = commonModules.tf;
@@ -275,7 +277,7 @@ class ShaleReservoirProductionPerformance
     const fileOption  = "default";
     const gpuOption = true;
    
-    //input tensors
+    //array/list of input tensors
     let xInputTensor = [];
     let yInputTensor = [];
     
