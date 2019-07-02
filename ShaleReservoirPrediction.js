@@ -73,7 +73,7 @@ class ShaleReservoirProductionPerformance
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate,
-                         unitsPerHiddenLayer, inputLayerActivation, outputLayerActivation,
+                         unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
                          hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     {
         
@@ -97,8 +97,8 @@ class ShaleReservoirProductionPerformance
                 console.log("=================================================>")
                 console.log("Using manually or randomly generated dataset.");
                 console.log("=================================================>")
-                x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.3, "float32", 0.5);
-                y = tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.5);
+                x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.4);
+                y = tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.4);
             }
             else
             {
@@ -117,8 +117,9 @@ class ShaleReservoirProductionPerformance
                     console.log("=======================================================================>")
                     
                     // (1) pass in csv files,
-                    // (2) load into arrays and display in console, using readDataInputCSVfile() method
+                    // (2) load into arrays and display/check in console, using readDataInputCSVfile() method
                     // note: readDataInputCSVfile() is a an optimised method for reading CSV data into "Tensor"
+                    // note: readDataInputCSVfile() is accessible from a module on the Node.js server hosting the application
                     const fileNameX = this.inputTensorFromCSVFileX;
                     const fileNameY = this.inputTensorFromCSVFileY;
                     //x = readDataInputCSVfile(fileNameX, pathTofileX)
@@ -127,8 +128,9 @@ class ShaleReservoirProductionPerformance
                 else if(this.fileOption === "MongoDB")
                 {
                     // (1) pass in data extracted (with query/MapReduce) from MongoDB server
-                    // (2) load into arrays and display in console, using readDataInputMongoDB() method
+                    // (2) load into arrays and display/check in console, using readDataInputMongoDB() method
                     // note: readDataInputMongoDB() is an optimised method for reading MongoDB data into "Tensor"
+                    // note: readDataInputMongoDB() is accessible from a module on the Node.js server hosting the application
                     const collectionName = this.mongDBCollectionName;
                     const specifiedDataArrayX = this.mongDBSpecifiedDataArrayX;
                     const specifiedDataArrayY = this.mongDBSpecifiedDataArrayY;
@@ -148,7 +150,7 @@ class ShaleReservoirProductionPerformance
                 {
                     hiddenLayers.push({units: unitsPerHiddenLayer, activation: hiddenLayersActivation})
                 }
-                const outputLayer = {units: 1, activation: outputLayerActivation};
+                const outputLayer = {units: unitsPerOutputLayer, activation: outputLayerActivation};
                 
                 //add layers and dropouts......
                 model.add(tf.layers.dense(inputLayer));
@@ -226,39 +228,53 @@ class ShaleReservoirProductionPerformance
         
         //training parameters
         const batchSize = 32;
-        const epochs = 100;
+        const epochs = 200;
         const validationSplit = 0.1;
         const verbose = 0;
         
         //model contruction parameters
-        const inputSize = 13;
-        const inputDim = 100;
+        const inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size well length, etc)
+        const inputDim = 100;         //number of datapoint  (number of row)
         const dropoutRate = 0.02;
-        const unitsPerHiddenLayer = 100;
+        const unitsPerHiddenLayer = 200;
+        const unitsPerOutputLayer = 1;
         const inputLayerActivation = "softmax";
         const outputLayerActivation = "linear";
         const hiddenLayersActivation = "tanh"
-        const numberOfHiddenLayers = 5;
+        const numberOfHiddenLayers = 4;
         const optimizer = "adam";
         const loss = "meanSquaredError";
         const metrics = "accuracy";
     
-        //create a new isntance of ShaleReservoirProductionPerformance() class for testing
+        //create a new instance of ShaleReservoirProductionPerformance() class for testing
         const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
                                                              mongDBCollectionName, mongDBSpecifiedDataArrayX, mongDBSpecifiedDataArrayY);
         
         //invoke dnn  method (productionPerformace()) on test object
         test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
-                                  unitsPerHiddenLayer, inputLayerActivation, outputLayerActivation,
+                                  unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
                                   hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     }
 }
 
-
-//test with IIFE function
+//test with IIFE
 (function testObject()
 {
-    new ShaleReservoirProductionPerformance("dnn", "default", false, null, null, null, null, null).testProductionPerformace(null, null)
+    //generalize to each time step: say  90, 365, 720 and i095 days
+    
+    //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and i095 days, respectively
+    const timeStep = 5;
+    
+    let xInputTensor = [[], [], [], [], []];
+    let yInputTensor = [[], [], [], [], []];
+    
+    for(let i = 0; i < timeStep; i++)
+    {
+        new ShaleReservoirProductionPerformance("dnn", "default", false, null, null, null, null, null).testProductionPerformace(xInputTensor[i], yInputTensor[i]);
+    }
+    
+    //note: all results are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
+    
 }());
 
 
