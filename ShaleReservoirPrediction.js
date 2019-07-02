@@ -14,7 +14,7 @@
  *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
  * 2) Then (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
- * 3) Target output: Cumulative production @ time, t (30 180, 365, 720,...1825 days)
+ * 3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, ...1825 days)
  *     a) BOE in MBoe
  *     b) Gas in MMScf
  *     c) Oil in M barrel
@@ -28,7 +28,6 @@
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  */
-
 
 class ShaleReservoirProductionPerformance
 {
@@ -57,7 +56,7 @@ class ShaleReservoirProductionPerformance
         const fs = require('fs');
         const util = require('util');
         const tfvis = require('@tensorflow/tfjs-vis');
-        const tf = require('@tensorflow/tfjs');
+        const tf = require('@tensorflow/tfjs');    //pure JavaScript version
         
         if(this.gpuOption === true)
         {
@@ -67,9 +66,9 @@ class ShaleReservoirProductionPerformance
         {
             require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
         }
-        
+
         const model = tf.sequential();
-        return {tf: tf, tfvis: tfvis, fs:fs, util: util, model: model};
+        return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:model};
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate,
@@ -139,7 +138,6 @@ class ShaleReservoirProductionPerformance
                     //x = readDataInputMongoDB(collectionName, specifiedDataArrayX)
                     //y = readDataInputMongoDB(collectionName, specifiedDataArrayY)
                 }
-                
             }
                             
             //create model (main engine) with IIFE
@@ -173,8 +171,7 @@ class ShaleReservoirProductionPerformance
                 //return model.....
                 return model;
             }());
-                            
-                        
+                                   
             // begin training: train the model using the data and time the training
             const beginTrainingTime = new Date();
             console.log(" ")
@@ -193,7 +190,7 @@ class ShaleReservoirProductionPerformance
                         console.log("Epoch = ", epoch, " Loss = ",  parseFloat(logs.loss), " Accuracy = ", parseFloat(logs.acc));
                     }
                 }
-                                
+                
             }).then(function()
             {
                 console.log("........Training Ends......................................")
@@ -221,7 +218,7 @@ class ShaleReservoirProductionPerformance
         //algorithm type, computer processing option and data loading parameters
         const modelingOption = "dnn";
         const fileOption  = "default";
-        const gpuOption = false;
+        const gpuOption = true;
         const inputTensorFromCSVFileX = null;
         const inputTensorFromCSVFileY = null;
         const mongDBCollectionName = null;
@@ -230,12 +227,12 @@ class ShaleReservoirProductionPerformance
         
         //training parameters
         const batchSize = 32;
-        const epochs = 200;
+        const epochs = 50;
         const validationSplit = 0.1;
         const verbose = 0;
         
         //model contruction parameters
-        const inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size well length, etc)
+        const inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
         const inputDim = 100;         //number of datapoint  (number of row)
         const dropoutRate = 0.02;
         const unitsPerHiddenLayer = 200;
@@ -264,21 +261,22 @@ class ShaleReservoirProductionPerformance
 (function testObject()
 {
     //generalize to each time step: say  90, 365, 720 and i095 days
-    
     //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and i095 days, respectively
     const timeStep = 5;
-    
     let xInputTensor = [[], [], [], [], []];
     let yInputTensor = [[], [], [], [], []];
     
+    const modelingOption = "dnn";
+    const fileOption  = "default";
+    const gpuOption = true;
+    
     for(let i = 0; i < timeStep; i++)
     {
-        new ShaleReservoirProductionPerformance("dnn", "default", false, null, null, null, null, null).testProductionPerformace(xInputTensor[i], yInputTensor[i]);
+        const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, null, null, null, null, null);
+        srpp.testProductionPerformace(xInputTensor[i], yInputTensor[i]);
     }
     
     //note: all results are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
-    
 }());
-
 
 module.exports = {ShaleReservoirProductionPerformance}
