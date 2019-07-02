@@ -7,7 +7,10 @@
  * @License Ends
  *
  *
- * This module is a Tensorflow-Based DNN Models for Hydraulically-Fractures-Driven Production Performance Prediction of Shale Reservoirs in the Cloud.
+ * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+ * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction ofin shale reservoirs in the cloud.
+ * It is based on Node.js with option to use either gpu or cpu.
+ * It can also adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
  * 2) Then (s) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
@@ -17,7 +20,7 @@
  *     c) Oil in M barrel
  * 4) Target inputs:
  *     a) Richness/OHIP-Related: so, phi, h, TOC
- *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro,nano and pico)
+ *     b) Reservoir Flow Capacity-Related, Permeability, pore size (micro, nano and pico)
  *     c) Drive-Related: TVD/pressure,
  *     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
  *     e) Fluid TYpe-Related: SG/Density/API, Ro/maturity level,
@@ -48,6 +51,7 @@ class ShaleReservoirProductionPerformance
     {
         const fs = require('fs');
         const util = require('util');
+        const tfvis = require('@tensorflow/tfjs-vis');
         const tf = require('@tensorflow/tfjs');
         
         if(this.gpuOption === true)
@@ -60,7 +64,7 @@ class ShaleReservoirProductionPerformance
         }
         
         const model = tf.sequential();
-        return {tf: tf, fs:fs,  util: util, model: model};
+        return {tf: tf, tfvis: tfvis, fs:fs,  util: util, model: model};
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize)
@@ -80,7 +84,7 @@ class ShaleReservoirProductionPerformance
             var x = null;
             var y = null;
                             
-            if(this.fileOption === "default")
+            if(this.fileOption === "default" || this.fileOption === null || this.fileOption === undefined)
             {
                 console.log("")
                 console.log("=================================================>")
@@ -91,17 +95,39 @@ class ShaleReservoirProductionPerformance
             }
             else
             {
-                this.fileOption  = "csv";
+                //use data from (a) "csv" file  or (b) data extracted from MongoDBData
                 console.log("")
                 console.log("=======================================================================>")
-                console.log("Not using default dataset, but dataset from externally loaded file.")
+                console.log("Using dataset from externally loaded 'csv' file or 'MongoDB' server.")
                 console.log("=======================================================================>")
+            
+                if(this.fileOption === "csv")
+                {
+          
+                    console.log("")
+                    console.log("=======================================================================>")
+                    console.log("Not using default dataset, but dataset from externally loaded file.")
+                    console.log("=======================================================================>")
+                    
+                    //then
+                    // (1) pass in csv files,
+                    // (2) load into arrays and displayed in console to check using readDataInputCSVfile() method
+                    const fileNameX = this.inputTensorFromCSVFileX;
+                    const fileNameY = this.inputTensorFromCSVFileY;
+                    //xx = readDataInputCSVfile(fileNameX, pathTofileX)
+                    //yy = readDataInputCSVfile(fileNameY, pathTofileY)
+                }
+                else if(this.fileOption === "MongoDB")
+                {
+                    //then:
+                    // (1) pass in data extracted (with query/MapReduce) from MongoDB server
+                    // (2) load into arrays and displayed in console to check using readDataInputMongoDBD() method
+                    const fileNameX = this.inputTensorFromCSVFileX;
+                    const fileNameY = this.inputTensorFromCSVFileY;
+                    //xx = readDataInputMongoDBD(collectionName, specifiedDataArrayX)
+                    //yy = readDataInputMongoDBD(collectionName, specifiedDataArrayY)
+                }
                 
-                //then pass in files, load into arrays and displayed in console to check using readDataInputCSVfile() method
-                const fileNameX = this.inputTensorFromCSVFileX;
-                const fileNameY = this.inputTensorFromCSVFileY;
-                //xx = readDataInputCSVfile(fileNameX, pathTofileX)
-                //yy = readDataInputCSVfile(fileNameY, pathTofileY)
             }
                             
             //create model
@@ -133,7 +159,7 @@ class ShaleReservoirProductionPerformance
                 batchSize: batchSize,
                 epochs: epochs,
                 validationSplit: validationSplit,   // for large dataset, set about 10% (0.1) aside
-                verbose: verbose,                   // 1 for full logging verbosity and 0 for none
+                verbose: verbose,                   // 1 full logging verbosity, 0 for none
                 callbacks:                          // customized logging verbosity
                 {
                     onEpochEnd: async function (epoch, logs)
@@ -161,7 +187,7 @@ class ShaleReservoirProductionPerformance
             });
         }
     }
-    
+
     testProductionPerformace(xInputTensor, yInputTensor)
     {
         const modelingOption = "dnn";
