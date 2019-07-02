@@ -214,12 +214,17 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(xInputTensor, yInputTensor)
     {
-        //algorithm type, data loading option and computer processing option
+        //algorithm type, omputer processing option and data loading parameters
         const modelingOption = "dnn";
         const fileOption  = "default";
         const gpuOption = false;
+        const inputTensorFromCSVFileX = null;
+        const inputTensorFromCSVFileY = null;
+        const mongDBCollectionName = null;
+        const mongDBSpecifiedDataArrayX  = null;
+        const mongDBSpecifiedDataArrayY  = null;
         
-        //training input
+        //training parameters
         const batchSize = 32;
         const epochs = 100;
         const validationSplit = 0.1;
@@ -239,7 +244,8 @@ class ShaleReservoirProductionPerformance
         const metrics = "accuracy";
     
         //create a new isntance of ShaleReservoirProductionPerformance() class for testing
-        const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, xInputTensor, yInputTensor);
+        const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
+                                                             mongDBCollectionName, mongDBSpecifiedDataArrayX, mongDBSpecifiedDataArrayY);
         
         //invoke dnn  method (productionPerformace()) on test object
         test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
@@ -252,7 +258,7 @@ class ShaleReservoirProductionPerformance
 //test with IIFE function
 (function testObject()
 {
-    new ShaleReservoirProductionPerformance("dnn", "csv", true, null, null, null, null, null).testProductionPerformace(null, null)
+    new ShaleReservoirProductionPerformance("dnn", "default", false, null, null, null, null, null).testProductionPerformace(null, null)
 }());
 
 
