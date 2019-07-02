@@ -7,6 +7,8 @@
  * @License Ends
  *
  *
+ * ...EcotertShaleReservoirPrediction.js implements:
+ *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
  * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
  * It is based on Node.js with option to use either gpu or cpu.
@@ -141,6 +143,7 @@ class ShaleReservoirProductionPerformance
             }
                             
             //create model (main engine) with IIFE
+            //TensorFlow.js equivalent of Keras' feed-forward DNN => "tf.layers" is equivalent to "tf.keras"
             const reModel = (function createDNNRegressionModel()
             {
                 //create layers.....
