@@ -214,7 +214,7 @@ class ShaleReservoirProductionPerformance
                 reModel.summary()
             }).catch(function(error)
             {
-                if(err) {console.log(error, " : TensorFlow rejection error successfully handled.");};
+                if(error) {console.log(error, " : TensorFlow rejection error successfully handled.");};
             });
         }
     }
