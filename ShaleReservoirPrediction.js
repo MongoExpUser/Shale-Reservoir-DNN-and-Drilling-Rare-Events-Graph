@@ -285,7 +285,6 @@ class ShaleReservoirProductionPerformance
 }
 
 
-
 //test object
 function testObject(test)
 {
