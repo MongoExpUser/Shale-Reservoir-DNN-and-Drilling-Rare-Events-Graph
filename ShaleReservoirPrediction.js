@@ -113,7 +113,6 @@ class ShaleReservoirProductionPerformance
             
                 if(this.fileOption === "csv")
                 {
-          
                     console.log("")
                     console.log("=======================================================================>")
                     console.log("Not using default dataset, but dataset from externally loaded file.")
@@ -193,8 +192,11 @@ class ShaleReservoirProductionPerformance
                 {
                     onEpochEnd: async function (epoch, logs)
                     {
-                        console.log("Epoch = ", epoch, " Loss = ",  parseFloat(logs.loss), " Accuracy = ", parseFloat(logs.acc));
-                        console.log("Allocated Memory (MB): ", (tf.memory().numBytes)/1000000);
+                        console.log("Epoch = ", epoch,
+                                    " Loss = ",  parseFloat(logs.loss),
+                                    " Acc = ", parseFloat(logs.acc),
+                                    " Allocated Mem (MB) = ", (tf.memory().numBytes)/1E+6
+                                    );
                     }
                 }
                 
@@ -202,20 +204,28 @@ class ShaleReservoirProductionPerformance
             {
                 console.log("........Training Ends......................................")
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
+                
                 // begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
                 var predictions = reModel.predict(x);
+                
                 // print outputs
                 console.log("Expected result in Tensor format:");
                 y.print(true);
+                
                 console.log("Actual result in Tensor format :")
                 reModel.predict(x).print(true);
+                
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
-                reModel.summary()
+                reModel.summary();
+                
             }).catch(function(error)
             {
-                if(error) {console.log(error, " : TensorFlow error successfully intercepted and handled.");};
+                if(error)
+                {
+                    console.log(error, " : TensorFlow error successfully intercepted and handled.");
+                };
             });
         }
     }
@@ -285,18 +295,20 @@ class ShaleReservoirProductionPerformance
 }
 
 
-//test object
-function testObject(test)
+//run test
+function testSRPP(test)
 {
     if(test === true)
     {
-        new ShaleReservoirProductionPerformance().testProductionPerformace();
+        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace();
     }
+    
+    //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
 }
 
-testObject(true);
-//testObject("doNotTestOption");
+testSRPP(true);
+//testSRPP("doNotTest");
 
 
 
-module.exports = {ShaleReservoirProductionPerformance}
+module.exports = {ShaleReservoirProductionPerformance};
