@@ -35,17 +35,17 @@
 
 class ShaleReservoirProductionPerformance
 {
-    constructor(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
-                mongDBCollectionName, mongDBSpecifiedDataArrayX, mongDBSpecifiedDataArrayY)
+    constructor(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY,
+                mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
     {
         this.modelingOption = modelingOption;
         this.fileOption  = fileOption;
         this.gpuOption = gpuOption;
-        this.inputTensorFromCSVFileX = inputTensorFromCSVFileX;
-        this.inputTensorFromCSVFileY = inputTensorFromCSVFileY;
+        this.inputFromCSVFileX = inputFromCSVFileX;
+        this.inputFromCSVFileY = inputFromCSVFileY;
         this.mongDBCollectionName = mongDBCollectionName;
-        this.mongDBSpecifiedDataArrayX = mongDBSpecifiedDataArrayX;
-        this.mongDBSpecifiedDataArrayY = mongDBSpecifiedDataArrayY;
+        this.mongDBSpecifiedDataX = mongDBSpecifiedDataX;
+        this.mongDBSpecifiedDataY = mongDBSpecifiedDataY;
     }
     
     static runTimeDNN(beginTime, timeOption)
@@ -89,62 +89,42 @@ class ShaleReservoirProductionPerformance
             const model = commonModules.model;
                             
             ///configure input tensor
-            //option 1: create default, manually or randomly generated dataset
-            //option 2: import dataset from external csv file or database (MongoDB)
             var x = null;
             var y = null;
                             
             if(this.fileOption === "default" || this.fileOption === null || this.fileOption === undefined)
             {
                 console.log("")
-                console.log("=================================================>")
+                console.log("==================================================>")
                 console.log("Using manually or randomly generated dataset.");
-                console.log("=================================================>")
+                console.log("==================================================>")
                 x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.4);
                 y = tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.4);
             }
             else
             {
-                //use data from (a) "csv" file or (b) data extracted from MongoDB server
-                console.log("")
-                console.log("=======================================================================>")
-                console.log("Using dataset from externally loaded 'csv' file or 'MongoDB' server.")
-                console.log("=======================================================================>")
-            
                 if(this.fileOption === "csv")
                 {
                     console.log("")
-                    console.log("=======================================================================>")
-                    console.log("Not using default dataset, but dataset from externally loaded file.")
-                    console.log("=======================================================================>")
-                    
-                    // (1) pass in csv files,
-                    // (2) load into arrays and display/check in console, using readDataInputCSVfile() method
-                    // note: readDataInputCSVfile() is a an optimised method for reading CSV data into "Tensor"
-                    // note: readDataInputCSVfile() is accessible from a module on the Node.js server hosting the application
-                    const fileNameX = this.inputTensorFromCSVFileX;
-                    const fileNameY = this.inputTensorFromCSVFileY;
-                    const pathTofileX = "./";
-                    const pathTofileY = "./"
-                    //x = readDataInputCSVfile(fileNameX, pathTofileX)
-                    //y = readDataInputCSVfile(fileNameY, pathTofileY)
+                    console.log("==================================================>")
+                    console.log("Using dataset from externally 'csv' file.")
+                    console.log("==================================================>")
+                    x = this.inputFromCSVFileX;
+                    y = this.inputFromCSVFileY;
                 }
-                else if(this.fileOption === "MongoDB")
+                
+                if(this.fileOption === "MongoDB")
                 {
-                    // (1) pass in data extracted (with query/MapReduce) from MongoDB server
-                    // (2) load into arrays and display/check in console, using readDataInputMongoDB() method
-                    // note: readDataInputMongoDB() is an optimised method for reading MongoDB data into "Tensor"
-                    // note: readDataInputMongoDB() is accessible from a module on the Node.js server hosting the application
-                    const collectionName = this.mongDBCollectionName;
-                    const specifiedDataArrayX = this.mongDBSpecifiedDataArrayX;
-                    const specifiedDataArrayY = this.mongDBSpecifiedDataArrayY;
-                    //x = readDataInputMongoDB(collectionName, specifiedDataArrayX)
-                    //y = readDataInputMongoDB(collectionName, specifiedDataArrayY)
+                    console.log("")
+                    console.log("==================================================>")
+                    console.log("Using dataset from externally 'MongoDB' server.")
+                    console.log("==================================================>")
+                    x = this.mongDBSpecifiedDataX;
+                    y = this.mongDBSpecifiedDataY;
                 }
             }
                             
             //create model (main engine) with IIFE
-            //TensorFlow.js' equivalent of Keras' feed-forward DNN =>
             //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
             const reModel = (function createDNNRegressionModel()
             {
@@ -230,18 +210,13 @@ class ShaleReservoirProductionPerformance
         }
     }
 
-    testProductionPerformace()
+    testProductionPerformace(inDevelopment = true, fileNameX, fileNameY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
     {
-        //algorithm type, computer processing option and data loading parameters
+        //algorithm, gpu/cpu and data loading options
         const modelingOption = "dnn";
-        const fileOption  = "default";
+        const fileOption  = "MongoDB";
         const gpuOption = true;
-        const inputTensorFromCSVFileX = null;
-        const inputTensorFromCSVFileY = null;
-        const mongDBCollectionName = null;
-        const mongDBSpecifiedDataArrayX  = null;
-        const mongDBSpecifiedDataArrayY  = null;
-        
+
         //training parameters
         const batchSize = 32;
         const epochs = 50;
@@ -262,15 +237,17 @@ class ShaleReservoirProductionPerformance
         const loss = "meanSquaredError";
         const metrics = "accuracy";
         
-        
         // NOTE:generalize to each time step: say  90, 365, 720 and 1095 days
         // ==================================================================
-        // implies: xInputTensor and yInputTensor contains 5 Tensors, representing:
+        // implies: xInputTensor and yInputTensor contain 5 Tensors, representing:
         // input tensors for 30, 90, 365, 720 and 1095 days, respectively
         
-        //array (list) of input tensors for test
-        let xInputTensor = [];
-        let yInputTensor = [];
+        //array (list) of input tensors
+        let inputFromCSVFileXList = [];
+        let inputFromCSVFileYList = [];
+        let mongDBSpecifiedDataXList = [];
+        let mongDBSpecifiedDataYList = []
+        
         const timeStep = 5;
         const commonModules = ShaleReservoirProductionPerformance.commonModules()
         const tf = commonModules.tf;
@@ -278,14 +255,54 @@ class ShaleReservoirProductionPerformance
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
         {
-            //first: create tensors at each timeStep for testing: format => (shape, mean, stdDev, dtype, seed)
-            xInputTensor.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-            yInputTensor.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
-            
+            //first: create tensors at each timeStep: format => (shape, mean, stdDev, dtype, seed)
+            if(inDevelopment === true)
+            {
+                switch(fileOption)
+                {
+                    case("csv"):
+                        inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
+                        inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
+                        break;
+                            
+                    case("MongoDB"):
+                        mongDBSpecifiedDataXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
+                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
+                        break;
+                }
+            }
+            else
+            {
+                inDevelopment === false; //i.e. appication in production/deployment phase
+                
+                switch(fileOption)
+                {
+                    case("csv"):
+                        // (1) pass in csv files,
+                        // (2) load into arrays and display/check in console, using readDataInputCSVfile() method
+                        // note: readDataInputCSVfile() is a an optimised method for reading CSV data into "Tensor"
+                        // note: readDataInputCSVfile() is accessible from a module on the Node.js server hosting the application
+                        const pathTofileX = "./";
+                        const pathTofileY = "./"
+                        //...>inputFromCSVFileXList.push(readDataInputCSVfile(fileNameX, pathTofileX));
+                        //...>inputFromCSVFileYList.push(readDataInputCSVfile(fileNameY, pathTofileY));
+                        break;
+                            
+                    case("MongoDB"):
+                        // (1) pass in data extracted (with query/MapReduce) from MongoDB server
+                        // (2) load into arrays and display/check in console, using readDataInputMongoDB() method
+                        // note: readDataInputMongoDB() is an optimised method for reading MongoDB data into "Tensor"
+                        // note: readDataInputMongoDB() is accessible from a module on the Node.js server hosting the application
+                        //...>mongDBSpecifiedDataXList.push(readDataInputMongoDB(mongDBCollectionName, mongDBSpecifiedDataX));
+                        //...>mongDBSpecifiedDataYList.push(readDataInputMongoDB(mongDBCollectionName, mongDBSpecifiedDataY));
+                        break;
+                }
+            }
+        
+        
             //2nd: invoke productionPerformance() method on srpp() class
-            const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, xInputTensor[i],
-                                                                 yInputTensor[i], mongDBCollectionName, xInputTensor[i],
-                                                                 yInputTensor[i])
+            const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputFromCSVFileXList[i], inputFromCSVFileYList[i],
+                                                                 mongDBCollectionName, mongDBSpecifiedDataXList[i], mongDBSpecifiedDataYList[i])
             srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
                                                                  unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation,
                                                                  outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers,
@@ -308,7 +325,6 @@ function testSRPP(test)
 
 testSRPP(true);
 //testSRPP("doNotTest");
-
 
 
 module.exports = {ShaleReservoirProductionPerformance};
