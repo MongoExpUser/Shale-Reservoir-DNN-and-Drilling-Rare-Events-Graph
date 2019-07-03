@@ -215,7 +215,7 @@ class ShaleReservoirProductionPerformance
                 reModel.summary()
             }).catch(function(error)
             {
-                if(err) {console.log(error, " : TensorFlow rejection error successfully handled.");};
+                if(error) {console.log(error, " : TensorFlow error successfully intercepted and handled.");};
             });
         }
     }
@@ -285,10 +285,19 @@ class ShaleReservoirProductionPerformance
 }
 
 
-(function testObject()
+
+//test object
+function testObject(test)
 {
-    new ShaleReservoirProductionPerformance().testProductionPerformace();
-}());
+    if(test === true)
+    {
+        new ShaleReservoirProductionPerformance().testProductionPerformace();
+    }
+}
+
+testObject(true);
+//testObject("doNotTestOption");
+
 
 
 module.exports = {ShaleReservoirProductionPerformance}
