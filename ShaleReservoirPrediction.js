@@ -256,7 +256,7 @@ class ShaleReservoirProductionPerformance
         for(let i = 0; i < timeStep; i++)
         {
             //first: create tensors at each timeStep: format => (shape, mean, stdDev, dtype, seed)
-            if(inDevelopment === true)
+            if(inDevelopment === true)  //i.e. application still in development phase
             {
                 switch(fileOption)
                 {
@@ -273,7 +273,7 @@ class ShaleReservoirProductionPerformance
             }
             else
             {
-                inDevelopment === false; //i.e. appication in production/deployment phase
+                inDevelopment === false; //i.e. application now in production/deployment phase
                 
                 switch(fileOption)
                 {
