@@ -79,6 +79,9 @@ class ShaleReservoirProductionPerformance
                          unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
                          hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     {
+        //note: the abstraction in this method is simplied and similar to sklearn's MLPRegressor(args),
+        //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
+        //    : see testProductionPerformace() method below - lines 312 and 314
         
         if(this.modelingOption === "dnn")
         {
@@ -210,12 +213,18 @@ class ShaleReservoirProductionPerformance
         }
     }
 
-    testProductionPerformace(inDevelopment = true, fileNameX, fileNameY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
+
+    testProductionPerformace(inDevelopment = true)
     {
         //algorithm, gpu/cpu and data loading options
         const modelingOption = "dnn";
         const fileOption  = "MongoDB";
         const gpuOption = true;
+        const fileNameX = undefined;
+        const fileNameY = undefined;
+        const mongDBCollectionName = undefined;
+        const mongDBSpecifiedDataX = undefined;
+        const mongDBSpecifiedDataY = undefined;
 
         //training parameters
         const batchSize = 32;
@@ -273,7 +282,7 @@ class ShaleReservoirProductionPerformance
             }
             else
             {
-                inDevelopment === false; //i.e. application now in production/deployment phase
+                inDevelopment = false; //i.e. application now in production/deployment phase
                 
                 switch(fileOption)
                 {
@@ -299,14 +308,11 @@ class ShaleReservoirProductionPerformance
                 }
             }
         
-        
             //2nd: invoke productionPerformance() method on srpp() class
             const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                                 mongDBCollectionName, mongDBSpecifiedDataXList[i], mongDBSpecifiedDataYList[i])
-            srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
-                                                                 unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation,
-                                                                 outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers,
-                                                                 optimizer, loss, metrics)
+                                                                 mongDBCollectionName, mongDBSpecifiedDataXList[i], mongDBSpecifiedDataYList[i]);
+            srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate, unitsPerHiddenLayer, unitsPerOutputLayer,
+                                     inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics);
         }
     }
 }
@@ -317,7 +323,7 @@ function testSRPP(test)
 {
     if(test === true)
     {
-        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace();
+        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = true);
     }
     
     //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
