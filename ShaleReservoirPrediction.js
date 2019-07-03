@@ -79,7 +79,7 @@ class ShaleReservoirProductionPerformance
                          unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
                          hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
     {
-        //note: the abstraction in this method is simplied and similar to sklearn's MLPRegressor(args),
+        //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
         //    : see testProductionPerformace() method below - lines 312 and 314
         
