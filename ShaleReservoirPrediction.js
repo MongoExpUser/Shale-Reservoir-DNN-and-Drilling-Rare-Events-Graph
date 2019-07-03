@@ -60,15 +60,15 @@ class ShaleReservoirProductionPerformance
         const fs = require('fs');
         const util = require('util');
         const tfvis = require('@tensorflow/tfjs-vis');
-        const tf = require('@tensorflow/tfjs');    //pure JavaScript version
+        let tf = require('@tensorflow/tfjs');    //pure JavaScript version
         
         if(this.gpuOption === true)
         {
-            require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
+            tf = require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
         }
         else
         {
-            require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
+            tf = require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
         }
 
         const model = tf.sequential();
@@ -176,7 +176,7 @@ class ShaleReservoirProductionPerformance
                 
                 //return model.....
                 return model;
-            }());
+            })();
                                    
             // begin training: train the model using the data and time the training
             const beginTrainingTime = new Date();
@@ -194,6 +194,7 @@ class ShaleReservoirProductionPerformance
                     onEpochEnd: async function (epoch, logs)
                     {
                         console.log("Epoch = ", epoch, " Loss = ",  parseFloat(logs.loss), " Accuracy = ", parseFloat(logs.acc));
+                        console.log("Allocated Memory (MB): ", (tf.memory().numBytes)/1000000);
                     }
                 }
                 
@@ -214,12 +215,12 @@ class ShaleReservoirProductionPerformance
                 reModel.summary()
             }).catch(function(error)
             {
-                if(error) {console.log(error, " : TensorFlow rejection error successfully handled.");};
+                if(err) {console.log(error, " : TensorFlow rejection error successfully handled.");};
             });
         }
     }
 
-    testProductionPerformace(xInputTensor, yInputTensor)
+    testProductionPerformace()
     {
         //algorithm type, computer processing option and data loading parameters
         const modelingOption = "dnn";
@@ -250,51 +251,44 @@ class ShaleReservoirProductionPerformance
         const optimizer = "adam";
         const loss = "meanSquaredError";
         const metrics = "accuracy";
-    
-        //create a new instance of ShaleReservoirProductionPerformance() class for testing
-        const test = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputTensorFromCSVFileX, inputTensorFromCSVFileY,
-                                                             mongDBCollectionName, mongDBSpecifiedDataArrayX, mongDBSpecifiedDataArrayY);
         
-        //invoke dnn  method (productionPerformace()) on test object
-        test.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
-                                  unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
-                                  hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
+        
+        // NOTE:generalize to each time step: say  90, 365, 720 and 1095 days
+        // ==================================================================
+        // implies: xInputTensor and yInputTensor contains 5 Tensors, representing:
+        // input tensors for 30, 90, 365, 720 and 1095 days, respectively
+        
+        //array (list) of input tensors for test
+        let xInputTensor = [];
+        let yInputTensor = [];
+        const timeStep = 5;
+        const commonModules = ShaleReservoirProductionPerformance.commonModules()
+        const tf = commonModules.tf;
+    
+        //run model by timeStep
+        for(let i = 0; i < timeStep; i++)
+        {
+            //first: create tensors at each timeStep for testing: format => (shape, mean, stdDev, dtype, seed)
+            xInputTensor.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
+            yInputTensor.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
+            
+            //2nd: invoke productionPerformance() method on srpp() class
+            const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, xInputTensor[i],
+                                                                 yInputTensor[i], mongDBCollectionName, xInputTensor[i],
+                                                                 yInputTensor[i])
+            srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate,
+                                                                 unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation,
+                                                                 outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers,
+                                                                 optimizer, loss, metrics)
+        }
     }
 }
 
 
-//test with IIFE
 (function testObject()
 {
-    //generalize to each time step: say  90, 365, 720 and 1095 days
-    //implies: xInputTensor and yInputTensor contains 5 Tensors, representing, input tensors for 30, 90, 365, 720 and 1095 days, respectively
-    const timeStep = 5;
-    const commonModules = ShaleReservoirProductionPerformance.commonModules()
-    const tf = commonModules.tf;
-    const inputSize = 13;
-    const inputDim = 100;
-    const modelingOption = "dnn";
-    const fileOption  = "default";
-    const gpuOption = true;
-   
-    //array/list of input tensors
-    let xInputTensor = [];
-    let yInputTensor = [];
-    
-    for(let i = 0; i < timeStep; i++)
-    {
-        xInputTensor.push(tf.truncatedNormal([inputDim, inputSize], 1, 0.1, "float32", 0.01)); //(shape, mean?, stdDev?, dtype?, seed?);)
-        xInputTensor.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));        //(shape, mean?, stdDev?, dtype?, seed?);)
-    }
-    
-    //run model by timeStep
-    for(let i = 0; i < timeStep; i++)
-    {
-        const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, null, null, null, null, null);
-        srpp.testProductionPerformace(xInputTensor[i], yInputTensor[i]);
-    }
-    
-    //note: all results are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
+    new ShaleReservoirProductionPerformance().testProductionPerformace();
 }());
+
 
 module.exports = {ShaleReservoirProductionPerformance}
