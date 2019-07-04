@@ -58,9 +58,7 @@ class ShaleReservoirProductionPerformance
     {
         //check if node.js exists (is installed)
         const cmdExists = require('command-exists').sync;
-        const command = 'node';
-        const nodeJsExist = cmdExists(command);
-        return nodeJsExist;
+        return cmdExists('node');
     }
     
     static commonModules(gpuOption)
