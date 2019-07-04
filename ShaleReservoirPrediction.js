@@ -75,9 +75,9 @@ class ShaleReservoirProductionPerformance
         return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:model};
     }
     
-    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate,
+    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer,
                          unitsPerHiddenLayer, unitsPerOutputLayer, inputLayerActivation, outputLayerActivation,
-                         hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics)
+                         hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, lossSummary)
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
@@ -132,7 +132,7 @@ class ShaleReservoirProductionPerformance
             const reModel = (function createDNNRegressionModel()
             {
                 //create layers.....
-                const inputLayer = {units: unitsPerHiddenLayer, inputShape: [inputSize], activation: inputLayerActivation};
+                const inputLayer = {units: unitsPerInputLayer, activation: inputLayerActivation, inputShape: [inputSize], };
                 let hiddenLayers = [];
                 for(let i = 0; i < numberOfHiddenLayers; i ++)
                 {
@@ -151,7 +151,7 @@ class ShaleReservoirProductionPerformance
                 model.add(tf.layers.dense(outputLayer));
                 
                 //specify compilation options....
-                const compileOptions = {optimizer: optimizer, loss: loss, metrics: [metrics]};
+                const compileOptions = {optimizer: optimizer, loss: loss};
                 
                 //compile model
                 model.compile(compileOptions);
@@ -163,42 +163,50 @@ class ShaleReservoirProductionPerformance
             // begin training: train the model using the data and time the training
             const beginTrainingTime = new Date();
             console.log(" ")
-            console.log("...............Training Begins.................................")
+            console.log("...............Training Begins.......................................")
+            
             
             reModel.fit(x, y,
             {
                 batchSize: batchSize,
                 epochs: epochs,
-                validationSplit: validationSplit,   // for large dataset, set about 10% (0.1) aside
-                verbose: verbose,                   // 1 for full logging verbosity, and 0 for none
-                callbacks:                          // customized logging verbosity
+                validationSplit: validationSplit,
+                verbose: verbose,
+                
+                //customized logging verbosity
+                callbacks:
                 {
                     onEpochEnd: async function (epoch, logs)
                     {
-                        console.log("Epoch = ", epoch,
-                                    " Loss = ",  parseFloat(logs.loss),
-                                    " Acc = ", parseFloat(logs.acc),
-                                    " Allocated Mem (MB) = ", (tf.memory().numBytes)/1E+6
-                                    );
+                        const loss = Number(logs.loss).toFixed(6);
+                        const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
+                        
+                        console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                     }
                 }
                 
-            }).then(function()
+            }).then(function(informationHistory)
             {
-                console.log("........Training Ends......................................")
+                //loss summary
+                if(lossSummary === true)
+                {
+                    console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
+                }
+                
+                console.log("........Training Ends................................................")
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
                 
                 // begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
-                var predictions = reModel.predict(x);
+                var predictY = reModel.predict(x);
                 
-                // print outputs
+                // print output Expected vs Actual
                 console.log("Expected result in Tensor format:");
                 y.print(true);
-                
                 console.log("Actual result in Tensor format :")
-                reModel.predict(x).print(true);
+                predictY.print(true);
                 
+                // print summary
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary();
@@ -216,6 +224,10 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(inDevelopment = true)
     {
+        //import tf
+        const commonModules = ShaleReservoirProductionPerformance.commonModules()
+        const tf = commonModules.tf;
+        
         //algorithm, gpu/cpu and data loading options
         const modelingOption = "dnn";
         const fileOption  = "MongoDB";
@@ -228,24 +240,25 @@ class ShaleReservoirProductionPerformance
 
         //training parameters
         const batchSize = 32;
-        const epochs = 50;
-        const validationSplit = 0.1;
-        const verbose = 0;
+        const epochs = 100;
+        const validationSplit = 0.1;  // for large dataset, set to about 10% (0.1) aside
+        const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
         const inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
         const inputDim = 100;         //number of datapoint  (number of row)
         const dropoutRate = 0.02;
-        const unitsPerHiddenLayer = 200;
+        const unitsPerInputLayer = 5;
+        const unitsPerHiddenLayer = 5;
         const unitsPerOutputLayer = 1;
         const inputLayerActivation = "softmax";
         const outputLayerActivation = "linear";
-        const hiddenLayersActivation = "tanh"
-        const numberOfHiddenLayers = 4;
+        const hiddenLayersActivation = "relu"; //"tanh";
+        const numberOfHiddenLayers = 3;
         const optimizer = "adam";
         const loss = "meanSquaredError";
-        const metrics = "accuracy";
-        
+        const lossSummary = true;
+
         // NOTE:generalize to each time step: say  90, 365, 720 and 1095 days
         // ==================================================================
         // implies: xInputTensor and yInputTensor contain 5 Tensors, representing:
@@ -256,11 +269,8 @@ class ShaleReservoirProductionPerformance
         let inputFromCSVFileYList = [];
         let mongDBSpecifiedDataXList = [];
         let mongDBSpecifiedDataYList = []
-        
         const timeStep = 5;
-        const commonModules = ShaleReservoirProductionPerformance.commonModules()
-        const tf = commonModules.tf;
-    
+        
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
         {
@@ -271,12 +281,12 @@ class ShaleReservoirProductionPerformance
                 {
                     case("csv"):
                         inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-                        inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
+                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
                         break;
                             
                     case("MongoDB"):
                         mongDBSpecifiedDataXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.3, "float32", 0.05));
+                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
                         break;
                 }
             }
@@ -311,8 +321,9 @@ class ShaleReservoirProductionPerformance
             //2nd: invoke productionPerformance() method on srpp() class
             const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputFromCSVFileXList[i], inputFromCSVFileYList[i],
                                                                  mongDBCollectionName, mongDBSpecifiedDataXList[i], mongDBSpecifiedDataYList[i]);
-            srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate, unitsPerHiddenLayer, unitsPerOutputLayer,
-                                     inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer, loss, metrics);
+            srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
+                                     unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
+                                     loss, lossSummary);
         }
     }
 }
