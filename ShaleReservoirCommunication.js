@@ -17,13 +17,10 @@
  * (3) read read/write files from MongoDB 
  * (4) etc.
  *
- *
- *
  */
  
- 
- 
-class ShaleReservoirCommuication
+
+class ShaleReservoirCommunication
 {
     constructor(infoList)
     {
@@ -93,7 +90,6 @@ class ShaleReservoirCommuication
                                 {
                                         console.log('File does not exist or already deleted !.....');
                                 }
-    
                             });
                         }
                     });
@@ -174,7 +170,6 @@ class ShaleReservoirCommuication
             load.on('error', function(error)
             {
                 assert.ifError(error);
-                    
             });
                 
             load.on('finish', function()
