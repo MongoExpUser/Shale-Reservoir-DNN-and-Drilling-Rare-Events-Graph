@@ -68,7 +68,6 @@ class ShaleReservoirProductionPerformance
         
         if(this.gpuOption === false)
         {
-        {
             tf = require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
         }
 
@@ -77,13 +76,13 @@ class ShaleReservoirProductionPerformance
         return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:model};
     }
     
-    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, 
-                         unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer, 
+    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
+                         unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
                          loss, lossSummary)
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see testProductionPerformace() method below - lines 322 and 324
+        //    : see testProductionPerformace() method below - lines 312 and 314
         
         if(this.modelingOption === "dnn")
         {
@@ -327,7 +326,7 @@ class ShaleReservoirProductionPerformance
         }
     }
 }
-
+    
 
 //run test
 function testSRPP(test)
@@ -342,6 +341,5 @@ function testSRPP(test)
 
 testSRPP(true);
 //testSRPP("doNotTest");
-
 
 module.exports = {ShaleReservoirProductionPerformance};
