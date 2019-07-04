@@ -180,33 +180,33 @@ class ShaleReservoirProductionPerformance
                     {
                         const loss = Number(logs.loss).toFixed(6);
                         const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
-                        
                         console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                     }
                 }
                 
             }).then(function(informationHistory)
             {
-                //loss summary
+                //print loss summary, if desired
                 if(lossSummary === true)
                 {
                     console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
                 }
                 
-                console.log("........Training Ends................................................")
+                //print training time & signify ending
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
+                console.log("........Training Ends................................................")
                 
-                // begin prediction: use the model to do inference on data points
+                //begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
                 var predictY = reModel.predict(x);
                 
-                // print output Expected vs Actual
+                //print output Expected vs Actual
                 console.log("Expected result in Tensor format:");
                 y.print(true);
                 console.log("Actual result in Tensor format :")
                 predictY.print(true);
                 
-                // print summary
+                //print summary & prection time
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary();
@@ -257,7 +257,7 @@ class ShaleReservoirProductionPerformance
         const numberOfHiddenLayers = 3;
         const optimizer = "adam";
         const loss = "meanSquaredError";
-        const lossSummary = true;
+        const lossSummary = false;
 
         // NOTE:generalize to each time step: say  90, 365, 720 and 1095 days
         // ==================================================================
@@ -327,21 +327,3 @@ class ShaleReservoirProductionPerformance
         }
     }
 }
-
-
-//run test
-function testSRPP(test)
-{
-    if(test === true)
-    {
-        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = true);
-    }
-    
-    //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
-}
-
-testSRPP(true);
-//testSRPP("doNotTest");
-
-
-module.exports = {ShaleReservoirProductionPerformance};
