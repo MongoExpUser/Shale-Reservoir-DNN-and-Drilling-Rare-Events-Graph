@@ -206,7 +206,7 @@ class ShaleReservoirProductionPerformance
                 console.log("Actual result in Tensor format :")
                 predictY.print(true);
                 
-                //print summary & prection time
+                //print summary & prediction time
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary();
