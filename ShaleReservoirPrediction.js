@@ -54,26 +54,50 @@ class ShaleReservoirProductionPerformance
         console.log("=========================================================>")
     }
     
-    static commonModules()
+    static nodeJsExist()
+    {
+        //check if node.js exists (is installed)
+        const cmdExists = require('command-exists').sync;
+        const command = 'node';
+        const nodeJsExist = cmdExists(command);
+        return nodeJsExist;
+    }
+    
+    static commonModules(gpuOption)
     {
         const fs = require('fs');
         const util = require('util');
         const tfvis = require('@tensorflow/tfjs-vis');
-        let tf = require('@tensorflow/tfjs');            //pure JavaScript version
+        let tf = require('@tensorflow/tfjs');                   //pure JavaScript version
         
-        if(this.gpuOption === true)
+        //replace pure JavaScript version with c/c++ back-end version, if node.js exist (is installed)
+        const nodeJsExist = ShaleReservoirProductionPerformance.nodeJsExist()
+
+        if(nodeJsExist === true)
         {
-            tf = require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
-        }
-        
-        if(this.gpuOption === false)
-        {
-            tf = require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
+            console.log("================================================================>")
+            console.log("Node.js exists (installed successfully) on this machine.");
+            console.log("================================================================>")
+               
+            switch(gpuOption)
+            {
+                case(true):
+                    tf = require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
+                    console.log("================================================================>")
+                    console.log("Swaping pure JavaScript version with GPU version of TensorFlow");
+                    console.log("================================================================>")
+                    break;
+                            
+                case(false):
+                    tf = require('@tensorflow/tfjs-node');  //c/c++ binding, cpu option
+                    console.log("================================================================>")
+                    console.log("Swaping pure JavaScript version with CPU version of TensorFlow");
+                    console.log("================================================================>")
+                    break;
+            }
         }
 
-        const model = tf.sequential();
-        
-        return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:model};
+        return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:tf.sequential()};
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
@@ -82,12 +106,12 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see testProductionPerformace() method below - lines 321 and 323
+        //    : see testProductionPerformace() method below - lines 312 and 314
         
         if(this.modelingOption === "dnn")
         {
             //import module(s) and create model
-            const commonModules = ShaleReservoirProductionPerformance.commonModules()
+            const commonModules = ShaleReservoirProductionPerformance.commonModules(this.gpuOption)
             const tf = commonModules.tf;
             const util = commonModules.util;
             const model = commonModules.model;
@@ -223,10 +247,6 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(inDevelopment = true)
     {
-        //import tf
-        const commonModules = ShaleReservoirProductionPerformance.commonModules()
-        const tf = commonModules.tf;
-        
         //algorithm, gpu/cpu and data loading options
         const modelingOption = "dnn";
         const fileOption  = "MongoDB";
@@ -236,6 +256,10 @@ class ShaleReservoirProductionPerformance
         const mongDBCollectionName = undefined;
         const mongDBSpecifiedDataX = undefined;
         const mongDBSpecifiedDataY = undefined;
+        
+        //import tf
+        const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption)
+        const tf = commonModules.tf;
 
         //training parameters
         const batchSize = 32;
@@ -328,6 +352,7 @@ class ShaleReservoirProductionPerformance
 }
     
 
+
 //run test
 function testSRPP(test)
 {
@@ -338,6 +363,7 @@ function testSRPP(test)
     
     //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
 }
+
 
 testSRPP(true);
 //testSRPP("doNotTest");
