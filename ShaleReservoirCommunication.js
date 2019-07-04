@@ -25,9 +25,9 @@
  
 class ShaleReservoirCommuication
 {
-    constructor()
+    constructor(infoList)
     {
-
+        this.infoList = infoList;
     }
     
     static commonLongDateFormat()
@@ -136,7 +136,6 @@ class ShaleReservoirCommuication
                 return;
             });
                 
-                
             rs.on('finish', function()
             {
                 console.log('Finished reading file with "ReadStream" !.....');
@@ -150,8 +149,7 @@ class ShaleReservoirCommuication
                                 console.log('File does not exist or already deleted !.....');
                         }
                     });
-                }
-                               
+                }              
             });
         }
     }
@@ -201,6 +199,5 @@ class ShaleReservoirCommuication
         }
     }
 }
-
 
 module.exports = {ShaleReservoirCommuication};
