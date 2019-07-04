@@ -12,14 +12,16 @@
  *
  * Relevant communications/data transmission methods - e.g.:
  *
- * (1) read/write files on disk 
- * (2) connect to MongoDB 
- * (3) read read/write files from MongoDB 
+ * (1) read/write files on disk
+ * (2) connect to MongoDB
+ * (3) read read/write files from MongoDB
  * (4) etc.
+ *
+ *
  *
  */
  
-
+ 
 class ShaleReservoirCommunication
 {
     constructor(infoList)
@@ -65,7 +67,11 @@ class ShaleReservoirCommunication
             //write file to folder to get instance to object/file to used (consumed) i.e. to be read
             fs.writeFile(filePathOut, readInputFile, function(writeError)
             {
-                if(writeError) {console.log(writeError); return;}
+                if(writeError)
+                {
+                    console.log(writeError);
+                    return;
+                }
                     
                 console.log('Finished writing/saving with "writeFile" !.....');
                      
@@ -145,7 +151,7 @@ class ShaleReservoirCommunication
                                 console.log('File does not exist or already deleted !.....');
                         }
                     });
-                }              
+                }
             });
         }
     }
