@@ -60,18 +60,21 @@ class ShaleReservoirProductionPerformance
         const fs = require('fs');
         const util = require('util');
         const tfvis = require('@tensorflow/tfjs-vis');
-        let tf = require('@tensorflow/tfjs');    //pure JavaScript version
+        let tf = require('@tensorflow/tfjs');            //pure JavaScript version
         
         if(this.gpuOption === true)
         {
             tf = require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
         }
-        else
+        
+        if(this.gpuOption === false)
+        {
         {
             tf = require('@tensorflow/tfjs-node');      //c/c++ binding, cpu option
         }
 
         const model = tf.sequential();
+        
         return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:model};
     }
     
@@ -81,7 +84,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see testProductionPerformace() method below - lines 312 and 314
+        //    : see testProductionPerformace() method below - lines 325 and 327
         
         if(this.modelingOption === "dnn")
         {
@@ -327,3 +330,21 @@ class ShaleReservoirProductionPerformance
         }
     }
 }
+
+
+//run test
+function testSRPP(test)
+{
+    if(test === true)
+    {
+        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = true);
+    }
+    
+    //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
+}
+
+testSRPP(true);
+//testSRPP("doNotTest");
+
+
+module.exports = {ShaleReservoirProductionPerformance};
