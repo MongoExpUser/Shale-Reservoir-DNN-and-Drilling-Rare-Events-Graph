@@ -195,4 +195,4 @@ class ShaleReservoirCommunication
     }
 }
 
-module.exports = {ShaleReservoirCommuication};
+module.exports = {ShaleReservoirCommunication};
