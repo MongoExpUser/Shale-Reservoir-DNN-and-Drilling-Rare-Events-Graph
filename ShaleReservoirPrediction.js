@@ -175,7 +175,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 345 and 347
+        //    : e.g. see testProductionPerformace() method below - lines 425 and 427
         
         if(this.modelingOption === "dnn")
         {
