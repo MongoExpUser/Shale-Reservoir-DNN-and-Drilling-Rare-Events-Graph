@@ -64,6 +64,7 @@ class ShaleReservoirProductionPerformance
     static commonModules(gpuOption)
     {
         const fs = require('fs');
+        const path = require('path');
         const util = require('util');
         const tfvis = require('@tensorflow/tfjs-vis');
         let tf = require('@tensorflow/tfjs');                   //pure JavaScript version
@@ -95,7 +96,77 @@ class ShaleReservoirProductionPerformance
             }
         }
 
-        return {fs:fs, util:util, tf:tf, tfvis:tfvis, model:tf.sequential()};
+        return {fs:fs, path:path, util:util, tf:tf, tfvis:tfvis, model:tf.sequential()};
+    }
+    
+    readInputCSVfile(pathTofile)
+    {
+        function loadFile(filetoRead)
+        {
+            const fs = require('fs');
+            return fs.readFileSync(filetoRead).toString();
+        }
+                        
+        function castCSVToArray(inputCsvFile)
+        {
+            var finalArraydata = [];
+            var splitRows = inputCsvFile.split(/\r?\n|\r/);
+                            
+            for (var i in splitRows)
+            {
+                finalArraydata.push(splitRows[i].split(','));
+            }
+                            
+            return finalArraydata;
+        }
+                            
+        function castCSVToArrayToNumeric(input, removeHeader=false)
+        {
+            var output = [];
+                            
+            for(var i in input)
+            {
+                var element = input[i];
+                var elementOut = [];
+                                
+                for(var j in element)
+                {
+                    var value =  parseFloat(element[j])
+                    var valid = !isNaN(value);
+                                    
+                    if(valid === true)
+                    {
+                        elementOut.push(value);
+                    }
+                    else
+                    {
+                        elementOut.push(element[j]);
+                    }
+                }
+                                
+                output.push(elementOut);
+            }
+                            
+            if(removeHeader === true)
+            {
+                output.shift();
+            }
+            
+            return output;
+        }
+             
+        return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
+    }
+    
+    
+    getTensor(csvFileArrayOutput)
+    {
+        const tf = require('@tensorflow/tfjs');
+        require('@tensorflow/tfjs-node');
+        const inputDim = csvFileArrayOutput.length;
+        const inputSize = csvFileArrayOutput[0].length;
+        const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
+        return {csvFileArrayOutputToTensor:csvFileArrayOutputToTensor, inputDim:inputDim, inputSize:inputSize}
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
@@ -155,7 +226,7 @@ class ShaleReservoirProductionPerformance
             const reModel = (function createDNNRegressionModel()
             {
                 //create layers.....
-                const inputLayer = {units: unitsPerInputLayer, activation: inputLayerActivation, inputShape: [inputSize], };
+                const inputLayer = {units: unitsPerInputLayer, activation: inputLayerActivation, inputShape: [inputSize] };
                 let hiddenLayers = [];
                 for(let i = 0; i < numberOfHiddenLayers; i ++)
                 {
@@ -245,29 +316,25 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(inDevelopment = true)
     {
-        //algorithm, gpu/cpu and data loading options
+        //algorithm, and gpu/cpu
         const modelingOption = "dnn";
-        const fileOption  = "MongoDB";
+        const fileOption  = "csv";
         const gpuOption = true;
-        const fileNameX = undefined;
-        const fileNameY = undefined;
-        const mongDBCollectionName = undefined;
-        const mongDBSpecifiedDataX = undefined;
-        const mongDBSpecifiedDataY = undefined;
         
-        //import tf
+        //import tf & path
         const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption)
         const tf = commonModules.tf;
+        const path = commonModules.path
 
         //training parameters
         const batchSize = 32;
-        const epochs = 100;
+        const epochs = 50;
         const validationSplit = 0.1;  // for large dataset, set to about 10% (0.1) aside
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
-        const inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
-        const inputDim = 100;         //number of datapoint  (number of row)
+        let inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
+        let inputDim = 500;         //number of datapoint  (number of row)
         const dropoutRate = 0.02;
         const unitsPerInputLayer = 5;
         const unitsPerHiddenLayer = 5;
@@ -285,12 +352,23 @@ class ShaleReservoirProductionPerformance
         // implies: xInputTensor and yInputTensor contain 5 Tensors, representing:
         // input tensors for 30, 90, 365, 720 and 1095 days, respectively
         
-        //array (list) of input tensors
+        //data loading options and array (list) of input tensors
+        const fileLocation  = path.format({ root: './'});
+        const fileNameX = "_z_CLogX.csv";
+        const fileNameY = "_z_CLogY.csv";
+        const pathTofileX = fileLocation + fileNameX;
+        const pathTofileY = fileLocation + fileNameY;
+        const mongDBCollectionName = undefined;
+        const mongDBSpecifiedDataX = undefined;
+        const mongDBSpecifiedDataY = undefined;
+        const timeStep = 5;
+        //
         let inputFromCSVFileXList = [];
         let inputFromCSVFileYList = [];
         let mongDBSpecifiedDataXList = [];
         let mongDBSpecifiedDataYList = []
-        const timeStep = 5;
+        
+        
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -319,22 +397,26 @@ class ShaleReservoirProductionPerformance
                 {
                     case("csv"):
                         // (1) pass in csv files,
-                        // (2) load into arrays and display/check in console, using readDataInputCSVfile() method
-                        // note: readDataInputCSVfile() is a an optimised method for reading CSV data into "Tensor"
-                        // note: readDataInputCSVfile() is accessible from a module on the Node.js server hosting the application
-                        const pathTofileX = "./";
-                        const pathTofileY = "./"
-                        //...>inputFromCSVFileXList.push(readDataInputCSVfile(fileNameX, pathTofileX));
-                        //...>inputFromCSVFileYList.push(readDataInputCSVfile(fileNameY, pathTofileY));
+                        // (2) load into tensor data type using readDataInputCSVfile() method
+                        // note: the method is optimized for reading CSV data into TensorFlow's "tensor" data type
+                        const srppCVS = new ShaleReservoirProductionPerformance();
+                        const xOutput = srppCVS.readInputCSVfile(pathTofileX);
+                        const yOutput = srppCVS.readInputCSVfile(pathTofileY);
+                        const tensorOutputX = srppCVS.getTensor(xOutput);
+                        const tensorOutputY = srppCVS.getTensor(yOutput);
+                        inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
+                        inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
+                        //over-ride inputSize and inputDim based on created "tensors" CVS file
+                        inputSize = tensorOutputX.inputSize;
+                        inputDim = tensorOutputX.inputDim;
                         break;
                             
                     case("MongoDB"):
                         // (1) pass in data extracted (with query/MapReduce) from MongoDB server
-                        // (2) load into arrays and display/check in console, using readDataInputMongoDB() method
-                        // note: readDataInputMongoDB() is an optimised method for reading MongoDB data into "Tensor"
-                        // note: readDataInputMongoDB() is accessible from a module on the Node.js server hosting the application
-                        //...>mongDBSpecifiedDataXList.push(readDataInputMongoDB(mongDBCollectionName, mongDBSpecifiedDataX));
-                        //...>mongDBSpecifiedDataYList.push(readDataInputMongoDB(mongDBCollectionName, mongDBSpecifiedDataY));
+                        // (2) load into tensor data type using readInputMongoDBData() method
+                        // note: the method is optimized for reading for reading MongoDB data into TensorFlow's "tensor" data type
+                        //...>mongDBSpecifiedDataXList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataX));
+                        //...>mongDBSpecifiedDataYList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataY));
                         break;
                 }
             }
@@ -356,7 +438,7 @@ function testSRPP(test)
 {
     if(test === true)
     {
-        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = true);
+        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = false);
     }
     
     //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
