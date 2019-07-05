@@ -166,7 +166,7 @@ class ShaleReservoirProductionPerformance
         const inputDim = csvFileArrayOutput.length;
         const inputSize = csvFileArrayOutput[0].length;
         const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
-        return {csvFileArrayOutputToTensor:csvFileArrayOutputToTensor, inputDim:inputDim, inputSize:inputSize}
+        return {csvFileArrayOutputToTensor:csvFileArrayOutputToTensor, inputDim:inputDim, inputSize:inputSize};
     }
     
     productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
@@ -175,7 +175,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 425 and 427
+        //    : e.g. see testProductionPerformace() method below - lines 440 and 442
         
         if(this.modelingOption === "dnn")
         {
@@ -220,6 +220,10 @@ class ShaleReservoirProductionPerformance
                     y = this.mongDBSpecifiedDataY;
                 }
             }
+            
+            //set tensor names (for identifiation purpose)
+            x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
+            y.name = "Output = produced_BOE_in_MBarrels";      //1 output
                             
             //create model (main engine) with IIFE
             //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
@@ -294,10 +298,21 @@ class ShaleReservoirProductionPerformance
                 var predictY = reModel.predict(x);
                 
                 //print output Expected vs Actual
-                console.log("Expected result in Tensor format:");
+                console.log();
+                console.log("Expected output result in Tensor format:");
+                console.log("========================================");
+                console.log(y.name);
+                console.log("Tensor id: ", y.id);
+                
                 y.print(true);
-                console.log("Actual result in Tensor format :")
+                console.log();
+                console.log("Actual output result in Tensor format:")
+                console.log("======================================");
+                predictY.name = y.name;
+                console.log(predictY.name);
+                console.log("Tensor id: ", predictY.id);
                 predictY.print(true);
+                console.log();
                 
                 //print summary & prediction time
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
@@ -368,8 +383,6 @@ class ShaleReservoirProductionPerformance
         let mongDBSpecifiedDataXList = [];
         let mongDBSpecifiedDataYList = []
         
-        
-        
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
         {
@@ -409,6 +422,8 @@ class ShaleReservoirProductionPerformance
                         //over-ride inputSize and inputDim based on created "tensors" CVS file
                         inputSize = tensorOutputX.inputSize;
                         inputDim = tensorOutputX.inputDim;
+                        console.log("inputSize: ", inputSize);
+                        console.log("inputDim: ", inputDim);
                         break;
                             
                     case("MongoDB"):
