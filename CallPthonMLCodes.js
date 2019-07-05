@@ -10,7 +10,7 @@
  * ...Ecotert's CallPthonMLCodes.js (released as open-source under MIT License) implements:
  *
  *
- * Calling calling of machine learning codes (or any other code) written in Python from Node.js,
+ * Calling of machine learning codes (or any other code) written in Python from Node.js.
  *
  *  The motivation, for calling of machine learning codes written in Python from Node.js,
  *  is to prevent re-inventing/re-creating of existing codes in Python.
