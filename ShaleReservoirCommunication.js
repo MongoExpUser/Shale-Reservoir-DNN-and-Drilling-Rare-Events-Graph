@@ -55,10 +55,86 @@ class ShaleReservoirCommunication
         }
     }
     
+    readInputCSVfile(pathTofile)
+    {
+        function loadFile(filetoRead)
+        {
+            const fs = require('fs');
+            return fs.readFileSync(filetoRead).toString();
+        }
+                        
+        function castCSVToArray(inputCsvFile)
+        {
+            var finalArraydata = [];
+            var splitRows = inputCsvFile.split(/\r?\n|\r/);
+                            
+            for (var i in splitRows)
+            {
+                finalArraydata.push(splitRows[i].split(','));
+            }
+                            
+            return finalArraydata;
+        }
+                            
+        function castCSVToArrayToNumeric(input, removeHeader=false)
+        {
+            console.log("stringify input: ");
+            console.log(input);
+                            
+            var output = [];
+                            
+            for(var i in input)
+            {
+                var element = input[i];
+                var elementOut = [];
+                                
+                for(var j in element)
+                {
+                    var value =  parseFloat(element[j])
+                    var valid = !isNaN(value);
+                                    
+                    if(valid === true)
+                    {
+                        elementOut.push(value);
+                    }
+                    else
+                    {
+                        elementOut.push(element[j]);
+                    }
+                }
+                                
+                output.push(elementOut);
+            }
+                            
+            if(removeHeader === true)
+            {
+                output.shift();
+            }
+            
+            return output;
+        }
+             
+        return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
+    }
+    
+    
+    getStatisticsOfTensor(csvFileArrayOutput)
+    {
+        console.log("converted/formatted output");
+        console.log(csvFileArrayOutput);
+        console.log("inputDim: ", csvFileArrayOutput.length);
+        console.log("inputSize: ", csvFileArrayOutput[0].length);
+        const tf = require('@tensorflow/tfjs');
+        require('@tensorflow/tfjs-node');
+        const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
+        csvFileArrayOutputToTensor.print(true);
+        return csvFileArrayOutputToTensor;
+    }
+    
     writeReadFile(filePath, outputFileName, readInputFile, unlink, streamOption)
     {
         const fs  = require('fs');
-        let filePathOut = filePath + outputFileName;
+        const filePathOut = filePath + outputFileName;
             
         if(streamOption === false)
         {
@@ -107,8 +183,8 @@ class ShaleReservoirCommunication
             //option 2: using "WriteStream" and "ReadStream" -> better option, b'cos of better memory management
                 
             //write-stream file to folder that can be read later
-            var options = {'bufferSize': 2048};
-            var ws = fs.createWriteStream(filePathOut, options);  //create file;
+            const options = {'bufferSize': 2048};
+            const ws = fs.createWriteStream(filePathOut, options);  //create file;
             ws.write(Buffer.from(readInputFile));                 //write to file
 
             ws.on('error', function(writeError)
@@ -200,5 +276,6 @@ class ShaleReservoirCommunication
         }
     }
 }
+
 
 module.exports = {ShaleReservoirCommunication};
