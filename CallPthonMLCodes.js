@@ -71,6 +71,7 @@ class CallPthonMLCodes
         catch(err)
         {
             console.log("Error running script!: ", err);
+            return;
         }
         finally
         {
