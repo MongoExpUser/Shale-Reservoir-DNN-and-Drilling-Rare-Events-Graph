@@ -10,7 +10,7 @@
  * ...Ecotert's CallPthonMLCodes.js (released as open-source under MIT License) implements:
  *
  *
- * Calling of machine learning codes (or any other code) written in Python from Node.js.
+ *  Calling of machine learning codes (or any other code) written in Python from Node.js.
  *
  *  The motivation, for calling of machine learning codes written in Python from Node.js,
  *  is to prevent re-inventing/re-creating of existing codes in Python.
@@ -22,9 +22,9 @@
 
 class CallPthonMLCodes
 {
-    constructor()
+    constructor(pyVersion='3.6')
     {
-        
+        this.pyVersion = pyVersion;
     }
     
     callpython(pyFile, pyScriptPath, options, PythonShell)
@@ -49,18 +49,15 @@ class CallPthonMLCodes
         });
     }
     
-
-    invokePythonShell(pyFileName, pyScriptPath, pyVersion='3.6')
+    invokePythonShell(pyFileName, pyScriptPath, pyMode="text")
     {
         try
         {
-            var {PythonShell}       = require('python-shell');          // run Py from Node.js with inter-process communication & error handling: ver 1.0.6 and above
+            var {PythonShell}       = require('python-shell');          // ver 1.0.6 and above
             var path                = require('path');
             var pyFile              = pyFileName
-            var pyVersionPath       = '/usr/bin/python' + pyVersion;    // path to python version to use: default python3.6 or python3.7 or higher
-            var pyMode              = 'text';                           // message/data exchange mode: could also be: 'json' or 'binary'
-            var pyMode2             = 'json';                           // message/data exchange mode: could also be: 'text' or 'binary'
-            //args: for cython_C_extension
+            var pyVersionPath       = '/usr/bin/python' + this.pyVersion;
+            var pyMode              = pyMode;
             var value1              = 'build_ext';                      // command arg 1: for cython_C_extension
             var value2              = '--inplace';                      // command arg 2: for cython_C_extension
             var value3              = 5;                                // arg 3: general
@@ -75,15 +72,28 @@ class CallPthonMLCodes
         }
         finally
         {
-            var cpml = new CallPthonMLCodes();
+            var cpml = new CallPthonMLCodes(this.pyVersion);
             cpml.callpython(pyFile, pyScriptPath, options, PythonShell)
         }
     }
 }
 
+class TestCall
+{
+    constructor(test=true)
+    {
+        if(test === true)
+        {
+            var pyScriptPath = './';
+            var pyMode = 'text'; ///or 'json' or 'binary'
+            var pyVersion = '3.6'  // or 3.7 or later
+            pyFileName='CallPythonMLCodesFromNodeJS.py',
+            new CallPthonMLCodes(pyVersion).invokePythonShell(pyFileName, pyScriptPath, pyMode);
+        }
+    }
+}
 
-//test
-var pyScriptPath = './';
-var pyVersion = 3.6  // or 3.7 or later
-pyFileName='CallPythonMLCodesFromNodeJS.py',
-new CallPthonMLCodes().invokePythonShell(pyFileName, pyScriptPath, pyVersion);
+new TestCall(true);
+//new TestCall("doNotTest");
+
+module.exports = {CallPthonMLCodes};
