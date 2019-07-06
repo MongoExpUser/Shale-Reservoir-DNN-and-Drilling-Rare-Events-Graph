@@ -56,7 +56,7 @@ try:
 except(ImportError) as err:
     print(str(err))
 
-class CallPythonMLCodesFromNodeJS(TestCase):
+class CallPythonMLCodesFromNodeJS():
     """ Machine learning tests """
     
     def sklearn_classifition_with_log_regression_gnb_svm_demo(self):
@@ -255,7 +255,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         print_tensor(transformed_tensor)
     # End tensorflow_model(printing=False) method
     
-# End JavaScriptPythonCallMachineLearningTests() class
+# End CallPythonMLCodesFromNodeJS() class
 
 def invoke_all():
   call_ml = CallPythonMLCodesFromNodeJS()
