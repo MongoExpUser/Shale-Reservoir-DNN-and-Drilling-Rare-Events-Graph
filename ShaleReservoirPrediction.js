@@ -448,11 +448,10 @@ class ShaleReservoirProductionPerformance
     
 class TestSRPP
 {
-    constructor(test=true)
+    constructor(test=true, inDevelopment=false)
     {
         if(test === true)
         {
-            const inDevelopment = false;
             const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment);
         }
         
@@ -460,8 +459,8 @@ class TestSRPP
     }
 }
 
-new TestSRPP(true);
-//new TestSRPP("doNotTest");
+new TestSRPP(true, false);
+//new TestSRPP("doNotTest", false);
 
 
 module.exports = {ShaleReservoirProductionPerformance};
