@@ -87,7 +87,7 @@ class TestCall
             var pyScriptPath = './';
             var pyMode = 'text'; ///or 'json' or 'binary'
             var pyVersion = '3.6'  // or 3.7 or later
-            pyFileName='CallPythonMLCodesFromNodeJS.py',
+            var pyFileName='CallPythonMLCodesFromNodeJS.py',
             new CallPthonMLCodes(pyVersion).invokePythonShell(pyFileName, pyScriptPath, pyMode);
         }
     }
