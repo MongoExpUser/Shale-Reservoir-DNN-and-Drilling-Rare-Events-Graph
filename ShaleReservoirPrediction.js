@@ -381,7 +381,7 @@ class ShaleReservoirProductionPerformance
         let inputFromCSVFileXList = [];
         let inputFromCSVFileYList = [];
         let mongDBSpecifiedDataXList = [];
-        let mongDBSpecifiedDataYList = []
+        let mongDBSpecifiedDataYList = [];
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -446,21 +446,22 @@ class ShaleReservoirProductionPerformance
     }
 }
     
-
-
-//run test
-function testSRPP(test)
+class TestSRPP
 {
-    if(test === true)
+    constructor(test=true)
     {
-        const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment = false);
+        if(test === true)
+        {
+            const inDevelopment = false;
+            const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment);
+        }
+        
+        //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
     }
-    
-    //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
 }
 
+new TestSRPP(true);
+//new TestSRPP("doNotTest");
 
-testSRPP(true);
-//testSRPP("doNotTest");
 
 module.exports = {ShaleReservoirProductionPerformance};
