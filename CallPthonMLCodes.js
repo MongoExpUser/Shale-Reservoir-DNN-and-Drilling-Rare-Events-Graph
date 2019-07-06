@@ -50,14 +50,14 @@ class CallPthonMLCodes
     }
     
 
-    invokePythonShell(pyFileName, pyScriptPath)
+    invokePythonShell(pyFileName, pyScriptPath, pyVersion='3.6')
     {
         try
         {
             var {PythonShell}       = require('python-shell');          // run Py from Node.js with inter-process communication & error handling: ver 1.0.6 and above
             var path                = require('path');
             var pyFile              = pyFileName
-            var pyVersionPath       = '/usr/bin/python3.6';             // path to python version to use: python3.6 or python3.7 or higher
+            var pyVersionPath       = '/usr/bin/python' + pyVersion;    // path to python version to use: default python3.6 or python3.7 or higher
             var pyMode              = 'text';                           // message/data exchange mode: could also be: 'json' or 'binary'
             var pyMode2             = 'json';                           // message/data exchange mode: could also be: 'text' or 'binary'
             //args: for cython_C_extension
@@ -84,4 +84,6 @@ class CallPthonMLCodes
 
 //test
 var pyScriptPath = './';
-new CallPthonMLCodes().invokePythonShell(pyFileName='CallPythonMLCodesFromNodeJS.py', pyScriptPath=pyScriptPath);
+var pyVersion = 3.6  // or 3.7 or later
+pyFileName='CallPythonMLCodesFromNodeJS.py',
+new CallPthonMLCodes().invokePythonShell(pyFileName, pyScriptPath, pyVersion);
