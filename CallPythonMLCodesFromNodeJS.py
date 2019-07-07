@@ -1,4 +1,3 @@
-
 # ****************************************************************************************
 # ****************************************************************************************
 # * @License Starts
@@ -53,6 +52,8 @@ try:
     from sklearn.neural_network import MLPClassifier, MLPRegressor, BernoulliRBM
     from sklearn.linear_model import LinearRegression, LogisticRegression, RidgeCV
     from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+    from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor, export_graphviz, plot_tree
+    from sklearn.cluster import AgglomerativeClustering, Birch, DBSCAN, KMeans, FeatureAgglomeration, SpectralClustering
 except(ImportError) as err:
     print(str(err))
 
@@ -114,14 +115,13 @@ class CallPythonMLCodesFromNodeJS():
       print("................................")
     # End test_sklearn_classifition_with_log_regression_gnb_svm_demo() method
     
-    def keras_demo(self, input_dimension="one_dimension"):
+    def keras_demo_regression(self, input_dimension="one_dimension"):
       """
          Simple keras DNN demo
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
          Input Layer  : 5 units (Infer from input matrix).
          Output Layer : 1 unit  (Infer from last Dense layer).
       """
-  
       # build and compile model
       model = keras.Sequential()
       model.add(keras.layers.Dense(units=10, input_shape=[1]))
@@ -165,6 +165,7 @@ class CallPythonMLCodesFromNodeJS():
       print(" Train data - x: ")
       print(xs)
       print()
+      
       # run inference with predict() and print results.
       if input_dimension == "one_dimension":
         print("prediction of xs_test[3] -> should give 7 : ", model.predict(np.array([4])))  # should give 7
@@ -260,8 +261,8 @@ class CallPythonMLCodesFromNodeJS():
 def invoke_all():
   call_ml = CallPythonMLCodesFromNodeJS()
   call_ml.sklearn_classifition_with_log_regression_gnb_svm_demo()
-  call_ml.keras_demo(input_dimension="one_dimension")
-  call_ml.keras_demo(input_dimension="two_dimension")
+  call_ml.keras_demo_regression(input_dimension="one_dimension")
+  call_ml.keras_demo_regression(input_dimension="two_dimension")
   call_ml.tensorflow_model(printing=True)
-
+  
 invoke_all()
