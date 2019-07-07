@@ -331,7 +331,7 @@ class ShaleReservoirProductionPerformance
 
     testProductionPerformace(inDevelopment = true)
     {
-        //algorithm, and gpu/cpu
+        //algorithm, file option, and gpu/cpu option
         const modelingOption = "dnn";
         const fileOption  = "csv";
         const gpuOption = true;
@@ -436,7 +436,7 @@ class ShaleReservoirProductionPerformance
                 }
             }
         
-            //2nd: invoke productionPerformance() method on srpp() class
+            //invoke productionPerformance() method on srpp() class
             const srpp = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputFromCSVFileXList[i], inputFromCSVFileYList[i],
                                                                  mongDBCollectionName, mongDBSpecifiedDataXList[i], mongDBSpecifiedDataYList[i]);
             srpp.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
