@@ -70,28 +70,29 @@ class ShaleReservoirProductionPerformance
         let tf = require('@tensorflow/tfjs');                   //pure JavaScript version
         
         //replace pure JavaScript version with c/c++ back-end version, if node.js exist (is installed)
-        const nodeJsExist = ShaleReservoirProductionPerformance.nodeJsExist()
+        const cmdExists = require('command-exists').sync;
+        const nodeJsExist = cmdExists('node');
 
         if(nodeJsExist === true)
         {
-            console.log("================================================================>")
+            console.log("================================================================>");
             console.log("Node.js exists (installed successfully) on this machine.");
-            console.log("================================================================>")
+            console.log("================================================================>");
                
             switch(gpuOption)
             {
                 case(true):
                     tf = require('@tensorflow/tfjs-node-gpu');  //c/c++ binding, gpu option
-                    console.log("================================================================>")
+                    console.log("================================================================>");
                     console.log("Swaping pure JavaScript version with GPU version of TensorFlow");
-                    console.log("================================================================>")
+                    console.log("================================================================>");
                     break;
                             
-                case(false):
+                case(false || null || undefined):
                     tf = require('@tensorflow/tfjs-node');  //c/c++ binding, cpu option
-                    console.log("================================================================>")
+                    console.log("================================================================>");
                     console.log("Swaping pure JavaScript version with CPU version of TensorFlow");
-                    console.log("================================================================>")
+                    console.log("================================================================>");
                     break;
             }
         }
@@ -175,7 +176,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 440 and 442
+        //    : e.g. see testProductionPerformace() method below - lines 478 and 480
         
         if(this.modelingOption === "dnn")
         {
@@ -192,30 +193,30 @@ class ShaleReservoirProductionPerformance
             if(this.fileOption === "default" || this.fileOption === null || this.fileOption === undefined)
             {
                 console.log("")
-                console.log("==================================================>")
+                console.log("==================================================>");
                 console.log("Using manually or randomly generated dataset.");
-                console.log("==================================================>")
+                console.log("==================================================>");
                 x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.4);
                 y = tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.4);
             }
             else
             {
-                if(this.fileOption === "csv")
+                if(this.fileOption === "csv-disk")
                 {
                     console.log("")
-                    console.log("==================================================>")
-                    console.log("Using dataset from externally 'csv' file.")
-                    console.log("==================================================>")
+                    console.log("==================================================>");
+                    console.log("Using dataset from 'csv' file on the computer disk.")
+                    console.log("==================================================>");
                     x = this.inputFromCSVFileX;
                     y = this.inputFromCSVFileY;
                 }
                 
-                if(this.fileOption === "MongoDB")
+                if(this.fileOption === "csv-MongoDB")
                 {
                     console.log("")
-                    console.log("==================================================>")
-                    console.log("Using dataset from externally 'MongoDB' server.")
-                    console.log("==================================================>")
+                    console.log("==================================================>");
+                    console.log("Using dataset from 'cvs' file in a 'MongoDB' server.")
+                    console.log("==================================================>");
                     x = this.mongDBSpecifiedDataX;
                     y = this.mongDBSpecifiedDataY;
                 }
@@ -261,7 +262,7 @@ class ShaleReservoirProductionPerformance
             // begin training: train the model using the data and time the training
             const beginTrainingTime = new Date();
             console.log(" ")
-            console.log("...............Training Begins.......................................")
+            console.log("...............Training Begins.......................................");
             
             reModel.fit(x, y,
             {
@@ -291,7 +292,7 @@ class ShaleReservoirProductionPerformance
                 
                 //print training time & signify ending
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
-                console.log("........Training Ends................................................")
+                console.log("........Training Ends................................................");
                 
                 //begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
@@ -329,27 +330,27 @@ class ShaleReservoirProductionPerformance
         }
     }
 
-    testProductionPerformace(inDevelopment = true)
+    testProductionPerformace(inDevelopment=true)
     {
         //algorithm, file option, and gpu/cpu option
         const modelingOption = "dnn";
-        const fileOption  = "csv";
-        const gpuOption = true;
+        const fileOption  = "csv-disk";  // or "csv-MongoDB";
+        const gpuOption = false;
         
         //import tf & path
-        const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption)
+        const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption);
         const tf = commonModules.tf;
-        const path = commonModules.path
+        const path = commonModules.path;
 
         //training parameters
         const batchSize = 32;
-        const epochs = 50;
+        const epochs = 200;
         const validationSplit = 0.1;  // for large dataset, set to about 10% (0.1) aside
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
-        let inputSize = 13;         //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
-        let inputDim = 500;         //number of datapoint  (number of row)
+        let inputSize = 13;          //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
+        let inputDim = 20;           //number of datapoint  (number of row)
         const dropoutRate = 0.02;
         const unitsPerInputLayer = 5;
         const unitsPerHiddenLayer = 5;
@@ -391,47 +392,84 @@ class ShaleReservoirProductionPerformance
             {
                 switch(fileOption)
                 {
-                    case("csv"):
-                        inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
+                    case("csv-disk"):
+                        try
+                        {
+                            inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
+                            inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
+                        }
+                        catch(diskDataError)
+                        {
+                            console.log("Error: ", diskDataError);
+                        }
+
                         break;
                             
-                    case("MongoDB"):
-                        mongDBSpecifiedDataXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-                        mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
+                    case("csv-MongoDB"):
+                        try
+                        {
+                            mongDBSpecifiedDataXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
+                            mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
+                        }
+                        catch(mongoDBDataError)
+                        {
+                            console.log("Data Error: ", mongoDBDataError);
+                        }
+
                         break;
                 }
             }
-            else
+            
+            if(inDevelopment === false) //i.e. application now in production/deployment phase
             {
-                inDevelopment = false; //i.e. application now in production/deployment phase
-                
                 switch(fileOption)
                 {
-                    case("csv"):
-                        // (1) pass in csv files,
-                        // (2) load into tensor data type using readDataInputCSVfile() method
-                        // note: the method is optimized for reading CSV data into TensorFlow's "tensor" data type
-                        const srppCVS = new ShaleReservoirProductionPerformance();
-                        const xOutput = srppCVS.readInputCSVfile(pathTofileX);
-                        const yOutput = srppCVS.readInputCSVfile(pathTofileY);
-                        const tensorOutputX = srppCVS.getTensor(xOutput);
-                        const tensorOutputY = srppCVS.getTensor(yOutput);
-                        inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
-                        inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
-                        //over-ride inputSize and inputDim based on created "tensors" CVS file
-                        inputSize = tensorOutputX.inputSize;
-                        inputDim = tensorOutputX.inputDim;
-                        console.log("inputSize: ", inputSize);
-                        console.log("inputDim: ", inputDim);
+                    case("csv-disk"):
+                        try
+                        {
+                            // (1) pass in csv files,
+                            // (2) load into tensor data type using readDataInputCSVfile() method
+                            // note: the method is optimized for reading CSV data into TensorFlow's "tensor" data type
+                            const srppCVS = new ShaleReservoirProductionPerformance();
+                            const xOutput = srppCVS.readInputCSVfile(pathTofileX);
+                            const yOutput = srppCVS.readInputCSVfile(pathTofileY);
+                            const tensorOutputX = srppCVS.getTensor(xOutput);
+                            const tensorOutputY = srppCVS.getTensor(yOutput);
+                            inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
+                            inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
+                            //over-ride inputSize and inputDim based on created "tensors" CVS file
+                            inputSize = tensorOutputX.inputSize;
+                            inputDim = tensorOutputX.inputDim;
+                            console.log("inputSize: ", inputSize);
+                            console.log("inputDim: ", inputDim);
+                        }
+                        catch(diskDataError)
+                        {
+                            console.log("Error: ", diskDataError);
+                        }
+                            
                         break;
                             
-                    case("MongoDB"):
-                        // (1) pass in data extracted (with query/MapReduce) from MongoDB server
-                        // (2) load into tensor data type using readInputMongoDBData() method
-                        // note: the method is optimized for reading for reading MongoDB data into TensorFlow's "tensor" data type
-                        //...>mongDBSpecifiedDataXList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataX));
-                        //...>mongDBSpecifiedDataYList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataY));
+                    case("csv-MongoDB"):
+                        try
+                        {
+                            // (1) pass in data extracted (with query/MapReduce) from MongoDB server
+                            // (2) load into tensor data type using readInputMongoDBData() method
+                            // note: the method is optimized for reading for reading MongoDB data into TensorFlow's "tensor" data type
+                            //...>mongDBSpecifiedDataXList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataX));
+                            //...>mongDBSpecifiedDataYList.push(readInputMongoDBData(mongDBCollectionName, mongDBSpecifiedDataY));
+                            console.log();
+                            console.log("=============================================================================================>");
+                            console.log("Implementation of accessing data through 'cvs' file in a MongoDB server is still pending!");
+                            console.log("Use the option of loading data through 'cvs' file on the computer disk!");
+                            console.log("==============================================================================================>");
+                            console.log();
+                            return;
+                        }
+                        catch(mongoDBDataError)
+                        {
+                            console.log("Error: ", mongoDBDataError);
+                        }
                         break;
                 }
             }
@@ -459,8 +497,8 @@ class TestSRPP
     }
 }
 
-new TestSRPP(true, false);
-//new TestSRPP("doNotTest", false);
+new TestSRPP(true, true);
+//new TestSRPP("doNotTest", true);
 
 
 module.exports = {ShaleReservoirProductionPerformance};
