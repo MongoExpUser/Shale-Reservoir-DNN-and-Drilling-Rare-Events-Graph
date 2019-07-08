@@ -383,9 +383,9 @@ class ShaleReservoirProductionPerformance
         const unitsPerInputLayer = 50;
         const unitsPerHiddenLayer = 100;
         const unitsPerOutputLayer = 1;
-        const inputLayerActivation = "softmax";
+        const inputLayerActivation = "relu";
+        const hiddenLayersActivation = "relu";
         const outputLayerActivation = "linear";
-        const hiddenLayersActivation = "relu"; //"tanh";
         const numberOfHiddenLayers = 3;
         const optimizer = "adam";
         const loss = "meanSquaredError";
