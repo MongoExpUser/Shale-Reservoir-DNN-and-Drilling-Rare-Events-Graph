@@ -176,7 +176,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 478 and 480
+        //    : e.g. see testProductionPerformace() method below - lines 510 and 512
         
         if(this.modelingOption === "dnn")
         {
@@ -198,6 +198,11 @@ class ShaleReservoirProductionPerformance
                 console.log("==================================================>");
                 x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.4);
                 y = tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.4);
+                
+                //once defined, set tensor names (for identifiation purpose)
+                x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
+                y.name = "Output = produced_BOE_in_MBarrels";      //1 output
+                
             }
             else
             {
@@ -220,18 +225,20 @@ class ShaleReservoirProductionPerformance
                     x = this.mongDBSpecifiedDataX;
                     y = this.mongDBSpecifiedDataY;
                 }
+                
+                //once defined, set tensor names (for identifiation purpose)
+                x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
+                y.name = "Output = produced_BOE_in_MBarrels";      //1 output
             }
             
-            //set tensor names (for identifiation purpose)
-            x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
-            y.name = "Output = produced_BOE_in_MBarrels";      //1 output
+            
                             
             //create model (main engine) with IIFE
             //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
             const reModel = (function createDNNRegressionModel()
             {
                 //create layers.....
-                const inputLayer = {units: unitsPerInputLayer, activation: inputLayerActivation, inputShape: [inputSize] };
+                const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
                 let hiddenLayers = [];
                 for(let i = 0; i < numberOfHiddenLayers; i ++)
                 {
@@ -280,7 +287,11 @@ class ShaleReservoirProductionPerformance
                         const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
                         console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                     }
+                    
+                    
                 }
+                
+                
                 
             }).then(function(informationHistory)
             {
@@ -304,9 +315,10 @@ class ShaleReservoirProductionPerformance
                 console.log("========================================");
                 console.log(y.name);
                 console.log("Tensor id: ", y.id);
-                
                 y.print(true);
                 console.log();
+                
+                
                 console.log("Actual output result in Tensor format:")
                 console.log("======================================");
                 predictY.name = y.name;
@@ -320,12 +332,27 @@ class ShaleReservoirProductionPerformance
                 console.log("Final Model Summary");
                 reModel.summary();
                 
+                //print input tensor summary
+                console.log();
+                console.log("Input tensor/data summary in Javascript format: ");
+                console.log("================================================");
+                console.log(x);
+                console.log("================================================");
+                console.log();
+                
+                //print output tensor summary
+                console.log("Output tensor/data summary in Javascript format:");
+                console.log("================================================");
+                console.log(y);
+                console.log("================================================");
+                console.log();
+                
             }).catch(function(error)
             {
                 if(error)
                 {
                     console.log(error, " : TensorFlow error successfully intercepted and handled.");
-                };
+                }
             });
         }
     }
@@ -349,11 +376,12 @@ class ShaleReservoirProductionPerformance
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
-        let inputSize = 13;          //number of parameters (number of col - so, phi, h, TOC, perm, pore size, well length, etc.)
-        let inputDim = 20;           //number of datapoint  (number of row)
+        const inputSize = 13;          //no. of input parameters (no. of col - so, phi, h, TOC, perm, pore size, well length, etc.)
+        const outputSize = 1;          //no. of output parameters (no. of col - cum_oil_Mbbs or cum_boe_MBoe or cum_gas_MMSCF )
+        const inputDim = 20;           //no. of datapoint (no. of row for inputSize and outputSize = should be thesame) e.g datapoints of wells/pads/DA/sections
         const dropoutRate = 0.02;
-        const unitsPerInputLayer = 5;
-        const unitsPerHiddenLayer = 5;
+        const unitsPerInputLayer = 50;
+        const unitsPerHiddenLayer = 100;
         const unitsPerOutputLayer = 1;
         const inputLayerActivation = "softmax";
         const outputLayerActivation = "linear";
@@ -396,7 +424,7 @@ class ShaleReservoirProductionPerformance
                         try
                         {
                             inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
-                            inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
+                            inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, outputSize], 1, 0.1, "float32", 0.2));
                         }
                         catch(diskDataError)
                         {
@@ -425,6 +453,7 @@ class ShaleReservoirProductionPerformance
                 switch(fileOption)
                 {
                     case("csv-disk"):
+                        
                         try
                         {
                             // (1) pass in csv files,
@@ -449,8 +478,10 @@ class ShaleReservoirProductionPerformance
                         }
                             
                         break;
+                        
                             
                     case("csv-MongoDB"):
+                        
                         try
                         {
                             // (1) pass in data extracted (with query/MapReduce) from MongoDB server
@@ -470,6 +501,7 @@ class ShaleReservoirProductionPerformance
                         {
                             console.log("Error: ", mongoDBDataError);
                         }
+                        
                         break;
                 }
             }
@@ -484,6 +516,7 @@ class ShaleReservoirProductionPerformance
     }
 }
     
+    
 class TestSRPP
 {
     constructor(test=true, inDevelopment=false)
@@ -493,12 +526,11 @@ class TestSRPP
             const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment);
         }
         
-        //note: all results at every timeStep are generated asychronically (non-blocking): beauty of TensorFlow.js/Node.js combo !!!!.....
+        //note: for pure JavaScipt version, all results at every timeStep are generated asychronically (non-blocking)
     }
 }
 
 new TestSRPP(true, true);
 //new TestSRPP("doNotTest", true);
-
 
 module.exports = {ShaleReservoirProductionPerformance};
