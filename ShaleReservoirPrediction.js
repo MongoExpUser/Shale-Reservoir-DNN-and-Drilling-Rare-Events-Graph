@@ -376,9 +376,9 @@ class ShaleReservoirProductionPerformance
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
-        const inputSize = 13;          //no. of input parameters (no. of col - so, phi, h, TOC, perm, pore size, well length, etc.)
-        const outputSize = 1;          //no. of output parameters (no. of col - cum_oil_Mbbs or cum_boe_MBoe or cum_gas_MMSCF )
-        const inputDim = 20;           //no. of datapoint (no. of row for inputSize and outputSize = should be thesame) e.g datapoints of wells/pads/DA/sections
+        let inputSize = 13;           //no. of input parameters (no. of col - so, phi, h, TOC, perm, pore size, well length, etc.)
+        let outputSize = 1;           //no. of output parameters (no. of col - cum_oil_Mbbs or cum_boe_MBoe or cum_gas_MMSCF )
+        let inputDim = 20;            //no. of datapoint (no. of row for inputSize and outputSize = should be thesame) e.g datapoints of wells/pads/DA/sections
         const dropoutRate = 0.02;
         const unitsPerInputLayer = 50;
         const unitsPerHiddenLayer = 100;
