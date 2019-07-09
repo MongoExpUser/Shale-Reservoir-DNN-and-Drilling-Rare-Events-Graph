@@ -176,7 +176,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 510 and 512
+        //    : e.g. see testProductionPerformace() method below - lines 507 and 509
         
         if(this.modelingOption === "dnn")
         {
@@ -352,7 +352,6 @@ class ShaleReservoirProductionPerformance
                 {
                     console.log(error, " : TensorFlow error successfully intercepted and handled.");
                 }
-                
             });
         }
     }
@@ -390,11 +389,10 @@ class ShaleReservoirProductionPerformance
         const optimizer = "adam";
         const loss = "meanSquaredError";
         const lossSummary = false;
-
-        // NOTE:generalize to each time step: say  90, 365, 720 and 1095 days
-        // ==================================================================
-        // implies: xInputTensor and yInputTensor contain 5 Tensors, representing:
-        // input tensors for 30, 90, 365, 720 and 1095 days, respectively
+        const timeStep = 5;              //1, 2, .....n
+        
+        // note: generalize to n, timeStep: n1, n2, n3 .....nx : says 90, 365, 720, 1095..... nx days
+        // implies: xInputTensor and yInputTensor contain n, timeStep tensors
         
         //data loading options and array (list) of input tensors
         const fileLocation  = path.format({ root: './'});
@@ -405,8 +403,7 @@ class ShaleReservoirProductionPerformance
         const mongDBCollectionName = undefined;
         const mongDBSpecifiedDataX = undefined;
         const mongDBSpecifiedDataY = undefined;
-        const timeStep = 1;
-        //
+        
         let inputFromCSVFileXList = [];
         let inputFromCSVFileYList = [];
         let mongDBSpecifiedDataXList = [];
@@ -532,5 +529,4 @@ class TestSRPP
 
 new TestSRPP(true, false);
 //new TestSRPP("doNotTest", true);
-
 module.exports = {ShaleReservoirProductionPerformance};
