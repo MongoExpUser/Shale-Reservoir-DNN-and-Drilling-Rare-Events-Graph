@@ -396,8 +396,8 @@ class ShaleReservoirProductionPerformance
         
         //data loading options and array (list) of input tensors
         const fileLocation  = path.format({ root: './'});
-        const fileNameX = "_z_CLogX.csv"; // _eagle_ford_datasets_X.csv";
-        const fileNameY = "_z_CLogY.csv"; // _eagle_ford_datasets_Y.csv";
+        const fileNameX = "_z_CLogX.csv"; // or "_eagle_ford_datasets_X.csv" or "duvernay_datasets_X.csv" or "bakken_datasets_X.csv"
+        const fileNameY = "_z_CLogY.csv"; // or "_eagle_ford_datasets_Y.csv" or "duvernay_datasets_Y.csv" or "bakken_datasets_Y.csv"
         const pathTofileX = fileLocation + fileNameX;
         const pathTofileY = fileLocation + fileNameY;
         const mongDBCollectionName = undefined;
