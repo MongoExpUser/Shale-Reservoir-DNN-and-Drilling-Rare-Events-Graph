@@ -287,11 +287,7 @@ class ShaleReservoirProductionPerformance
                         const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
                         console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                     }
-                    
-                    
                 }
-                
-                
                 
             }).then(function(informationHistory)
             {
@@ -304,47 +300,50 @@ class ShaleReservoirProductionPerformance
                 //print training time & signify ending
                 ShaleReservoirProductionPerformance.runTimeDNN(beginTrainingTime, "Training Time");
                 console.log("........Training Ends................................................");
+                console.log();
                 
                 //begin prediction: use the model to do inference on data points
                 var beginPredictingTime = new Date();
                 var predictY = reModel.predict(x);
                 
-                //print output Expected vs Actual
+                //print "train" input and output tensors summary
+                console.log("Input train tensor/data summary in JS and TF formats: ");
+                console.log("======================================================");
+                console.log("Train Properties: ")
+                console.log(x);
+                console.log("Train Values: ");
+                x.print(false);
+                console.log("======================================================");
+                //
+                console.log("Input train tensor/data summary in JS and TF formats: ");
+                console.log("======================================================");
+                console.log("Train Properties: ")
+                console.log(y);
+                console.log("Train Values: ")
+                y.print(false);
+                console.log("======================================================");
                 console.log();
-                console.log("Expected output result in Tensor format:");
-                console.log("========================================");
+            
+                //print "test" output: expected vs actual
+                console.log("Expected 'test' output result in Tensor format: ");
+                console.log("======================================================");
                 console.log(y.name);
-                console.log("Tensor id: ", y.id);
-                y.print(true);
-                console.log();
-                
-                
-                console.log("Actual output result in Tensor format:")
-                console.log("======================================");
+                console.log("Test Values: ");
+                y.print(false);
+                console.log("======================================================");
+                //
+                console.log("Actual 'test' output result in Tensor format:   ")
+                console.log("======================================================");
                 predictY.name = y.name;
                 console.log(predictY.name);
-                console.log("Tensor id: ", predictY.id);
-                predictY.print(true);
+                console.log("Test Values: ");
+                predictY.print(false);
                 console.log();
                 
                 //print summary & prediction time
                 ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
                 console.log("Final Model Summary");
                 reModel.summary();
-                
-                //print input tensor summary
-                console.log();
-                console.log("Input tensor/data summary in Javascript format: ");
-                console.log("================================================");
-                console.log(x);
-                console.log("================================================");
-                console.log();
-                
-                //print output tensor summary
-                console.log("Output tensor/data summary in Javascript format:");
-                console.log("================================================");
-                console.log(y);
-                console.log("================================================");
                 console.log();
                 
             }).catch(function(error)
@@ -353,6 +352,7 @@ class ShaleReservoirProductionPerformance
                 {
                     console.log(error, " : TensorFlow error successfully intercepted and handled.");
                 }
+                
             });
         }
     }
@@ -371,22 +371,22 @@ class ShaleReservoirProductionPerformance
 
         //training parameters
         const batchSize = 32;
-        const epochs = 200;
-        const validationSplit = 0.1;  // for large dataset, set to about 10% (0.1) aside
+        const epochs = 1000;
+        const validationSplit = 0;    // for large dataset, set to about 10% (0.1) aside
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
-        let inputSize = 13;           //no. of input parameters (no. of col - so, phi, h, TOC, perm, pore size, well length, etc.)
+        let inputSize = 15;           //no. of input parameters (no. of col - so, phi, h, TOC, perm, pore size, well length, etc.)
         let outputSize = 1;           //no. of output parameters (no. of col - cum_oil_Mbbs or cum_boe_MBoe or cum_gas_MMSCF )
         let inputDim = 20;            //no. of datapoint (no. of row for inputSize and outputSize = should be thesame) e.g datapoints of wells/pads/DA/sections
         const dropoutRate = 0.02;
-        const unitsPerInputLayer = 50;
+        const unitsPerInputLayer = 100;
         const unitsPerHiddenLayer = 100;
         const unitsPerOutputLayer = 1;
         const inputLayerActivation = "relu";
         const hiddenLayersActivation = "relu";
         const outputLayerActivation = "linear";
-        const numberOfHiddenLayers = 3;
+        const numberOfHiddenLayers = 5;
         const optimizer = "adam";
         const loss = "meanSquaredError";
         const lossSummary = false;
@@ -398,14 +398,14 @@ class ShaleReservoirProductionPerformance
         
         //data loading options and array (list) of input tensors
         const fileLocation  = path.format({ root: './'});
-        const fileNameX = "_z_CLogX.csv";
-        const fileNameY = "_z_CLogY.csv";
+        const fileNameX = "_z_CLogX.csv"; // _eagle_ford_datasets_X.csv";
+        const fileNameY = "_z_CLogY.csv"; // _eagle_ford_datasets_Y.csv";
         const pathTofileX = fileLocation + fileNameX;
         const pathTofileY = fileLocation + fileNameY;
         const mongDBCollectionName = undefined;
         const mongDBSpecifiedDataX = undefined;
         const mongDBSpecifiedDataY = undefined;
-        const timeStep = 5;
+        const timeStep = 1;
         //
         let inputFromCSVFileXList = [];
         let inputFromCSVFileYList = [];
@@ -526,11 +526,11 @@ class TestSRPP
             const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment);
         }
         
-        //note: for pure JavaScipt version, all results at every timeStep are generated asychronically (non-blocking)
+        //note: for pure JavaScipt version, all results at every timeStep are generated asychronically (non-blocking) !!!
     }
 }
 
-new TestSRPP(true, true);
+new TestSRPP(true, false);
 //new TestSRPP("doNotTest", true);
 
 module.exports = {ShaleReservoirProductionPerformance};
