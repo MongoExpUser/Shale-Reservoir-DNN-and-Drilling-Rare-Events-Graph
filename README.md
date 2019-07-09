@@ -22,6 +22,6 @@ Python v3.6
 
 Tensorflow v1.14
 
-Scikit-learn v0.21.0
+Scikit-learn v0.21.2
 
 Keras v2.2.4
