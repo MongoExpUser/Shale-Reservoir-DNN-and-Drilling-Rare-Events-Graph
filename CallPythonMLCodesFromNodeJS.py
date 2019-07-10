@@ -1,3 +1,4 @@
+
 # ****************************************************************************************
 # ****************************************************************************************
 # * @License Starts
@@ -213,10 +214,9 @@ class CallPythonMLCodesFromNodeJS():
       rang_tensor = tf.range(start=10., limit=101., delta=10, name="fracture_orientation", dtype=tf.float64)
       
       # 3. multi-dimensional tensors of shape, l x m x n (with random number) and print
-      rand_norm_tensor = tf.random_normal(shape=[l, m, n ], mean=5, stddev=1, name="TOC", seed=tf.set_random_seed(2), dtype=tf.float64)
-      trun_norm_tensor = tf.truncated_normal(shape=[l, m, n ], mean=5, stddev=1, name="permeability_x", seed=tf.set_random_seed(2), dtype=tf.float64)
-      rand_unif_tensor = tf.random_uniform(shape=[l, m, n ], minval=0, maxval=1, name="permeability_y", seed=tf.set_random_seed(0.2), dtype=tf.float64)
-      rand_shuf_tensor = tf.random_shuffle(trun_norm_tensor, seed=tf.set_random_seed(2), name="permeability_z",)
+      rand_norm_tensor = tf.random.normal(shape=[l, m, n ], mean=5, stddev=1, name="TOC", seed=tf.compat.v1.set_random_seed(2), dtype=tf.float64)
+      trun_norm_tensor = tf.random.truncated_normal #(shape=[l, m, n ], mean=5, stddev=1, name="permeability_x", seed=tf.set_random_seed(2), dtype=tf.float64)
+      rand_unif_tensor = tf.random.uniform(shape=[l, m, n ], minval=0, maxval=1, name="permeability_y", seed=tf.compat.v1.set_random_seed(0.2), dtype=tf.float64)
       
       # print all tensor data types and formats
       if printing:
@@ -231,31 +231,26 @@ class CallPythonMLCodesFromNodeJS():
       # print all elements in all the tensors
       sess_option = True
       created_tensor = [const_tenso1, const_tenso2,zero_tensor, fill_tensor, line_tensor, rang_tensor,
-                        rand_norm_tensor, trun_norm_tensor, rand_unif_tensor, rand_shuf_tensor]
-         
+                        rand_norm_tensor, trun_norm_tensor, rand_unif_tensor]
+         #
       def print_tensor(list_of_tensor):
-        with tf.Session() as sess:
           for tensor in list_of_tensor:
             if sess_option:
               pprint(tensor)
-              pprint(sess.run(tensor))
               print(" ")
             else:
               pprint(tensor)
-              pprint(tensor.eval())
               print(" ")
        
       if printing:
         print_tensor(created_tensor)
       
       #transform tensors
-      reverse_tensor = tf.reverse(rand_shuf_tensor, axis=[0], name="permeability_z_reverse")
-      stacked_tensor = tf.stack([trun_norm_tensor, rand_unif_tensor, rand_shuf_tensor], name="stacked_permeability_tensor_x_y_z",)
-      transformed_tensor = [reverse_tensor, stacked_tensor]
+      reverse_tensor = tf.reverse(rand_unif_tensor, axis=[0], name="permeability_z_reverse")
+      transformed_tensor = [reverse_tensor]
       if printing:
         print_tensor(transformed_tensor)
     # End tensorflow_model(printing=False) method
-    
 # End CallPythonMLCodesFromNodeJS() class
 
 def invoke_all():
@@ -264,5 +259,6 @@ def invoke_all():
   call_ml.keras_demo_regression(input_dimension="one_dimension")
   call_ml.keras_demo_regression(input_dimension="two_dimension")
   call_ml.tensorflow_model(printing=True)
-  
+  call_ml.keras_demo_classification()
+
 invoke_all()
