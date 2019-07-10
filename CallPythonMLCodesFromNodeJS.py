@@ -263,6 +263,5 @@ def invoke_all():
   call_ml.keras_demo_regression(input_dimension="one_dimension")
   call_ml.keras_demo_regression(input_dimension="two_dimension")
   call_ml.tensorflow_model(printing=True)
-  call_ml.keras_demo_classification()
 
 invoke_all()
