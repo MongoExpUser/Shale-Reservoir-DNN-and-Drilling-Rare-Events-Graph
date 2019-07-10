@@ -61,7 +61,7 @@ except(ImportError) as err:
 class CallPythonMLCodesFromNodeJS():
     """ Machine learning tests """
     
-    def sklearn_classifition_with_log_regression_gnb_svm_demo(self):
+    def sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
       #create training dataset
       x_train, y_train = make_classification(n_samples=20, n_features=6)
@@ -114,15 +114,18 @@ class CallPythonMLCodesFromNodeJS():
       print("................................")
       print("target/output", y_train)
       print("................................")
-    # End test_sklearn_classifition_with_log_regression_gnb_svm_demo() method
+    # End test_sklearn_classification_with_log_regression_gnb_svm_demo() method
     
     def keras_demo_regression(self, input_dimension="one_dimension"):
       """
-         Simple keras DNN demo
+         Simple keras DNN demo for regression problem
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
          Input Layer  : 5 units (Infer from input matrix).
          Output Layer : 1 unit  (Infer from last Dense layer).
       """
+    
+      print("TensorFlow Version: ", tf.__version__)
+      
       # build and compile model
       model = keras.Sequential()
       model.add(keras.layers.Dense(units=10, input_shape=[1]))
@@ -151,7 +154,7 @@ class CallPythonMLCodesFromNodeJS():
       
       # train model with fit().
       verbose = 1
-      epochs = 10000
+      epochs = 100
       batch_size = 128
       #fit_model = model.fit(xs, ys, epochs=epochs)
       fit_model = model.fit(xs, ys, epochs=epochs, batch_size=batch_size,  verbose=verbose, validation_data=(xs_test, ys_test))
@@ -251,11 +254,12 @@ class CallPythonMLCodesFromNodeJS():
       if printing:
         print_tensor(transformed_tensor)
     # End tensorflow_model(printing=False) method
+    
 # End CallPythonMLCodesFromNodeJS() class
 
 def invoke_all():
   call_ml = CallPythonMLCodesFromNodeJS()
-  call_ml.sklearn_classifition_with_log_regression_gnb_svm_demo()
+  call_ml.sklearn_classification_with_log_regression_gnb_svm_demo()
   call_ml.keras_demo_regression(input_dimension="one_dimension")
   call_ml.keras_demo_regression(input_dimension="two_dimension")
   call_ml.tensorflow_model(printing=True)
