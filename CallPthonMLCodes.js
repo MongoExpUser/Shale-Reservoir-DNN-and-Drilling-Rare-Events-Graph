@@ -53,7 +53,7 @@ class CallPthonMLCodes
     {
         try
         {
-            var {PythonShell}       = require('python-shell');          // ver 1.0.6 and above
+            var {PythonShell}       = require('python-shell');          // ver 1.0.7 or above
             var path                = require('path');
             var pyFile              = pyFileName
             var pyVersionPath       = '/usr/bin/python' + this.pyVersion;
@@ -84,10 +84,10 @@ class TestCall
     {
         if(test === true)
         {
-            var pyScriptPath = './';
-            var pyMode = 'text'; ///or 'json' or 'binary'
-            var pyVersion = '3.6'  // or 3.7 or later
-            var pyFileName='CallPythonMLCodesFromNodeJS.py',
+            var pyScriptPath = "./";
+            var pyMode = "text";    // or "json" or "binary"
+            var pyVersion = "3.7"   // or "3.6" or "3.8" or later
+            pyFileName="CallPythonMLCodesFromNodeJS.py",
             new CallPthonMLCodes(pyVersion).invokePythonShell(pyFileName, pyScriptPath, pyMode);
         }
     }
