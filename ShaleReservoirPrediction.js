@@ -429,7 +429,7 @@ class ShaleReservoirProductionPerformance
         let pathToExistingSavedTrainedModel = null;
         if(existingSavedModel === true)
         {
-            pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json"; //pathToExistingSavedTrainedModel = "file://myShaleProductionModel-0/model.json";
+            pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json";
         }
         
         
