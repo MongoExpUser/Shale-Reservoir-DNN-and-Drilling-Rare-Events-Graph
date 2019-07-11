@@ -86,42 +86,57 @@ class ShaleReservoirProductionPerformance
         return {fs:fs, path:path, util:util, tf:tf, tfvis:tfvis, model:tf.sequential()};
     }
     
-    static predictProdcutionAndPrintResults(_x, _y, _reModel)
+    static predictProductionAndPrintResults(_x, _y, _reModel, existingSavedModel=false)
     {
         //begin prediction: use the model to do inference on data points
         var beginPredictingTime = new Date();
         var predictY = _reModel.predict(_x);
                     
         //print "train" input and output tensors summary
-        console.log("Input train tensor/data summary in JS and TF formats: ");
-        console.log("======================================================");
-        console.log("Input Train Properties: ")
-        console.log(_x);
-        console.log("Input Train Values: ");
-        _x.print(false);
-        console.log("======================================================");
-        //
-        console.log("Output train tensor/data summary in JS and TF formats:");
-        console.log("======================================================");
-        console.log("Output Train Properties: ")
-        console.log(_y);
-        console.log("Output Train Values: ")
-        _y.print(false);
-        console.log("======================================================");
-        console.log();
-                
+        if(existingSavedModel === false || existingSavedModel === null || existingSavedModel === undefined)
+        {
+            console.log("Input train tensor/data summary in JS and TF formats: ");
+            console.log("======================================================");
+            console.log("Input Train Properties: ")
+            console.log(_x);
+            console.log("Input Train Values: ");
+            _x.print(false);
+            console.log("======================================================");
+            //
+            console.log("Output train tensor/data summary in JS and TF formats:");
+            console.log("======================================================");
+            console.log("Output Train Properties: ")
+            console.log(_y);
+            console.log("Output Train Values: ")
+            _y.print(false);
+            console.log("======================================================");
+            console.log();
+        }
+           
         //print "test" output: expected vs actual
-        console.log("Expected 'test' output result in Tensor format: ");
-        console.log("======================================================");
-        console.log(_y.name);
-        console.log("Expected Test Values: ");
-        _y.print(false);
-        console.log("======================================================");
+        if(_y.dtype === "float32")
+        {
+            
+            console.log("Expected 'test' output result in Tensor format: ");
+            console.log("======================================================");
+            console.log(_y.name);
+            console.log("Expected Test Values: ");
+            _y.print(false);
+            console.log("======================================================");
+        }
         //
         console.log("Actual 'test' output result in Tensor format:   ")
         console.log("======================================================");
-        predictY.name = _y.name;
-        console.log(predictY.name);
+        if(_y.dtype === "float32")
+        {
+            predictY.name = _y.name;
+            console.log(predictY.name);
+        }
+        else
+        {
+            console.log("Output = Check_Assigned_Name_And_Unit");
+        }
+        //
         console.log("Actual Test Values: ");
         predictY.print(false);
         console.log();
@@ -133,7 +148,7 @@ class ShaleReservoirProductionPerformance
         console.log();
     }
     
-    static predictProdcutionAndPrintResultsBasedOnExistingSavedModel(_x, _y, tf, pathToExistingSavedTrainedModel)
+    static predictProductionAndPrintResultsBasedOnExistingSavedModel(_x, _y=null, tf, pathToExistingSavedTrainedModel)
     {
         //load/open saved mode and re-use for predicting without training again
         const loadModel = tf.loadLayersModel(pathToExistingSavedTrainedModel)
@@ -146,7 +161,8 @@ class ShaleReservoirProductionPerformance
             
             //then predict and print results
             const srpp = ShaleReservoirProductionPerformance;
-            srpp.predictProdcutionAndPrintResults(_x, _y, existingModel);
+            var existingSavedModel = undefined;
+            srpp.predictProductionAndPrintResults(_x, _y, existingModel, existingSavedModel=true);
             
             console.log("........Prediction from loaded model Ends..........................");
             console.log();
@@ -235,7 +251,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 550 and 552
+        //    : e.g. see testProductionPerformace() method below - lines 566 and 568
         
         if(this.modelingOption === "dnn")
         {
@@ -293,7 +309,7 @@ class ShaleReservoirProductionPerformance
             if(existingSavedModel === true)
             {
                 //predict with saved model
-                ShaleReservoirProductionPerformance.predictProdcutionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                ShaleReservoirProductionPerformance.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
             else
             {
@@ -371,7 +387,7 @@ class ShaleReservoirProductionPerformance
                     console.log();
                     
                     //-->c. predict and print results
-                    srpp.predictProdcutionAndPrintResults(x, y, reModel);
+                    srpp.predictProductionAndPrintResults(x, y, reModel, existingSavedModel=false);
                     
                     //save model's topology and weights in the specified sub-folder of the current folder
                     //this model can be called later without any need for training again
@@ -429,7 +445,7 @@ class ShaleReservoirProductionPerformance
         let pathToExistingSavedTrainedModel = null;
         if(existingSavedModel === true)
         {
-            pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json";
+            //pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json";
         }
         
         
