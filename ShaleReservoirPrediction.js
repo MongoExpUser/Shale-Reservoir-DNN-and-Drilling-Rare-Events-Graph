@@ -148,7 +148,7 @@ class ShaleReservoirProductionPerformance
         console.log();
     }
     
-    static predictProductionAndPrintResultsBasedOnExistingSavedModel(_x, _y=null, tf, pathToExistingSavedTrainedModel)
+    static predictProductionAndPrintResultsBasedOnExistingSavedModel(_x, _y, tf, pathToExistingSavedTrainedModel)
     {
         //load/open saved mode and re-use for predicting without training again
         const loadModel = tf.loadLayersModel(pathToExistingSavedTrainedModel)
