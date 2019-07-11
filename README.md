@@ -18,7 +18,7 @@ Tensorflow.js v1.2.3
 
 Python-shell.js v1.0.7
 
-Python v3.6
+Python v3.7
 
 Tensorflow v1.14.0
 
