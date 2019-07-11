@@ -15,13 +15,13 @@
  * It is based on Node.js with option to use either gpu or cpu.
  * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
- *
+ * Objectives:
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
  * 2) Then: (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
- * 3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, ...1825 days)
+ * 3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, .... 1825.....n days)
  *     a) BOE in MBoe
  *     b) Gas in MMScf
- *     c) Oil in M barrel
+ *     c) Oil in Mbbls
  * 4) Target inputs:
  *     a) Richness/OHIP-Related: so, phi, h, TOC
  *     b) Reservoir Flow Capacity-Related, Permeability and pore size (micro, nano and pico)
@@ -95,17 +95,17 @@ class ShaleReservoirProductionPerformance
         //print "train" input and output tensors summary
         console.log("Input train tensor/data summary in JS and TF formats: ");
         console.log("======================================================");
-        console.log("Train Properties: ")
+        console.log("Input Train Properties: ")
         console.log(_x);
-        console.log("Train Values: ");
+        console.log("Input Train Values: ");
         _x.print(false);
         console.log("======================================================");
         //
-        console.log("Input train tensor/data summary in JS and TF formats: ");
+        console.log("Output train tensor/data summary in JS and TF formats:");
         console.log("======================================================");
-        console.log("Train Properties: ")
+        console.log("Output Train Properties: ")
         console.log(_y);
-        console.log("Train Values: ")
+        console.log("Output Train Values: ")
         _y.print(false);
         console.log("======================================================");
         console.log();
@@ -114,7 +114,7 @@ class ShaleReservoirProductionPerformance
         console.log("Expected 'test' output result in Tensor format: ");
         console.log("======================================================");
         console.log(_y.name);
-        console.log("Test Values: ");
+        console.log("Expected Test Values: ");
         _y.print(false);
         console.log("======================================================");
         //
@@ -122,7 +122,7 @@ class ShaleReservoirProductionPerformance
         console.log("======================================================");
         predictY.name = _y.name;
         console.log(predictY.name);
-        console.log("Test Values: ");
+        console.log("Actual Test Values: ");
         predictY.print(false);
         console.log();
                     
@@ -133,7 +133,7 @@ class ShaleReservoirProductionPerformance
         console.log();
     }
     
-    static predictProductionBasedOnSavedModel(_x, _y, tf, pathToExistingSavedTrainedModel)
+    static predictProdcutionAndPrintResultsBasedOnExistingSavedModel(_x, _y, tf, pathToExistingSavedTrainedModel)
     {
         //load/open saved mode and re-use for predicting without training again
         const loadModel = tf.loadLayersModel(pathToExistingSavedTrainedModel)
@@ -151,9 +151,6 @@ class ShaleReservoirProductionPerformance
             console.log("........Prediction from loaded model Ends..........................");
             console.log();
         });
-        
-        
-        
     }
     
     static runTimeDNN(beginTime, timeOption)
@@ -238,7 +235,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 553 and 555
+        //    : e.g. see testProductionPerformace() method below - lines 550 and 552
         
         if(this.modelingOption === "dnn")
         {
@@ -264,7 +261,6 @@ class ShaleReservoirProductionPerformance
                 //once defined, set tensor names (for identifiation purpose)
                 x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
                 y.name = "Output = produced_BOE_in_MBarrels";      //1 output
-                
             }
             else
             {
@@ -297,13 +293,13 @@ class ShaleReservoirProductionPerformance
             if(existingSavedModel === true)
             {
                 //predict with saved model
-                ShaleReservoirProductionPerformance.predictProductionBasedOnSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                ShaleReservoirProductionPerformance.predictProdcutionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
-            else  ////create, train and predict new model
+            else
             {
-                
+                //(a) create, (a) train and (c) predict new model
             
-                //create model (main engine) with IIFE
+                //-->a. create model (main engine) with IIFE
                 //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
                 const reModel = (function createDNNRegressionModel()
                 {
@@ -337,7 +333,7 @@ class ShaleReservoirProductionPerformance
                 })();
             
                                    
-                // begin training: train the model using the data and time the training
+                //-->b. begin training: train the model using the data and time the training
                 const beginTrainingTime = new Date();
                 console.log(" ")
                 console.log("...............Training Begins.......................................");
@@ -374,7 +370,7 @@ class ShaleReservoirProductionPerformance
                     console.log("........Training Ends................................................");
                     console.log();
                     
-                    //predict and print results
+                    //-->c. predict and print results
                     srpp.predictProdcutionAndPrintResults(x, y, reModel);
                     
                     //save model's topology and weights in the specified sub-folder of the current folder
@@ -428,17 +424,17 @@ class ShaleReservoirProductionPerformance
         const optimizer = "adam";
         const loss = "meanSquaredError";
         const lossSummary = false;
-        const existingSavedModel = true;
+        const existingSavedModel = false;
         const pathToSaveTrainedModel = "file://myShaleProductionModel";
         let pathToExistingSavedTrainedModel = null;
         if(existingSavedModel === true)
         {
-            pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json";
+            pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json"; //pathToExistingSavedTrainedModel = "file://myShaleProductionModel-0/model.json";
         }
         
         
-        const timeStep = 5;           //1, 2, .....
-        // note: generalize to n, timeStep: n1, n2, n3 .....nx : says 90, 365, 720, 1095..... nx days
+        const timeStep = 1;           //1, 2, .....n
+        // note: generalize to n, timeStep: 1, 2, 3 .....n : says 90, 365, 720, 1095..... n days
         // implies: xInputTensor and yInputTensor contain n, timeStep tensors
         
         //data loading options and array (list) of input tensors
@@ -458,7 +454,6 @@ class ShaleReservoirProductionPerformance
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
         {
-            //first: create tensors at each timeStep: format => (shape, mean, stdDev, dtype, seed)
             if(inDevelopment === true)  //i.e. application still in development phase
             {
                 switch(fileOption)
@@ -466,6 +461,7 @@ class ShaleReservoirProductionPerformance
                     case("csv-disk"):
                         try
                         {
+                            //create randomly-filled tensors at each timeStep: format => (shape, mean, stdDev, dtype, seed)
                             inputFromCSVFileXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
                             inputFromCSVFileYList.push(tf.truncatedNormal ([inputDim, outputSize], 1, 0.1, "float32", 0.2));
                         }
@@ -479,6 +475,7 @@ class ShaleReservoirProductionPerformance
                     case("csv-MongoDB"):
                         try
                         {
+                            //create randomly-filled tensors at each timeStep: format => (shape, mean, stdDev, dtype, seed)
                             mongDBSpecifiedDataXList.push(tf.randomNormal([inputDim, inputSize], 0.0, 1.0, "float32", 0.1));
                             mongDBSpecifiedDataYList.push(tf.truncatedNormal ([inputDim, 1], 1, 0.1, "float32", 0.2));
                         }
@@ -509,7 +506,7 @@ class ShaleReservoirProductionPerformance
                             const tensorOutputY = srppCVS.getTensor(yOutput);
                             inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
                             inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
-                            //over-ride inputSize and inputDim based on created "tensors" CVS file
+                            //over-ride inputSize and inputDim based on created "tensors" from CVS file
                             inputSize = tensorOutputX.inputSize;
                             inputDim = tensorOutputX.inputDim;
                             console.log("inputSize: ", inputSize);
@@ -569,7 +566,7 @@ class TestSRPP
             const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace(inDevelopment);
         }
         
-        //note: for pure JavaScipt version, all results at every timeStep are generated asychronically (non-blocking) !!!
+        //note: all results at every timeStep are generated asychronically (non-blocking) !!!
     }
 }
 
