@@ -20,7 +20,7 @@ Python-shell.js v1.0.7
 
 Python v3.7
 
-Tensorflow v1.14.0 (Python version)
+Tensorflow v1.14.0 (Python Version)
 
 Scikit-learn v0.21.2
 
