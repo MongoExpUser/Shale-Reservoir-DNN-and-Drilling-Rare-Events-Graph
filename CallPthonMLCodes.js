@@ -20,9 +20,10 @@
  *
  */
 
+
 class CallPthonMLCodes
 {
-    constructor(pyVersion='3.6')
+    constructor(pyVersion='3.7')
     {
         this.pyVersion = pyVersion;
     }
@@ -49,14 +50,13 @@ class CallPthonMLCodes
         });
     }
     
-    invokePythonShell(pyFileName, pyScriptPath, pyMode="text")
+    invokePythonShell(pyFileName, pyVersionPath, pyScriptPath, pyMode="text")
     {
         try
         {
             var {PythonShell}       = require('python-shell');          // ver 1.0.7 or above
             var path                = require('path');
             var pyFile              = pyFileName
-            var pyVersionPath       = '/usr/bin/python' + this.pyVersion;
             var pyMode              = pyMode;
             var value1              = 'build_ext';                      // command arg 1: for cython_C_extension
             var value2              = '--inplace';                      // command arg 2: for cython_C_extension
@@ -84,11 +84,12 @@ class TestCall
     {
         if(test === true)
         {
-            var pyScriptPath = "./";
-            var pyMode = "text";    // or "json" or "binary"
-            var pyVersion = "3.7"   // or "3.6" or "3.8" or later
-            pyFileName="CallPythonMLCodesFromNodeJS.py",
-            new CallPthonMLCodes(pyVersion).invokePythonShell(pyFileName, pyScriptPath, pyMode);
+            var pyScriptPath    = "./";
+            var pyMode          = "text";                                    // or "json" or "binary"
+            var pyVersion       = "3.7"                                      // or "3.6" or "3.8" or later
+            var pyVersionPath   = "/usr/bin/python" + pyVersion;             // or any other path e.g ".../miniconda3/bin/python" + pyVersion;
+            var pyFileName      = "CallPythonMLCodesFromNodeJS.py";
+            new CallPthonMLCodes(pyVersion).invokePythonShell(pyFileName, pyVersionPath, pyScriptPath, pyMode);
         }
     }
 }
