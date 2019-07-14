@@ -1,4 +1,4 @@
-/* @License Starts
+* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
  *
@@ -24,9 +24,9 @@
  
 class ShaleReservoirCommunication
 {
-    constructor(infoList)
+    constructor()
     {
-        this.infoList = infoList;
+        return null;
     }
     
     static commonLongDateFormat()
@@ -114,6 +114,14 @@ class ShaleReservoirCommunication
         return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
     }
     
+    readInputCSVfileFromMongoDB(mongoDBCollectionName, mongoDBSpecifiedData)
+    {
+       const MongoDBAccess  = require('./MongoDBAccess.js').MongoDBAccess;
+       const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
+       const src = new ShaleReservoirCommunication();
+       const mda = new MongoDBAccess();
+       //....finalise
+    }
     
     getStatisticsOfTensor(csvFileArrayOutput)
     {
@@ -182,7 +190,7 @@ class ShaleReservoirCommunication
             //write-stream file to folder that can be read later
             const options = {'bufferSize': 2048};
             const ws = fs.createWriteStream(filePathOut, options);  //create file;
-            ws.write(Buffer.from(readInputFile));                 //write to file
+            ws.write(Buffer.from(readInputFile));                   //write to file
 
             ws.on('error', function(writeError)
             {
