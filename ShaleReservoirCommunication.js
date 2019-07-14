@@ -21,6 +21,7 @@
  *
  */
  
+ 
 class ShaleReservoirCommunication
 {
     constructor(infoList)
@@ -228,22 +229,20 @@ class ShaleReservoirCommunication
         }
     }
     
-    uploadDownloadFileGridFS(username, connectedDB, inputFileName, outputFileName, action)
+    uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
     {
-        // method to upload & download file from MongoDB database in  GridFS format
+        // method to upload and download file from MongoDB database in GridFS format
         
         const mongodb         = require('mongodb');
         const fs              = require('fs');
         const assert          = require('assert');
         const db              = connectedDB.db;
-        const collectionName  = username;
             
-        //create bucket/collection for holding file(s)  and pass db & bucketname to GridFSBucket
-        const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName});
+        const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
                
         if(action === "upload")
         {
-            const load = fs.createReadStream(inputFileName, {'bufferSize': 2048}).pipe(bucket.openUploadStream(outputFileName));
+            const load = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
                 
             load.on('error', function(error)
             {
@@ -252,13 +251,13 @@ class ShaleReservoirCommunication
                 
             load.on('finish', function()
             {
-                console.log('Done uploading!');
+                console.log('Done uploading' + inputFilePath + '!');
             });
         }
                 
         if(action === "download")
         {
-            const download = bucket.openDownloadStreamByName(outputFileName).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 2048});
+            const download = bucket.openDownloadStreamByName(outputFileName).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
                 
             download.on('error', function(error)
             {
@@ -267,7 +266,7 @@ class ShaleReservoirCommunication
                 
             download.on('finish', function()
             {
-                console.log('Done downloading!');
+                console.log('Done downloading ' + outputFileName + '!');
             });
         }
     }
