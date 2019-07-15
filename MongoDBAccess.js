@@ -49,13 +49,12 @@ class MongoDBAccess
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-    
+            
             console.log("NOW connected to MongoDB on: ", mongoose.connection.host);
                     
         }).then(function(callbackDB)
         {
             return callbackDB.connections[0];
-                
         }).catch(function(err)
         {
             if(err)
@@ -65,7 +64,6 @@ class MongoDBAccess
                 return;
             };
         });
-            
     }
     
     static connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean=true)
@@ -108,13 +106,15 @@ class MongoDBAccess
         return mongoose.connection;
     }
         
-    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
+    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
+                                 connectionBolean, collectionName, inputFilePath, outputFileName, action)
     {
-        const connectedDB = MongoDBAccess.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
+        const connectedDB = MongoDBAccess.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, 
+                                                           dbName, sslCertOptions, connectionBolean);
             
         connectedDB.then(function()
         {
-            //const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication; //add later
+            const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
             const src = new ShaleReservoirCommunication();
             src.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
 
@@ -127,12 +127,14 @@ class MongoDBAccess
         });
     }
     
-    downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, outputFileName)
+    downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
+                                connectionBolean, collectionName, outputFileName)
     {
         const inputFilePath = null;
         const action = "download";
         const mda = new MongoDBAccess;
-        mda.uploadDownloadFileInMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action);
+        mda.uploadDownloadFileInMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
+                                        connectionBolean, collectionName, inputFilePath, outputFileName, action);
     }
 }
 module.exports = {MongoDBAccess};
