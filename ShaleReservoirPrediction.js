@@ -192,12 +192,13 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 472 and 474
+        //    : e.g. see testProductionPerformace() method below - lines 474 and 476.
         
         if(this.modelingOption === "dnn")
         {
             //import module(s) and create model
-            const commonModules = ShaleReservoirProductionPerformance.commonModules(this.gpuOption)
+            const srpp = ShaleReservoirProductionPerformance;
+            const commonModules = srpp.commonModules(this.gpuOption);
             const tf = commonModules.tf;
             const util = commonModules.util;
             const model = commonModules.model;
@@ -227,8 +228,6 @@ class ShaleReservoirProductionPerformance
                     console.log("==================================================>");
                     console.log("Using dataset from 'csv' file on the computer disk.")
                     console.log("==================================================>");
-                    x = this.inputFromCSVFileX;
-                    y = this.inputFromCSVFileY;
                 }
                 
                 if(this.fileOption === "csv-MongoDB")
@@ -237,9 +236,11 @@ class ShaleReservoirProductionPerformance
                     console.log("==================================================>");
                     console.log("Using dataset from 'cvs' file in a 'MongoDB' server.")
                     console.log("==================================================>");
-                    x = this.mongDBSpecifiedDataX;
-                    y = this.mongDBSpecifiedDataY;
                 }
+                
+                //define tensor
+                x = this.inputFromCSVFileX;
+                y = this.inputFromCSVFileY;
                 
                 //once defined, set tensor names (for identifiation purpose)
                 x.name = "Inputs = so-phi-h-toc-depth-and-others"; //several inputs (=input size)
@@ -250,7 +251,8 @@ class ShaleReservoirProductionPerformance
             if(existingSavedModel === true)
             {
                 //predict with saved model
-                ShaleReservoirProductionPerformance.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                const srpp = ShaleReservoirProductionPerformance;
+                srpp.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
             else
             {
@@ -289,7 +291,7 @@ class ShaleReservoirProductionPerformance
                     return model;
                 })();
             
-                
+                                   
                 //-->b. begin training: train the model using the data and time the training
                 const beginTrainingTime = new Date();
                 console.log(" ")
@@ -355,6 +357,7 @@ class ShaleReservoirProductionPerformance
         //import tf & path
         const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption);
         const tf = commonModules.tf;
+        const fs = commonModules.fs;
         const path = commonModules.path;
 
         //training parameters
@@ -384,31 +387,42 @@ class ShaleReservoirProductionPerformance
         
         if(existingSavedModel === true)
         {
-            pathToExistingSavedTrainedModel = "file://myShaleProductionModel-0/model.json";
+            //pathToExistingSavedTrainedModel = "file://myShaleProductionModelExisting/model.json"; //pathToExistingSavedTrainedModel = "file://myShaleProductionModel-0/model.json";
         }
         
-        const timeStep = 1;           //1, 2, .....n
+        const timeStep = 5;           //1, 2, .....n
         // note: generalize to n, timeStep: 1, 2, 3 .....n : says 90, 365, 720, 1095..... n days
         // implies: xInputTensor and yInputTensor contain n, timeStep tensors
         
-        //data loading options and array (list) of input tensors
+        //data loading options, array of input tensors, MongoDB options, etc.
         const fileLocation  = path.format({ root: './'});
         const fileNameX = "_z_CLogX.csv"; // or "_eagle_ford_datasets_X.csv" or "duvernay_datasets_X.csv" or "bakken_datasets_X.csv"
         const fileNameY = "_z_CLogY.csv"; // or "_eagle_ford_datasets_Y.csv" or "duvernay_datasets_Y.csv" or "bakken_datasets_Y.csv"
-        let pathTofileX = fileLocation + fileNameX;
-        let pathTofileY = fileLocation + fileNameY;
         let inputFromCSVFileXList = [];
         let inputFromCSVFileYList = [];
-        let mongDBCollectionName = undefined;
-        let mongoDBSpecifiedDataX = undefined;
-        let mongoDBSpecifiedDataY = undefined;
-        let mongoDBSpecifiedDataXList = [];
-        let mongoDBSpecifiedDataYList = [];
-        const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;  
-        const src = new ShaleReservoirCommunication();
-        const srpp = new ShaleReservoirProductionPerformance();
+        let csvDataXList = [];
+        let csvDataYList = [];
+        let mongoDBDataFileX = "_eagle_ford_SPE_19260-MS_X.csv";
+        let mongoDBDataFileY = "_eagle_ford_SPE_19260-MS_Y.csv";
+        let mongoDBDataFileXList = [];
+        let mongoDBDataFileYList = [];
+        let mongoDBCollectionName = "Company";
+        let dbUserName = "ecotert";
+        let dbUserPassword = "ffebe266b37d945f0a4edb86f2b2c6316058850fea0d46fa17465b441288fceeb5cb82936966b2919b8fb0880043cdb67cf0aad1e39587ff7c36117c3f4966bc";
+        var dbDomainURL = "ecotert.com";
+        let dbName = "urppsdb";
+        let sslCertOptions  = {ca: fs.readFileSync('/etc/ssl/ca.pem'), key: fs.readFileSync('/etc/ssl/mongodb.pem'),cert: fs.readFileSync('/etc/ssl/mongodb.pem')};
+        let connectionBolean = true;
         let xOutput = undefined;
         let yOutput = undefined;
+        
+        //load/require/import relevant modules
+        const ShaleReservoirCommunication  = require('./MongoDBAccess.js').MongoDBAccess;  //add later
+        const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;  //add later
+        const mda = new MongoDBAccess();
+        const src = new ShaleReservoirCommunication();
+        const srpp = new ShaleReservoirProductionPerformance();
+        
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -416,43 +430,32 @@ class ShaleReservoirProductionPerformance
             switch(fileOption)
             {
                 case("csv-disk"):
-                    try
-                    {
-                        //read csv files to JS arrays
-                        xOutput = src.readInputCSVfile(pathTofileX);
-                        yOutput = src.readInputCSVfile(pathTofileY);
-                    }
-                    catch(diskDataError)
-                    {
-                        console.log("Error: ", diskDataError);
-                    }
+                    //specify csv file names
+                    csvDataXList.push(fileNameX);
+                    csvDataYList.push(fileNameY);
+                    //assign csv files into pathTofileX and pathTofileY
+                    var pathTofileX = fileLocation + csvDataXList[i];
+                    var pathTofileY = fileLocation + csvDataYList[i];
+                    //read csv files, in pathTofileX and pathTofileY, to JS arrays
+                    xOutput = src.readInputCSVfile(pathTofileX);
+                    yOutput = src.readInputCSVfile(pathTofileY);
                     break;
                         
                 case("csv-MongoDB"):
-                    try
-                    {
-                        //download files from MongoDB database & read into pathTofileX and pathTofileY
-                        //mongDBSpecifiedDataXList.append(mongoDBSpecifiedDataX);
-                        //mongDBSpecifiedDataYList.append(mongoDBSpecifiedDataY);
-                        //pathTofileX = src.readInputCSVfileFromMongoDB(mongoDBCollectionName, mongoDBSpecifiedDataXList[i]);
-                        //pathTofileY = src.readInputCSVfileFromMongoDB(mongoDBCollectionName, mongoDBSpecifiedDataYList[i]);
-                            
-                        //read csv files, in pathTofileX and pathTofileY, to JS arrays
-                        //xOutput = src.readInputCSVfile(pathTofileX);
-                        //yOutput = src.readInputCSVfile(pathTofileY);
-            
-                        console.log();
-                        console.log("=============================================================================================>");
-                        console.log("Implementation of data access through 'cvs' file in a MongoDB server is still pending!");
-                        console.log("Use the option of loading data through 'cvs' file on the computer disk!");
-                        console.log("==============================================================================================>");
-                        console.log();
-                        return;
-                    }
-                    catch(mongoDBDataError)
-                    {
-                        console.log("Error: ", mongoDBDataError);
-                    }
+                    //specify csv file names to be downloaded from MongoDB database
+                    mongoDBDataFileXList.push(mongoDBDataFileX);
+                    mongoDBDataFileYList.push(mongoDBDataFileY);
+                    //download csv files from MongoDB database
+                    mda.downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
+                                                   connectionBolean, mongoDBCollectionName, mongoDBDataFileXList[i]);
+                    mda.downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
+                                                   connectionBolean, mongoDBCollectionName, mongoDBDataFileYList[i])
+                    // assign downloaded csv files into pathTofileX and pathTofileY
+                    var pathTofileX = fileLocation + mongoDBDataFileXList[i];
+                    var pathTofileY = fileLocation + mongoDBDataFileYList[i];
+                    //read csv files, in pathTofileX and pathTofileY, to JS arrays
+                    xOutput = src.readInputCSVfile(pathTofileX);
+                    yOutput = src.readInputCSVfile(pathTofileY);
                     break;
             }
                 
@@ -466,11 +469,10 @@ class ShaleReservoirProductionPerformance
             inputDim = tensorOutputX.inputDim;
             console.log("inputSize: ", inputSize);
             console.log("inputDim: ", inputDim);
-        
             
             //invoke productionPerformance() method on srpp() class
             const srppTwo = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption, inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                                    mongDBCollectionName, mongoDBSpecifiedDataXList[i], mongoDBSpecifiedDataYList[i]);
+                                                                    mongoDBCollectionName, mongoDBDataFileXList[i], mongoDBDataFileYList[i]);
             srppTwo.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
                                          unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers,
                                          optimizer, loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
