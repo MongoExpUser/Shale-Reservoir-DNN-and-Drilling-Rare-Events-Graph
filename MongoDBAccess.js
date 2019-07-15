@@ -16,9 +16,8 @@
  * (3) Other objects from "ShaleReservoirCommunication.js"
  * (4) etc.
  *
- *
- *
  */
+
 
 class MongoDBAccess
 {
@@ -109,14 +108,13 @@ class MongoDBAccess
         return mongoose.connection;
     }
         
-    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
-                                 connectionBolean, collectionName, inputFilePath, outputFileName, action)
+    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
     {
         const connectedDB = MongoDBAccess.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
             
         connectedDB.then(function()
         {
-            const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication; 
+            //const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication; //add later
             const src = new ShaleReservoirCommunication();
             src.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
 
@@ -128,6 +126,13 @@ class MongoDBAccess
             }
         });
     }
+    
+    downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, outputFileName)
+    {
+        const inputFilePath = null;
+        const action = "download";
+        const mda = new MongoDBAccess;
+        mda.uploadDownloadFileInMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action);
+    }
 }
-
 module.exports = {MongoDBAccess};
