@@ -18,7 +18,6 @@
  * (4) etc.
  *
  *
- *
  */
  
  
@@ -112,15 +111,6 @@ class ShaleReservoirCommunication
         }
              
         return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
-    }
-    
-    readInputCSVfileFromMongoDB(mongoDBCollectionName, mongoDBSpecifiedData)
-    {
-       const MongoDBAccess  = require('./MongoDBAccess.js').MongoDBAccess;
-       const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
-       const src = new ShaleReservoirCommunication();
-       const mda = new MongoDBAccess();
-       //....finalise
     }
     
     getStatisticsOfTensor(csvFileArrayOutput)
