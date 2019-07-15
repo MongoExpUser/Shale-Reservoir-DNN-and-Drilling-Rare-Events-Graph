@@ -407,11 +407,11 @@ class ShaleReservoirProductionPerformance
         let mongoDBDataFileXList = [];
         let mongoDBDataFileYList = [];
         let mongoDBCollectionName = "Company";
-        let dbUserName = "ecotert";
-        let dbUserPassword = "ffebe266b37d945f0a4edb86f2b2c6316058850fea0d46fa17465b441288fceeb5cb82936966b2919b8fb0880043cdb67cf0aad1e39587ff7c36117c3f4966bc";
-        var dbDomainURL = "ecotert.com";
+        let dbUserName = "name";
+        let dbUserPassword = "pasd";
+        var dbDomainURL = "domain.com";
         let dbName = "urppsdb";
-        let sslCertOptions  = {ca: fs.readFileSync('/etc/ssl/ca.pem'), key: fs.readFileSync('/etc/ssl/mongodb.pem'),cert: fs.readFileSync('/etc/ssl/mongodb.pem')};
+        let sslCertOptions  = {ca: fs.readFileSync('/path_to_file/ca.pem'), key: fs.readFileSync('/path_to_file//mongodb.pem'),cert: fs.readFileSync('/path_to_file//mongodb.pem')};
         let connectionBolean = true;
         let xOutput = undefined;
         let yOutput = undefined;
