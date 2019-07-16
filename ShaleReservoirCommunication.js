@@ -250,7 +250,6 @@ class ShaleReservoirCommunication
             load.on('finish', function()
             {
                 console.log('Done uploading' + inputFilePath + '!');
-                process.exit(0);
             });
         }
                 
@@ -266,7 +265,6 @@ class ShaleReservoirCommunication
             download.on('finish', function()
             {
                 console.log('Done downloading ' + outputFileName + '!');
-                process.exit(0);
             });
         }
     }
