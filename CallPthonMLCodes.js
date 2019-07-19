@@ -61,8 +61,8 @@ class CallPthonMLCodes
             var value1              = 'build_ext';                      // command arg 1: for cython_C_extension
             var value2              = '--inplace';                      // command arg 2: for cython_C_extension
             var value3              = 5;                                // arg 3: general
-            //var pyArgs            = [value1, value2];                 // arguments to python script: use this if for cython
-            var pyArgs              = [value3, value3, value3];         // arguments to python script: use thus if for pure python
+            //var pyArgs            = [value1, value2];                 // arguments to python script: use this for cython
+            var pyArgs              = [value3, value3, value3];         // arguments to python script: use thus for pure python
             var options             = {mode: pyMode, pythonPath: pyVersionPath, scriptPath: pyScriptPath, args: pyArgs, pythonOptions: ["-u"]};
         }
         catch(err)
