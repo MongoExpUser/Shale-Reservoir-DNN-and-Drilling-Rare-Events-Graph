@@ -62,7 +62,7 @@ class CallPthonMLCodes
             var value2              = '--inplace';                      // command arg 2: for cython_C_extension
             var value               = 5;                                // general arg: any valid datatype/object can be passed in
             //var pyArgs            = [value1, value2];                 // arguments to python script: use this for cython
-            //var pyArgs              = [value, value, value];          // arguments to python script: use this for pure python with args
+            //var pyArgs            = [value, value, value];            // arguments to python script: use this for pure python with args
             var pyArgs              = [];                               // arguments to python script: use this for pure python with no args
             var options             = {mode: pyMode, pythonPath: pyVersionPath, scriptPath: pyScriptPath, args: pyArgs, pythonOptions: ["-u"]};
         }
