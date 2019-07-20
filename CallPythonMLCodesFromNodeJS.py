@@ -16,7 +16,7 @@
 #
 #  1) Simple classifications with sklearn's LogisticRegression, GaussianNB() & SVC (linear & sigmoidal).
 #
-#  2) Simple DNN with keras.
+#  2) Simple DNN regression with keras (contained inside TensorFlow).
 #
 #  3) Simple creation and transformation of tensor data type with TensorFlow (Python version).
 #
@@ -30,9 +30,11 @@
 # ****************************************************************************************
 # ****************************************************************************************
 
-#import commonly used modules and check for import error
+
 try:
-    import keras
+    """ import commonly used modules and check for import error """
+    
+    import sys
     import sklearn
     import unittest
     import numpy as np
@@ -41,6 +43,7 @@ try:
     from unittest import TestCase
     from sklearn.base import clone
     import matplotlib.pyplot as plt
+    import tensorflow.keras as keras
     from scipy.ndimage import convolve
     from sklearn.pipeline import Pipeline
     from sklearn.svm import SVC, LinearSVC
@@ -58,10 +61,10 @@ try:
 except(ImportError) as err:
     print(str(err))
 
-class CallPythonMLCodesFromNodeJS():
+class CallPythonMLCodesFromNodeJS(unittest.TestCase):
     """ Machine learning tests """
     
-    def sklearn_classification_with_log_regression_gnb_svm_demo(self):
+    def test_sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
       #create training dataset
       x_train, y_train = make_classification(n_samples=20, n_features=6)
@@ -116,9 +119,9 @@ class CallPythonMLCodesFromNodeJS():
       print("................................")
     # End test_sklearn_classification_with_log_regression_gnb_svm_demo() method
     
-    def keras_demo_regression(self, input_dimension="one_dimension"):
+    def test_keras_tf_demo_regression(self, input_dimension="one_dimension"):
       """
-         Simple keras DNN demo for regression problem
+         Simple keras (with tf) DNN demo for regression problem
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
          Input Layer  : 5 units (Infer from input matrix).
          Output Layer : 1 unit  (Infer from last Dense layer).
@@ -195,9 +198,9 @@ class CallPythonMLCodesFromNodeJS():
         print()
       
       print('.........................................................................')
-    # End keras_model() method
+    # End test_keras_tf_demo_regression() method
     
-    def tensorflow_model(self, printing=False):
+    def test_tensorflow_model(self, printing=False):
       """
       Simple tensorflow demo: create and transform TensorFlow's tensor data types
       """
@@ -253,15 +256,17 @@ class CallPythonMLCodesFromNodeJS():
       transformed_tensor = [reverse_tensor]
       if printing:
         print_tensor(transformed_tensor)
-    # End tensorflow_model(printing=False) method
+    # End test_ensorflow_model(printing=False) method
     
+    def test_check_packages_versions(self):
+      print("Python", sys.version, "is properly set up with miniconda3.")
+      print()
+      print("Using TensorFlow version", tf.__version__, "on this system.")
+      print()
+      print("Using Keras version", tf.keras.__version__, "on this system.")
+      print()
+    # End test_check_packages_version() method
+      
 # End CallPythonMLCodesFromNodeJS() class
 
-def invoke_all():
-  call_ml = CallPythonMLCodesFromNodeJS()
-  call_ml.sklearn_classification_with_log_regression_gnb_svm_demo()
-  call_ml.keras_demo_regression(input_dimension="one_dimension")
-  call_ml.keras_demo_regression(input_dimension="two_dimension")
-  call_ml.tensorflow_model(printing=True)
-
-invoke_all()
+unittest.main();
