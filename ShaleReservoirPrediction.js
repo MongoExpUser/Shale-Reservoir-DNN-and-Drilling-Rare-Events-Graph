@@ -603,7 +603,7 @@ class TestSRPP
     }
 }
 
-new TestSRPP(true);
-//new TestSRPP("doNotTest", true);
+ new TestSRPP(test=true);
+ //new TestSRPP(test=false);
 
 module.exports = {ShaleReservoirProductionPerformance};
