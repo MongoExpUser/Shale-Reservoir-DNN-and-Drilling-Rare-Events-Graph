@@ -408,7 +408,7 @@ class ShaleReservoirProductionPerformance
         const loss = "meanSquaredError";
         const lossSummary = false;
         const existingSavedModel = false;
-        const pathToSaveTrainedModel = "file://myShaleProductionModel";
+        const pathToSaveTrainedModel = "file://myShaleProductionModel-0";
         let pathToExistingSavedTrainedModel = null;
         
         if(existingSavedModel === true)
