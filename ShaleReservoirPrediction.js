@@ -194,7 +194,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 566 and 568
+        //    : e.g. see testProductionPerformace() method below - lines 489 and 493
         
         const innerfileOption = this.fileOption;
         
@@ -388,7 +388,7 @@ class ShaleReservoirProductionPerformance
         
         //training parameters
         const batchSize = 32;
-        const epochs = 5;
+        const epochs = 200;
         const validationSplit = 0;    // for large dataset, set to about 10% (0.1) aside
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
