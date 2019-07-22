@@ -6,7 +6,9 @@
  *
  * @License Ends
  *
+ *
  * ...Ecotert's test_NAPI.cc (released as open-source under MIT License) implements:
+ *
  *
  *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon
  *
@@ -52,7 +54,7 @@
 #include <complex>
 #include <typeinfo>
 #include <thread>
-
+    
 //header file related to NAPI and/or v8 C++ codes
 #include <node.h>
 #include <unistd.h>
@@ -62,7 +64,7 @@
 #include <v8.h>             // v8 library
 
 
-//.... simple method creations in pure C (No C++ syntax) ........................ start
+//.... simple function creations in pure C (No C++ syntax) ........................ start
 double gammaFunction(double a)
 {
   /*
@@ -114,6 +116,7 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
 //.... simple method creations in pure C (No C++ syntax)  ........................ end
         
       
+      
 // Now  call above pure C methods within C++ scope and generate NAPI equivalent
 namespace urppsAddonNAPI
 {
@@ -155,6 +158,7 @@ namespace urppsAddonNAPI
         return fn;
     }
     
+  
     // gammaFunction  as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaFunctionCall(napi_env env, napi_callback_info info)
@@ -203,6 +207,7 @@ namespace urppsAddonNAPI
     }
     
     
+  
     // export local objects (function arguments) i.e. assemble all methods for export inside initNAPI
     // and export created function(s) on test_NAPI.cc source file
     napi_value initNAPI(napi_env env, napi_value exports)
@@ -210,20 +215,20 @@ namespace urppsAddonNAPI
         // note: plain vanila, no error handle
         
         //define all functions to be exported
-        napi_value fn1, fn2, fn2;
+        napi_value fn1, fn2, fn3;
         
         //then declare:
-        //function 2
+        //function 1
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
-        napi_set_named_property(env, exports, "IRR", fn2);
+        napi_set_named_property(env, exports, "IRR", fn1);
         // "IRR": is the name of the exported function
         
-        //function 5
+        //function 2
         napi_create_function(env, "gammaFunction", NAPI_AUTO_LENGTH, gammaFunctionCall, nullptr, &fn2);
         napi_set_named_property(env, exports, "gammaFunction", fn2);
         // "gammaFunction": is the name of the exported function
 
-        //function 6
+        //function 2
         napi_create_function(env, "gammaDistFunction", NAPI_AUTO_LENGTH, gammaDistFunctionCall, nullptr, &fn3);
         napi_set_named_property(env, exports, "gammaDistFunction", fn3);
         // "gammaDistFunction": is the name of the exported function
@@ -235,6 +240,7 @@ namespace urppsAddonNAPI
     //export all method on inits
     NAPI_MODULE(addonTest_NAPI, initNAPI)         // "addonTest": is the name of the exported addon in the target "binding.gyp" file
 }
+
 
 /*
  //After generating addon module with "node-gyp" command, to use any of above functions (e.g. IRR) within Node.js file, do these:
