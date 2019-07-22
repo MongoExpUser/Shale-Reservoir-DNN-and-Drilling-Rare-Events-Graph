@@ -373,9 +373,9 @@ class ShaleReservoirProductionPerformance
     {
         //algorithm, file option, and gpu/cpu option
         const modelingOption = "dnn";
-        const fileOption  = "csv-MongoDB"; // or
-        //const fileOption  = "csv-disk";  // or
-        //const fileOption  = "default";
+        //const fileOption  = "csv-MongoDB"; // or
+        //const fileOption  = "csv-disk";    // or
+        const fileOption  = "default";
         const gpuOption = false;
         
         //import tf & path
