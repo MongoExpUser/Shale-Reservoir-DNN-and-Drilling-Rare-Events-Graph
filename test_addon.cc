@@ -1,4 +1,4 @@
-​/* @License Starts
+/* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
  *
@@ -10,7 +10,7 @@
  * ...Ecotert's test_NAPI.cc (released as open-source under MIT License) implements:
  *
  *
- *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon
+ *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon.
  *
  *
  */
@@ -69,9 +69,9 @@ double gammaFunction(double a)
 {
   /*
     Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
-             In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
+               In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
     Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
-          see Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
+          See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
   */
   
   const double PI = 3.1415926536;
@@ -95,27 +95,35 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
   double increment  = 1E-4;
   double NPVout     = 0;
 
-    do
+  do
+  {
+    guess += increment;
+
+    double NPV = 0;
+
+    for (int i = 0; i < cfaLength ; i++)
     {
-      guess += increment;
-
-      double NPV = 0;
-
-      for (int i = 0; i < cfaLength ; i++)
-      {
-        NPV += cashFlowArray[i] / pow((1 + guess), i);
-        NPVout = NPV;
-      }
-
+      NPV += cashFlowArray[i] / pow((1 + guess), i);
+      NPVout = NPV;
     }
-    while (NPVout > 0);
 
-   return guess * 100;
+  }
+  while (NPVout > 0);
+
+  return guess * 100;
 }
 
+
+
+char *PSD()
+{
+  //a method for returning  a string
+  static char psd [] = "just_a_string_of_non-hashed-password";
+  return psd;
+}
+   
 //.... simple method creations in pure C (No C++ syntax)  ........................ end
         
-      
       
 // Now  call above pure C methods within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
@@ -207,6 +215,21 @@ namespace addonNAPIScope
     }
     
     
+    
+    // PSD as Addon_NAPI: C/C++ implementation within NAPI
+    // arguments are passed with "napi_get_cb_info" function
+    napi_value PSDCall(napi_env env, napi_callback_info info)
+    {
+       //standard C part
+       char *psd = PSD();                                          //pointer (array of chars) = string to consume PSD()
+       
+       //convert data type and return in napi
+       napi_value fn;                                              //napi string to return as psd
+       napi_create_string_utf8(env, psd, NAPI_AUTO_LENGTH, &fn);   //convert to (create) napi string
+       return fn;
+    }
+    
+    
   
     // export local objects (function arguments) i.e. assemble all methods for export inside initNAPI
     // and export created function(s) on test_NAPI.cc source file
@@ -215,7 +238,7 @@ namespace addonNAPIScope
         // note: plain vanila, no error handle
         
         //define all functions to be exported
-        napi_value fn1, fn2, fn3;
+        napi_value fn1, fn2, fn3, fn4;
         
         //then declare:
         //function 1
@@ -228,28 +251,38 @@ namespace addonNAPIScope
         napi_set_named_property(env, exports, "gammaFunction", fn2);
         // "gammaFunction": is the name of the exported function
 
-        //function 2
+        //function 3
         napi_create_function(env, "gammaDistFunction", NAPI_AUTO_LENGTH, gammaDistFunctionCall, nullptr, &fn3);
         napi_set_named_property(env, exports, "gammaDistFunction", fn3);
         // "gammaDistFunction": is the name of the exported function
+        
+         //function 4
+        napi_create_function(env, "PSD", NAPI_AUTO_LENGTH, PSDCall, nullptr, &fn4);
+        napi_set_named_property(env, exports, "PSD", fn4);
+        // "PSD": is the name of the exported function
 
         return exports;
     }
     
     
     //export all method on inits
-    NAPI_MODULE(addonTest_NAPI, initNAPI)         // "addonTest": is the name of the exported addon in the target "binding.gyp" file
+    NAPI_MODULE(addonTest_NAPI, initNAPI)
+    // "addonTest": is the name of the exported addon in the target "binding.gyp" file
 }
 
 
 /*
- //After generating addon module with "node-gyp" command, to use any of above functions (e.g. IRR) within Node.js file, do these:
+
+// After generating addon module with "node-gyp" command, to use any of the
+// above functions (e.g. Gamma Dist. Function & PSD) within Node.js file, do these:
  
- //1. required the addon module
- let  addonTest  =  require('bindings')('addonTest.node');
+//1. required the addon module
+const addonTest = require('bindings')('addonTest.node');
  
- //2. then invoke function on the module
- let Alist = [];
- let IRR = addonTest.IRR(Alist, A.length);
- 
+//2. then invoke function on the module
+const psd = addonTest.PSD();
+const gdf = addonTest.gammaDistFunction(0.05, 0.23);
+console.log("Non-hashed password : ", psd);
+console.log("Gamma Dist Function : ", gdf);
+
 */
