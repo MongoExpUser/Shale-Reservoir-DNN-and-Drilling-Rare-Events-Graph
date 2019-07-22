@@ -1,3 +1,5 @@
+//1. communication option for github
+
 /* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
@@ -238,7 +240,7 @@ class ShaleReservoirCommunication
             
         const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
                
-        if(action === "upload")
+        if(action === "upload-")
         {
             const load = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
                 
@@ -253,9 +255,9 @@ class ShaleReservoirCommunication
             });
         }
                 
-        if(action === "download")
+        if(action === "download-")
         {
-            const download = bucket.openDownloadStreamByName(outputFileName).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
+            const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
                 
             download.on('error', function(error)
             {
