@@ -49,12 +49,13 @@ class MongoDBAccess
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-            
+    
             console.log("NOW connected to MongoDB on: ", mongoose.connection.host);
                     
         }).then(function(callbackDB)
         {
             return callbackDB.connections[0];
+
         }).catch(function(err)
         {
             if(err)
@@ -66,7 +67,7 @@ class MongoDBAccess
         });
     }
     
-    static connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean=true)
+    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean=true)
     {
         const mongoose = require('mongoose');
             
@@ -106,11 +107,10 @@ class MongoDBAccess
         return mongoose.connection;
     }
         
-    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
-                                 connectionBolean, collectionName, inputFilePath, outputFileName, action)
+    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
     {
-        const connectedDB = MongoDBAccess.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, 
-                                                           dbName, sslCertOptions, connectionBolean);
+        const mda = new MongoDBAccess();
+        const connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
             
         connectedDB.then(function()
         {
@@ -126,15 +126,8 @@ class MongoDBAccess
             }
         });
     }
-    
-    downloadCSVFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
-                                connectionBolean, collectionName, outputFileName)
-    {
-        const inputFilePath = null;
-        const action = "download";
-        const mda = new MongoDBAccess;
-        mda.uploadDownloadFileInMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, 
-                                        connectionBolean, collectionName, inputFilePath, outputFileName, action);
-    }
 }
+
+
+
 module.exports = {MongoDBAccess};
