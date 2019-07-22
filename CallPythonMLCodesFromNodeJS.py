@@ -1,4 +1,3 @@
-
 # ****************************************************************************************
 # ****************************************************************************************
 # * @License Starts
@@ -68,7 +67,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
     def setUp(self):
         self.count = 0
 
-    def ttest_sklearn_classification_with_log_regression_gnb_svm_demo(self):
+    def test_sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
       #create training dataset
       x_train, y_train = make_classification(n_samples=20, n_features=6)
@@ -125,7 +124,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       self.count = 0
     # End test_sklearn_classification_with_log_regression_gnb_svm_demo() method
     
-    def ttest_keras_tf_demo_regression(self, input_dimension="one_dimension"):
+    def test_keras_tf_demo_regression(self, input_dimension="one_dimension"):
       """
          Simple keras (with tf) DNN demo for regression problem
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
@@ -206,120 +205,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       self.count = 1
     # End test_keras_tf_demo_regression() method
     
-    def ttest_keras_tf_demo_classification(self):
-      """
-         Simple keras (with tf) DNN demo for classification problem
-         ref: https://www.tensorflow.org/tutorials/keras/basic_classification
-      """
-      
-      #import datasets
-      fashion_mnist = tf.keras.datasets.fashion_mnist
-      (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
-      class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-      
-      #pre-process data
-      plt.figure()
-      plt.imshow(train_images[0])
-      plt.colorbar()
-      plt.grid(False)
-      #plt.show()
-      path_and_file_name = 'ml_plot_keras_minst_classification_pre_process.png'  # path to thesame folder
-      plt.savefig(path_and_file_name, dpi=300)
-      
-      #display all images with class names and verify data format
-      plt.figure(figsize=(10,10))
-      for i in range(25):
-          plt.subplot(5,5,i+1)
-          plt.xticks([])
-          plt.yticks([])
-          plt.grid(False)
-          plt.imshow(train_images[i], cmap=plt.cm.binary)
-          plt.xlabel(class_names[train_labels[i]])
-      #plt.show()
-      path_and_file_name = 'ml_plot_keras_minst_classification_all_images.png'  # path to thesame folder
-      plt.savefig(path_and_file_name, dpi=300)
-      
-      #create model
-      model = tf.keras.Sequential()
-      # refort data: transforms  format of images from 2d-array (of 28 by 28 pixels),
-      # to a 1d-array of 28 * 28 = 784 pixels.
-      model.add(tf.keras.layers.Flatten(input_shape=(28, 28)))
-      model.add(tf.keras.layers.Dense(units=128, activation='relu'))
-      model.add(tf.keras.layers.Dense(units=10, activation='softmax'))
-      #model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
-      model.compile(loss='sparse_categorical_crossentropy', optimizer='rmsprop')
-      
-      # train model with fit().
-      verbose = 1
-      epochs = 50
-      batch_size = 128
-      fit_model = model.fit(train_images, train_labels, epochs=epochs, batch_size=batch_size,  verbose=verbose, validation_data=(test_images, test_labels))
-      
-      #evaluate accuracy
-      # test_loss, test_acc = model.evaluate(test_images, test_labels)
-      #print()
-      #print('Test accuracy:', test_acc)
-      
-      score = model.evaluate(test_images, test_labels)
-      print()
-      print('Test loss:', score*100, " %")
-      
-      # print train and test data
-      print(" train_images -  x: ")
-      #print(train_images)
-      print()
-      print(" train_labels - y: ")
-      #print(train_labels)
-      print()
-      
-      #make predictions
-      predictions = model.predict(test_images)
-      # 1st prediction
-      print("1st Prediction: ", predictions[0])
-      
-      
-      #graph full set of 10 class predictions
-      def plot_image(i, predictions_array, true_label, img):
-        predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
-        plt.grid(False)
-        plt.xticks([])
-        plt.yticks([])
-        plt.imshow(img, cmap=plt.cm.binary)
-        predicted_label = np.argmax(predictions_array)
-        
-        if predicted_label == true_label:
-          color = 'blue'
-        else:
-          color = 'red'
-        
-        plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
-                                      100*np.max(predictions_array),
-                                      class_names[true_label]),
-                                      color=color)
-
-      def plot_value_array(i, predictions_array, true_label):
-        predictions_array, true_label = predictions_array[i], true_label[i]
-        plt.grid(False)
-        plt.xticks([])
-        plt.yticks([])
-        thisplot = plt.bar(range(10), predictions_array, color="#777777")
-        plt.ylim([0, 1])
-        predicted_label = np.argmax(predictions_array)
-        thisplot[predicted_label].set_color('red')
-        thisplot[true_label].set_color('blue')
-        
-        plot_image(i, predictions_array, true_label, img)
-        plot_value_array(i, predictions_array, true_label)
-      
-        #show or save plot
-        #plt.show()
-        path_and_file_name = 'ml_plot_keras_minst_classification_all_images_final.png'  # path to thesame folder
-        plt.savefig(path_and_file_name, dpi=300)
-        
-        self.count = 2
-    # End test_keras_tf_demo_classification() method
-    
-    def ttest_tensorflow_model(self, printing=False):
+    def test_tensorflow_model(self, printing=False):
       """
       Simple tensorflow demo: create and transform TensorFlow's tensor data types
       """
