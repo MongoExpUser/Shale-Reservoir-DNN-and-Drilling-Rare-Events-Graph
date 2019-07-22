@@ -95,8 +95,8 @@ class TestCall
     }
 }
 
-new TestCall(true);
-//new TestCall("doNotTest");
+new TestCall(test=true);
+//new TestCall(test=false);
 
 
 module.exports = {CallPthonMLCodes};
