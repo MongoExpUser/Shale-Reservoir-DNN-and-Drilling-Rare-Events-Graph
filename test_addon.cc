@@ -64,7 +64,8 @@
 #include <v8.h>             // v8 library
 
 
-//.... simple functions creation in pure C (No C++ syntax) ........................ start
+//.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ starts
+
 double gammaFunction(double a)
 {
   /*
@@ -122,7 +123,7 @@ char *PSD()
   return psd;
 }
    
-//.... simple functions creation in pure C (No C++ syntax)  ........................ end
+//.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ ends
         
       
 // now  call above pure C functions within C++ scope and generate NAPI equivalent
