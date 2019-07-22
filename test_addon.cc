@@ -253,7 +253,6 @@ namespace urppsAddonNAPI
  //1. required the addon module
  let  addonTest  =  require('bindings')('addonTest.node');
  
- 
  //2. then invoke method on the module
  let Alist = [];
  let IRR = addonTest.IRR(Alist, A.length);
