@@ -1,8 +1,8 @@
-/* @License Starts
+​/* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Heavy-Oil-PVT-Simulator/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
  *
  * @License Ends
  *
@@ -118,7 +118,7 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
       
       
 // Now  call above pure C methods within C++ scope and generate NAPI equivalent
-namespace urppsAddonNAPI
+namespace addonNAPIScope
 {
     
     // IRR as Addon_NAPI: C/C++ implementation within NAPI
