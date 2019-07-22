@@ -14,7 +14,7 @@
 #
 #  Demonstration of 3 simple ML codes that can be called from Node.js, namely:
 #
-#  1) Simple classifications with sklearn's LogisticRegression, GaussianNB() & SVC (linear & sigmoidal).
+#  1) Simple classifications with sklearn's LogisticRegression, GaussianNB & SVC (linear & sigmoidal).
 #
 #  2) Simple DNN regression with keras (contained inside TensorFlow).
 #
