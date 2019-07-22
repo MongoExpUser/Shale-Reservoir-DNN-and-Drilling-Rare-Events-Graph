@@ -2,7 +2,7 @@
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Heavy-Oil-PVT-Simulator/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
  *
  * @License Ends
  *
