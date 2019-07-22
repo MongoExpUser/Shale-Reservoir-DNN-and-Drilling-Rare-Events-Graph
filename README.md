@@ -25,3 +25,7 @@ Tensorflow v1.14.0 (Python Version)
 Scikit-learn v0.21.2
 
 Keras v2.2.4
+
+C11
+
+C++17
