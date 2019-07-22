@@ -2,15 +2,13 @@
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Heavy-Oil-PVT-Simulator/blob/master/LICENSE
  *
  * @License Ends
  *
- *
  * ...Ecotert's test_NAPI.cc (released as open-source under MIT License) implements:
  *
- *
- *  A simple demonstration of NAPI's functions/methods creation that can be called on Node.js server as simple Addons
+ *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon
  *
  *
  */
@@ -64,9 +62,6 @@
 #include <v8.h>             // v8 library
 
 
-
-//using namespace std;
-
 //.... simple method creations in pure C (No C++ syntax) ........................ start
 double gammaFunction(double a)
 {
@@ -119,10 +114,7 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
 //.... simple method creations in pure C (No C++ syntax)  ........................ end
         
       
-      
-      
 // Now  call above pure C methods within C++ scope and generate NAPI equivalent
-
 namespace urppsAddonNAPI
 {
     
@@ -163,7 +155,6 @@ namespace urppsAddonNAPI
         return fn;
     }
     
-  
     // gammaFunction  as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaFunctionCall(napi_env env, napi_callback_info info)
@@ -212,7 +203,6 @@ namespace urppsAddonNAPI
     }
     
     
-  
     // export local objects (function arguments) i.e. assemble all methods for export inside initNAPI
     // and export created function(s) on test_NAPI.cc source file
     napi_value initNAPI(napi_env env, napi_value exports)
@@ -246,14 +236,13 @@ namespace urppsAddonNAPI
     NAPI_MODULE(addonTest_NAPI, initNAPI)         // "addonTest": is the name of the exported addon in the target "binding.gyp" file
 }
 
-
 /*
- to use any above functions (e.g. IRR) within Node.js
+ //After generating addon module with "node-gyp" command, to use any of above functions (e.g. IRR) within Node.js file, do these:
  
  //1. required the addon module
  let  addonTest  =  require('bindings')('addonTest.node');
  
- //2. then invoke method on the module
+ //2. then invoke function on the module
  let Alist = [];
  let IRR = addonTest.IRR(Alist, A.length);
  
