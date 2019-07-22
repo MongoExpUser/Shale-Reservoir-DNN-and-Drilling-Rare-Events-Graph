@@ -64,7 +64,7 @@
 #include <v8.h>             // v8 library
 
 
-//.... simple function creations in pure C (No C++ syntax) ........................ start
+//.... simple functions creation in pure C (No C++ syntax) ........................ start
 double gammaFunction(double a)
 {
   /*
@@ -122,10 +122,10 @@ char *PSD()
   return psd;
 }
    
-//.... simple method creations in pure C (No C++ syntax)  ........................ end
+//.... simple functions creation in pure C (No C++ syntax)  ........................ end
         
       
-// Now  call above pure C methods within C++ scope and generate NAPI equivalent
+// now  call above pure C functions within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
 {
     
@@ -231,16 +231,15 @@ namespace addonNAPIScope
     
     
   
-    // export local objects (function arguments) i.e. assemble all methods for export inside initNAPI
-    // and export created function(s) on test_NAPI.cc source file
+    // export local objects (function arguments) i.e. assemble all functions for export inside initNAPI on test_NAPI.cc source file
     napi_value initNAPI(napi_env env, napi_value exports)
     {
         // note: plain vanila, no error handle
         
-        //define all functions to be exported
+        //declare all functions to be exported
         napi_value fn1, fn2, fn3, fn4;
         
-        //then declare:
+        //then define:
         //function 1
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
         napi_set_named_property(env, exports, "IRR", fn1);
@@ -273,7 +272,7 @@ namespace addonNAPIScope
 
 /*
 
-// After generating addon module with "node-gyp" command, to use any of the
+//After generating addon module with "node-gyp" command, to use any of the
 // above functions (e.g. Gamma Dist. Function & PSD) within Node.js file, do these:
  
 //1. required the addon module
