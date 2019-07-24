@@ -128,6 +128,4 @@ class MongoDBAccess
     }
 }
 
-
-
 module.exports = {MongoDBAccess};
