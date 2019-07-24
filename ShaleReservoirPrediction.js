@@ -362,7 +362,7 @@ class ShaleReservoirProductionPerformance
                 {
                     if(error)
                     {
-                        console.log(error, " : TensorFlow error successfully intercepted and handled.");
+                        console.log(error, " : TensorFlow error successfully intercepted.");
                     }
                 });
             }
@@ -495,10 +495,9 @@ class ShaleReservoirProductionPerformance
                                                 numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
                                                 pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                 }());
+              
             }
-            
-            
-            if(fileOption === "csv-MongoDB")
+            else if(fileOption === "csv-MongoDB")
             {
                 //....1. initiliaze model with datasets
                     
@@ -535,7 +534,6 @@ class ShaleReservoirProductionPerformance
                         var pathTofileX = mongoDBDataFileXList[i];
                         //read csv files, in pathTofileX, into JS arrays
                         xOutput = src.readInputCSVfile(pathTofileX);
-                        
                         
                         //download csv file (Y-file) from MongoDB database
                         const downloadY = bucket.openDownloadStreamByName(inputFilePathY).pipe(fs.createWriteStream(outputFileNameY), {'bufferSize': 1024});
