@@ -12,7 +12,6 @@
  *
  */
 
-
 // c standard header files
 #include <assert.h>
 #include <ctype.h>
@@ -59,7 +58,6 @@
 #include <uv.h>             // libuv library
 #include <node_api.h>       // napi library
 #include <v8.h>             // v8 library
-
 
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ starts
 
