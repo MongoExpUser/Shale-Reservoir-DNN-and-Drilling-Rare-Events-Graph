@@ -14,7 +14,7 @@ JavaScript ES6
 
 Node v12.7.0
 
-Tensorflow.js v1.2.3 (JavaScript/Node.js Version)
+Tensorflow.js v1.2.5 (JavaScript/Node.js Version)
 
 Python-shell.js v1.0.7
 
