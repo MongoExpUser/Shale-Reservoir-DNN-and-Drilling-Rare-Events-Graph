@@ -32,18 +32,15 @@
 
 try:
     """ import commonly used modules and check for import error """
-    
     import sys
     import sklearn
-    import unittest
-    import numpy as np
     import tensorflow as tf
     from pprint import pprint
-    from unittest import TestCase
     from sklearn.base import clone
     import matplotlib.pyplot as plt
     import tensorflow.keras as keras
     from scipy.ndimage import convolve
+    from unittest import TestCase, main
     from sklearn.pipeline import Pipeline
     from sklearn.svm import SVC, LinearSVC
     from sklearn.naive_bayes import GaussianNB
@@ -57,6 +54,7 @@ try:
     from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
     from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor, export_graphviz, plot_tree
     from sklearn.cluster import AgglomerativeClustering, Birch, DBSCAN, KMeans, FeatureAgglomeration, SpectralClustering
+    import numpy as np, scipy as sci, matplotlib as mpl, pandas as pd, skimage as skim, statsmodels as statmod, cython as cyn
 except(ImportError) as err:
     print(str(err))
 
@@ -285,4 +283,4 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       
 # End CallPythonMLCodesFromNodeJS() class
 
-unittest.main(verbosity=2)
+main(verbosity=2)
