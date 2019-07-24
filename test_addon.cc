@@ -65,13 +65,12 @@
 
 double gammaFunction(double a)
 {
-  /*
-    Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
-               In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
-    Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
-          See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
-  */
-  
+  //a method for calculating gamma function
+  //Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
+  //           In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
+  //Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
+  //      See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
+
   const double PI = 3.1415926536;
   const double E  = 2.718281828459045;
   double coefficient6 = pow( ( 1 + 1/(12*a*a) + 1/(1440*pow(a,4)) + 239/(362880*pow(a,6)) ), a);   //Nemes_6 coefficient
@@ -80,8 +79,11 @@ double gammaFunction(double a)
 
 double gammaDistFunction(double a, double x)
 {
-  //Reference: NIST/SEMATECH e-Handbook of statistical methods,
-  //http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm. Retrieved January 5, 2016.
+  //a method for calculating gamma distribution function
+  //Reference: NIST/SEMATECH e-Handbook of statistical methods. 
+  //         : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm. 
+  //         : Retrieved January 5, 2016.
+    
   return (  ( pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x)  );
 }
 
@@ -250,7 +252,8 @@ namespace addonNAPIScope
         return exports;
     }
     
-    //export all functions on inits: "addonTest": is the name of the exported addon in the target "binding.gyp" file
+    //export all functions as Addons on inits.
+    //note: "addonTest": is the name of the exported addon module inside the target "binding.gyp" file
     NAPI_MODULE(addonTest_NAPI, initNAPI)
 }
 
@@ -268,3 +271,4 @@ namespace addonNAPIScope
     console.log("Non-hashed password : ", psd);
     console.log("Gamma Dist Function : ", gdf);
 */
+
