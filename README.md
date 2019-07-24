@@ -12,7 +12,7 @@ This repo is based on the following languages, frameworks and packages' versions
 
 JavaScript ES6
 
-Node v12.6.0
+Node v12.7.0
 
 Tensorflow.js v1.2.3 (JavaScript/Node.js Version)
 
