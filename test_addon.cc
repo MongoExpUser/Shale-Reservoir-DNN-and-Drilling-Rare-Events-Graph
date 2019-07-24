@@ -6,12 +6,9 @@
  *
  * @License Ends
  *
- *
  * ...Ecotert's test_NAPI.cc (released as open-source under MIT License) implements:
  *
- *
  *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon.
- *
  *
  */
 
@@ -99,7 +96,6 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
   do
   {
     guess += increment;
-
     double NPV = 0;
 
     for (int i = 0; i < cfaLength ; i++)
@@ -107,7 +103,6 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
       NPV += cashFlowArray[i] / pow((1 + guess), i);
       NPVout = NPV;
     }
-
   }
   while (NPVout > 0);
 
@@ -129,7 +124,6 @@ char *PSD()
 // now  call above pure C functions within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
 {
-    
     // IRR as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value IRRCall(napi_env env, napi_callback_info info)
@@ -215,8 +209,6 @@ namespace addonNAPIScope
         return fn;
     }
     
-    
-    
     // PSD as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value PSDCall(napi_env env, napi_callback_info info)
@@ -230,9 +222,7 @@ namespace addonNAPIScope
        return fn;
     }
     
-    
-  
-    // export local objects (function arguments) i.e. assemble all functions for export inside initNAPI on test_NAPI.cc source file
+    // export local objects (function arguments) i.e. assemble all functions for export inside initNAPI
     napi_value initNAPI(napi_env env, napi_value exports)
     {
         // note: plain vanila, no error handle
@@ -241,48 +231,40 @@ namespace addonNAPIScope
         napi_value fn1, fn2, fn3, fn4;
         
         //then define:
-        //function 1
+        // function 1: "IRR" is the name of the exported function
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
         napi_set_named_property(env, exports, "IRR", fn1);
-        // "IRR": is the name of the exported function
         
-        //function 2
+        // function 2: "gammaFunction" is the name of the exported function
         napi_create_function(env, "gammaFunction", NAPI_AUTO_LENGTH, gammaFunctionCall, nullptr, &fn2);
         napi_set_named_property(env, exports, "gammaFunction", fn2);
-        // "gammaFunction": is the name of the exported function
-
-        //function 3
+        
+        //function 3: "gammaDistFunction" is the name of the exported function
         napi_create_function(env, "gammaDistFunction", NAPI_AUTO_LENGTH, gammaDistFunctionCall, nullptr, &fn3);
         napi_set_named_property(env, exports, "gammaDistFunction", fn3);
-        // "gammaDistFunction": is the name of the exported function
         
-         //function 4
+        //function 4: // "PSD" is the name of the exported function
         napi_create_function(env, "PSD", NAPI_AUTO_LENGTH, PSDCall, nullptr, &fn4);
         napi_set_named_property(env, exports, "PSD", fn4);
-        // "PSD": is the name of the exported function
-
+       
         return exports;
     }
     
-    
-    //export all method on inits
+    //export all functions on inits: "addonTest": is the name of the exported addon in the target "binding.gyp" file
     NAPI_MODULE(addonTest_NAPI, initNAPI)
-    // "addonTest": is the name of the exported addon in the target "binding.gyp" file
 }
 
 
 /*
+    //After generating addon module with "node-gyp" command, to use any of the
+    // above functions (e.g. Gamma Dist. Function & PSD) within Node.js module/file, do these:
 
-//After generating addon module with "node-gyp" command, to use any of the
-// above functions (e.g. Gamma Dist. Function & PSD) within Node.js file, do these:
- 
-//1. required the addon module
-const addonTest = require('bindings')('addonTest.node');
- 
-//2. then invoke function on the module
-const psd = addonTest.PSD();
-const gdf = addonTest.gammaDistFunction(0.05, 0.23);
-console.log("Non-hashed password : ", psd);
-console.log("Gamma Dist Function : ", gdf);
+    //1. required the addon module
+    const addonTest = require('bindings')('addonTest.node');
 
+    //2. then invoke function on the module
+    const psd = addonTest.PSD();
+    const gdf = addonTest.gammaDistFunction(0.05, 0.23);
+    console.log("Non-hashed password : ", psd);
+    console.log("Gamma Dist Function : ", gdf);
 */
