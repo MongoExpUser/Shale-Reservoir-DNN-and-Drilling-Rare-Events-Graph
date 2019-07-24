@@ -65,10 +65,10 @@
 
 double gammaFunction(double a)
 {
-  //a method for calculating gamma function
-  //Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
+  // a method for calculating gamma function
+  // Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
   //           In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
-  //Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
+  // Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
   //      See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
 
   const double PI = 3.1415926536;
@@ -79,17 +79,17 @@ double gammaFunction(double a)
 
 double gammaDistFunction(double a, double x)
 {
-  //a method for calculating gamma distribution function
-  //Reference: NIST/SEMATECH e-Handbook of statistical methods. 
-  //         : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm. 
-  //         : Retrieved January 5, 2016.
+  // a method for calculating gamma distribution function
+  // Reference: NIST/SEMATECH e-Handbook of statistical methods. 
+  //          : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm. 
+  //          : Retrieved January 5, 2016.
     
   return (  ( pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x)  );
 }
 
 double IRR(double cashFlowArray [], int cashFlowArrayLength)
 {
-  //a method for calculating internal rate of return (IRR)
+  // a method for calculating internal rate of return (IRR)
   int cfaLength     = cashFlowArrayLength;
   double guess      = 1E-1;
   double increment  = 1E-4;
@@ -115,7 +115,7 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
 
 char *PSD()
 {
-  //a method for returning  a string
+  // a method for returning  a string
   static char psd [] = "just_a_string_of_non-hashed-password";
   return psd;
 }
@@ -130,13 +130,13 @@ namespace addonNAPIScope
     // arguments are passed with "napi_get_cb_info" function
     napi_value IRRCall(napi_env env, napi_callback_info info)
     {
-        //napi part: call arguments
+        // napi part: call arguments
         size_t argc = 1;                                            // size/length of argument
         napi_value argv[1];                                         // arguments as an array
         napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr); // convert argvs to napi values
         napi_handle_scope scope;                                    // variable to handle scope
        
-        //standard C part - 1: convert data types
+        // standard C part - 1: convert data types
         unsigned int length;                                        // length of array in C data type
         napi_get_array_length(env, argv[0], &length);               // convert napi value to C value -1 (option b: read length from single array argv[0])
         double cfa[length];                                         // array (for cfa) in C data type
@@ -154,7 +154,7 @@ namespace addonNAPIScope
             napi_close_handle_scope(env, scope);                    // close scope
         }
         
-        //standard C part - 2: then invoke c function
+        // standard C part - 2: then invoke c function
         double outputData = IRR(cfa, length);                       //call IRR C function
 
         //convert data type back and return in napi
@@ -168,19 +168,19 @@ namespace addonNAPIScope
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaFunctionCall(napi_env env, napi_callback_info info)
     {
-        //napi part: call arguments
+        // napi part: call arguments
         size_t argc = 1;
         napi_value argv[1];
         napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr); // convert argvs to napi values
           
-        //standard C part - 1: convert data types
+        // standard C part - 1: convert data types
         double a;                                                   // 1st arg in C data type
         napi_get_value_double(env, argv[0], &a);                    // convert napi values to C values -1 (argv[0])
        
-        //standard C part - 2: then invoke c function
+        // standard C part - 2: then invoke c function
         double outputData = gammaFunction(a);                       // call gammaFunction(a) C function
         
-        //convert data type back and return in napi
+        // convert data type back and return in napi
         napi_value fn;
         napi_create_double(env, outputData, &fn);                   // convert to (create) napi value/double
         return fn;
@@ -191,21 +191,21 @@ namespace addonNAPIScope
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaDistFunctionCall(napi_env env, napi_callback_info info)
     {
-        //napi part: call arguments
+        // napi part: call arguments
         size_t argc = 2;
         napi_value argv[2];
         napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);// convert argvs to napi values
            
-        //standard C part - 1: convert data types
+        // standard C part - 1: convert data types
         double a;                                                   // 1st arg in C data type
         double x;                                                   // 2nd arg in C data type
         napi_get_value_double(env, argv[0], &a);                    // convert napi values to C values -1 (argv[0])
         napi_get_value_double(env, argv[1], &x);                    // convert napi values to C values -2 (argv[1])
         
-        //standard C part - 2: then invoke c function
+        // standard C part - 2: then invoke c function
         double outputData = gammaDistFunction(a, x);                // call gammaDistFunction(a, x) C function
       
-        //convert data type back and return in napi
+        // convert data type back and return in napi
         napi_value fn;
         napi_create_double(env, outputData, &fn);                   // convert to (create) napi value/double
         return fn;
@@ -215,10 +215,10 @@ namespace addonNAPIScope
     // arguments are passed with "napi_get_cb_info" function
     napi_value PSDCall(napi_env env, napi_callback_info info)
     {
-       //standard C part
+       // standard C part
        char *psd = PSD();                                          //pointer (array of chars) = string to consume PSD()
        
-       //convert data type and return in napi
+       // convert data type and return in napi
        napi_value fn;                                              //napi string to return as psd
        napi_create_string_utf8(env, psd, NAPI_AUTO_LENGTH, &fn);   //convert to (create) napi string
        return fn;
@@ -229,10 +229,10 @@ namespace addonNAPIScope
     {
         // note: plain vanila, no error handle
         
-        //declare all functions to be exported
+        // declare all functions to be exported
         napi_value fn1, fn2, fn3, fn4;
         
-        //then define:
+        // then define the finctions
         // function 1: "IRR" is the name of the exported function
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
         napi_set_named_property(env, exports, "IRR", fn1);
@@ -241,28 +241,28 @@ namespace addonNAPIScope
         napi_create_function(env, "gammaFunction", NAPI_AUTO_LENGTH, gammaFunctionCall, nullptr, &fn2);
         napi_set_named_property(env, exports, "gammaFunction", fn2);
         
-        //function 3: "gammaDistFunction" is the name of the exported function
+        // function 3: "gammaDistFunction" is the name of the exported function
         napi_create_function(env, "gammaDistFunction", NAPI_AUTO_LENGTH, gammaDistFunctionCall, nullptr, &fn3);
         napi_set_named_property(env, exports, "gammaDistFunction", fn3);
         
-        //function 4: // "PSD" is the name of the exported function
+        // function 4: "PSD" is the name of the exported function
         napi_create_function(env, "PSD", NAPI_AUTO_LENGTH, PSDCall, nullptr, &fn4);
         napi_set_named_property(env, exports, "PSD", fn4);
        
         return exports;
     }
     
-    //export all functions as Addons on inits.
-    //note: "addonTest": is the name of the exported addon module inside the target "binding.gyp" file
+    // export all functions as Addons on inits.
+    // note: "addonTest": is the name of the exported addon module inside the target "binding.gyp" file
     NAPI_MODULE(addonTest_NAPI, initNAPI)
 }
 
 
 /*
-    //After generating addon module with "node-gyp" command, to use any of the
-    // above functions (e.g. Gamma Dist. Function & PSD) within Node.js module/file, do these:
+    // after generating addon module with "node-gyp" command, to use any of the
+    // above functions (e.g. PSD & Gamma Dist Function) within Node.js codes, do these:
 
-    //1. required the addon module
+    //1. required/import the addon module
     const addonTest = require('bindings')('addonTest.node');
 
     //2. then invoke function on the module
@@ -271,4 +271,5 @@ namespace addonNAPIScope
     console.log("Non-hashed password : ", psd);
     console.log("Gamma Dist Function : ", gdf);
 */
+
 
