@@ -32,8 +32,10 @@
 
 try:
     """ import commonly used modules and check for import error """
-    import sys
-    import sklearn
+    import sys, cython
+    import numpy as np
+    import scipy, pandas
+    import sklearn, skimage
     import tensorflow as tf
     from pprint import pprint
     from sklearn.base import clone
@@ -54,7 +56,7 @@ try:
     from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
     from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor, export_graphviz, plot_tree
     from sklearn.cluster import AgglomerativeClustering, Birch, DBSCAN, KMeans, FeatureAgglomeration, SpectralClustering
-    import numpy as np, scipy as sci, matplotlib as mpl, pandas as pd, skimage as skim, statsmodels as statmod, cython as cyn
+    import statsmodels as sm, statsmodels.api as smbase, statsmodels.formula.api as smform, statsmodels.graphics.api as smgraph
 except(ImportError) as err:
     print(str(err))
 
