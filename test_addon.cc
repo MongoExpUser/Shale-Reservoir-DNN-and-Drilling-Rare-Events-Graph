@@ -269,5 +269,3 @@ namespace addonNAPIScope
     console.log("Non-hashed password : ", psd);
     console.log("Gamma Dist Function : ", gdf);
 */
-
-
