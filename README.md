@@ -10,7 +10,7 @@ It can also be adapted for use in the browser with the tfjs-vis library enabled 
 
 This repo is based on the following languages, frameworks and packages' versions:
 
-JavaScript ES6
+JavaScript ES6+
 
 Node v12.7.0
 
