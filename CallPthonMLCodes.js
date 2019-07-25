@@ -20,7 +20,6 @@
  *
  */
 
-
 class CallPthonMLCodes
 {
     constructor(pyVersion='3.7')
