@@ -230,7 +230,8 @@ namespace addonNAPIScope
         // declare all functions to be exported
         napi_value fn1, fn2, fn3, fn4;
         
-        // then define the finctions
+        // then define the functions
+      
         // function 1: "IRR" is the name of the exported function
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
         napi_set_named_property(env, exports, "IRR", fn1);
