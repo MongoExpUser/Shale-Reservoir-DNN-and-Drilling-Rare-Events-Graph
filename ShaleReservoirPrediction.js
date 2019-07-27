@@ -576,12 +576,12 @@ class ShaleReservoirProductionPerformance
                     });
                     
                 }).catch(function(error)
-                    {
+                {
                     if(error)
                     {
                         console.log(error, ": Uploading file error successfully intercepted.");
                     }
-                });
+               });
             }
         }
     }
