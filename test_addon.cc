@@ -256,7 +256,6 @@ namespace addonNAPIScope
     NAPI_MODULE(addonTest_NAPI, initNAPI)
 }
 
-
 /*
     // after generating addon module with "node-gyp" command, to use any of the
     // above functions (e.g. PSD & Gamma Dist Function) within Node.js codes, do these:
