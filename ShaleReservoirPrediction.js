@@ -118,7 +118,6 @@ class ShaleReservoirProductionPerformance
         //print "test" output: expected vs actual
         if(_y.dtype === "float32")
         {
-            
             console.log("Expected 'test' output result in Tensor format: ");
             console.log("======================================================");
             console.log(_y.name);
@@ -126,7 +125,7 @@ class ShaleReservoirProductionPerformance
             _y.print(false);
             console.log("======================================================");
         }
-        //
+        
         console.log("Actual 'test' output result in Tensor format:   ")
         console.log("======================================================");
         if(_y.dtype === "float32")
@@ -194,7 +193,7 @@ class ShaleReservoirProductionPerformance
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 489 and 493
+        //    : e.g. see testProductionPerformace() method below - lines 487 and 491
         
         const innerfileOption = this.fileOption;
         
