@@ -24,7 +24,7 @@
  *     c) Oil in Mbbls
  * 4) Target inputs:
  *     a) Richness/OHIP-Related: so, phi, h, TOC
- *     b) Reservoir Flow Capacity-Related, Permeability and pore size (micro, nano and pico)
+ *     b) Reservoir Flow Capacity-Related: Permeability and pore size (micro, nano and pico)
  *     c) Drive-Related: TVD/pressure,
  *     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
  *     e) Fluid Type-Related: SG/Density/API, Ro/maturity level,
