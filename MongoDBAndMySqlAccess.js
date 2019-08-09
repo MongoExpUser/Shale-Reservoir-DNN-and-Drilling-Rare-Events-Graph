@@ -145,7 +145,8 @@ class MongoDBAndMySqlAccess
         {
             if(connectionError)
             {
-                console.log("Connection Error: ", connectionError)
+                console.log("Connection Error: ", connectionError);
+                return;
             }
                       
             console.log("Connection to MySql server is established......");
@@ -154,14 +155,14 @@ class MongoDBAndMySqlAccess
             //then confirm table(s) exit(s) within database, and create table is desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
             {
-                
                 var mySqlQuery = "SHOW TABLES"
                 
                 nodeJSConnect.query(mySqlQuery, function (confirmTableError, result)
                 {
                     if(confirmTableError)
                     {
-                        console.log("Table confirmation Error: ", confirmTableError)
+                        console.log("Table confirmation Error: ", confirmTableError);
+                        return;
                     }
                       
                     console.log(result);
@@ -176,7 +177,8 @@ class MongoDBAndMySqlAccess
                         {
                             if(createTableError)
                             {
-                                console.log("Table creation Error: ", createTableError)
+                                console.log("Table creation Error: ", createTableError);
+                                return;
                             }
                             
                             console.log(result);
