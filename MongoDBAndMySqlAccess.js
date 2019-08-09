@@ -132,14 +132,14 @@ class MongoDBAndMySqlAccess
     {
         const fs = require('fs');
         const mysql = require('mysql');
-        const options = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+        const mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
                          password: connectionOptions.password, database: connectionOptions.database,
                          ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert},
                          debug: connectionOptions.debug
                         }
                         
         //create connection (authenticate) to database
-        var nodeJSConnect = mysql.createConnection({options});
+        var nodeJSConnect = mysql.createConnection(mysqlOptions);
                 
         nodeJSConnect.connect(function(connectError)
         {
