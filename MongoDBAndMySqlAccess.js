@@ -7,19 +7,20 @@
  * @License Ends
  *
  *
- * ...Ecotert's MongoDBAccess.js (released as open-source under MIT License) implements:
+ * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
  *
- * Relevant access to MongoDB database using:
+ * Relevant access to MongoDB and MySQL databases using:
  *
- * (1) MongoDB native driver
- * (2) Mongoose ORM
- * (3) Other objects from "ShaleReservoirCommunication.js"
- * (4) etc.
+ * (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
+ * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
+ * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
+ * (4) Other objects from "ShaleReservoirCommunication.js"
+ * (5) etc.
  *
  */
 
 
-class MongoDBAccess
+class MongoDBAndMySqlAccess
 {
     constructor()
     {
@@ -37,8 +38,7 @@ class MongoDBAccess
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName)
         const connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
                              ssl: true, sslValidate: true, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key,
-                             sslCert: sslCertOptions.cert
-                            };
+                             sslCert: sslCertOptions.cert, poolSize: 20};
              
         //connect (authenticate) to database using promise
         mongoose.connect(uri, connOptions, function(err)
@@ -114,7 +114,7 @@ class MongoDBAccess
             
         connectedDB.then(function()
         {
-            const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
+            //const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
             const src = new ShaleReservoirCommunication();
             src.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
 
@@ -126,7 +126,70 @@ class MongoDBAccess
             }
         });
     }
+    
+    
+    connectToMySQL(dbUserName, dbUserPassword, dbDomainURL, sslCertOptions, connectionOptions, dbName, confirmDatabase=false, createTable=false)
+    {
+        const fs = require('fs');
+        const mysql = require('mysql');
+        const options = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+                         password: connectionOptions.password, database: connectionOptions.database,
+                         ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert},
+                         debug: connectionOptions.debug
+                        }
+                        
+             
+        //create connection (authenticate) to database
+        var nodeJSConnect = mysql.createConnection({options});
+                
+        nodeJSConnect.connect(function(connectError)
+        {
+            if(connectionError)
+            {
+                console.log("Connection Error: ", connectionError)
+            }
+                      
+            console.log("Connection to MySql server is established......");
+            
+            
+            //then confirm table(s) exit(s) within database, and create table is desired, using callbacks/asynchronously
+            if(confirmDatabase === true && dbName !== null)
+            {
+                
+                var mySqlQuery = "SHOW TABLES"
+                
+                nodeJSConnect.query(mySqlQuery, function (confirmTableError, result)
+                {
+                    if(confirmTableError)
+                    {
+                        console.log("Table confirmation Error: ", confirmTableError)
+                    }
+                      
+                    console.log(result);
+                    console.log("Confirmed TABLE(S) exist within " dbName);
+                    
+                    
+                    //create a new table
+                    if(createTable === true)
+                    {
+                        var mySqlQuery = "CREATE TABLE reservoirType (dominantMineral VARCHAR(255), fluidContent VARCHAR(255))";
+                        
+                        nodeJSConnect.query(mySqlQuery, function (createTableError, result)
+                        {
+                            if(createTableError)
+                            {
+                                console.log("Table creation Error: ", createTableError)
+                            }
+                            
+                            console.log(result);
+                            console.log("TABLE successfully created");
+                        });
+                    }
+                });
+            }
+        });
+    }
 }
 
-module.exports = {MongoDBAccess};
+module.exports = {MongoDBAndMySqlAccess};
 
