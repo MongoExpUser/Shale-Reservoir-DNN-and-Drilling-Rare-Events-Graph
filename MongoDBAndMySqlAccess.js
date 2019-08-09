@@ -151,7 +151,6 @@ class MongoDBAndMySqlAccess
                       
             console.log("Connection to MySql server is established......");
             
-            
             //then confirm table(s) exit(s) within database, and create table is desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
             {
