@@ -114,7 +114,7 @@ class MongoDBAndMySqlAccess
             
         connectedDB.then(function()
         {
-            //const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
+            const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
             const src = new ShaleReservoirCommunication();
             src.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
 
@@ -138,7 +138,6 @@ class MongoDBAndMySqlAccess
                          debug: connectionOptions.debug
                         }
                         
-             
         //create connection (authenticate) to database
         var nodeJSConnect = mysql.createConnection({options});
                 
@@ -167,7 +166,6 @@ class MongoDBAndMySqlAccess
                       
                     console.log(result);
                     console.log("Confirmed TABLE(S) exist within " dbName);
-                    
                     
                     //create a new table
                     if(createTable === true)
