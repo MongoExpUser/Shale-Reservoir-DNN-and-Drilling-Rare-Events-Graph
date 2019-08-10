@@ -105,7 +105,6 @@ class MongoDBAndMySqlAccess
         });
     }
     
-    
     connectToMySQL(dbUserName, dbUserPassword, dbDomainURL, sslCertOptions, connectionOptions, dbName, confirmDatabase=false, createTable=false)
     {
         const fs = require('fs');
@@ -169,6 +168,3 @@ class MongoDBAndMySqlAccess
 }
 
 module.exports = {MongoDBAndMySqlAccess};
-
-
-
