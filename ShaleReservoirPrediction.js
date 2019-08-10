@@ -443,9 +443,9 @@ class ShaleReservoirProductionPerformance
         let yOutput = undefined;
         
         //load/require/import relevant modules
-        const ShaleReservoirCommunication  = require('./MongoDBAccess.js').MongoDBAccess; 
+        const MongoDBAndMySqlAccess  = require('./MongoDBAndMySqlAccess.js').MongoDBAndMySqlAccess; 
         const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
-        const mda = new MongoDBAccess();
+        const mda = new MongoDBAndMySqlAccess();
         const src = new ShaleReservoirCommunication();
         const srpp = new ShaleReservoirProductionPerformance();
         
