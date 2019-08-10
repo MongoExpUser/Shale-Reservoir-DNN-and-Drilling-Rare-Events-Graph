@@ -1,25 +1,3 @@
-/* @License Starts
- *
- * Copyright © 2015 - present. MongoExpUser
- *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
- *
- * @License Ends
- *
- *
- * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
- *
- * Relevant access to MongoDB and MySQL databases using:
- *
- * (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
- * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
- * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- * (4) Other objects from "ShaleReservoirCommunication.js"
- * (5) etc.
- *
- */
-
-
 class MongoDBAndMySqlAccess
 {
     constructor()
@@ -89,7 +67,7 @@ class MongoDBAndMySqlAccess
         if(mongoose.connection.readyState === 0 && connectionBolean === true)
         {
             //is closed/disconnected & want to connect
-            MongoDBAccess.connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions);
+            MongoDBAndMySqlAccess.connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions);
         }
                 
         process.on('SIGINT', function()
@@ -109,7 +87,7 @@ class MongoDBAndMySqlAccess
         
     uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
     {
-        const mda = new MongoDBAccess();
+        const mda = new MongoDBAndMySqlAccess();
         const connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
             
         connectedDB.then(function()
@@ -191,4 +169,6 @@ class MongoDBAndMySqlAccess
 }
 
 module.exports = {MongoDBAndMySqlAccess};
+
+
 
