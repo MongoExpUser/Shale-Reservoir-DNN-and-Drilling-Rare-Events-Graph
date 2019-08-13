@@ -16,7 +16,7 @@
  *
  *  3) NAPI's JavaScript Object creation
  *
- *  All NAPI's creation in item 1, 2 and 3 above can be called on Node.js server as simple Addon.
+ *  All NAPI's creation in items 1, 2 and 3 above can be called on Node.js server as simple Addon.
  *
  */
 
@@ -93,7 +93,7 @@ char *PSD()
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ............................ ends
 
 
-//.... implementation of the above pure C function within C++ class i.s. as OOP............................... starts
+//.... implementation of the above pure C functions and other functions within C++ class i.s. as OOP.......... starts
 class TestNAPI
 {
   
@@ -161,10 +161,10 @@ class TestNAPI
     }
     
 };
-//.... implementation of the above pure C function within C++ class i.s. as OOP...................................... ends
+//.... implementation of the above pure C functions and other functions within C++ class i.s. as OOP.......... ends
 
 
-//.... implementation of C++ function to invoke methods on the above TestNAPI class ................................. starts
+//.... implementation of C++ function to invoke methods on the above TestNAPI class .......................... starts
 int testNAPIStuff()
 {
   cout<< "" << endl;
@@ -180,7 +180,7 @@ int testNAPIStuff()
 	cout<< "" << endl;
 	return 0;
 }
-//.... implementation of C++ function to invoke methods on above TestNAPI class ................................. ends
+//.... implementation of C++ function to invoke methods on the above TestNAPI class .......................... ends
     
 
 
