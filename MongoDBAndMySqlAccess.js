@@ -1,10 +1,29 @@
+/* @License Starts
+ *
+ * Copyright © 2015 - present. MongoExpUser
+ *
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ *
+ * @License Ends
+ *
+ *
+ * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
+ *
+ * Relevant access to MongoDB and MySQL databases and file i/o using:
+ *
+ * (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
+ * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
+ * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
+ * (4) Node.js native stream modules and MongoDB's GridFS
+ *
+ */
+
 class MongoDBAndMySqlAccess
 {
     constructor()
     {
-        return null;
+      return null;
     }
-  
     static connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions)
     {
         const mongoose = require('mongoose');
@@ -84,28 +103,8 @@ class MongoDBAndMySqlAccess
              
         return mongoose.connection;
     }
-        
-    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
-    {
-        const mda = new MongoDBAndMySqlAccess();
-        const connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
-            
-        connectedDB.then(function()
-        {
-            const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
-            const src = new ShaleReservoirCommunication();
-            src.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
-
-        }).catch(function(error)
-        {
-            if(error)
-            {
-                console.log(error, " : Uploading file error successfully intercepted and handled.");
-            }
-        });
-    }
     
-    connectToMySQL(dbUserName, dbUserPassword, dbDomainURL, sslCertOptions, connectionOptions, dbName, confirmDatabase=false, createTable=false)
+    connectToMySQL(sslCertOptions, connectionOptions, confirmDatabase=false, createTable=false)
     {
         const fs = require('fs');
         const mysql = require('mysql');
@@ -118,7 +117,7 @@ class MongoDBAndMySqlAccess
         //create connection (authenticate) to database
         var nodeJSConnect = mysql.createConnection(mysqlOptions);
                 
-        nodeJSConnect.connect(function(connectError)
+        nodeJSConnect.connect(function(connectionError)
         {
             if(connectionError)
             {
@@ -162,6 +161,65 @@ class MongoDBAndMySqlAccess
                         });
                     }
                 });
+            }
+        });
+    }
+        
+    uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
+    {
+        // method to upload and download file from MongoDB database in GridFS format
+        
+        const mongodb         = require('mongodb');
+        const fs              = require('fs');
+        const assert          = require('assert');
+        const db              = connectedDB.db;
+            
+        const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
+               
+        if(action === "upload")
+        {
+            const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
+                
+            upload.on('error', function(error)
+            {
+                assert.ifError(error);
+            });
+                
+            upload.on('finish', function()
+            {
+                console.log('Done uploading' + inputFilePath + '!');
+            });
+        }
+                
+        if(action === "download")
+        {
+            const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
+                
+            download.on('error', function(error)
+            {
+                assert.ifError(error);
+            });
+                
+            download.on('finish', function()
+            {
+                console.log('Done downloading ' + outputFileName + '!');
+            });
+        }
+    }
+    
+    uploadDownloadFileInMongoDB (dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean, collectionName, inputFilePath, outputFileName, action)
+    {
+        const mda = new MongoDBAndMySqlAccess();
+        const connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
+            
+        connectedDB.then(function()
+        {
+            mda.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
+        }).catch(function(error)
+        {
+            if(error)
+            {
+                console.log(error, " : Uploading file error successfully intercepted and handled.");
             }
         });
     }
