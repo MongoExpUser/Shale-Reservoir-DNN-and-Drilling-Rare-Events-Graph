@@ -6,58 +6,23 @@
  *
  * @License Ends
  *
- * ...Ecotert's test_NAPI.cc (released as open-source under MIT License) implements:
+ * ...Ecotert's test_addon.cc (released as open-source under MIT License) implements:
  *
- *  A simple demonstration of NAPI's functions creation that can be called on Node.js server as a simple Addon.
+ *  A simple demonstration of NAPI's functions and JS Object creation that can be called on Node.js server as a simple Addon.
  *
  */
 
-// c standard header files
-#include <assert.h>
-#include <ctype.h>
-#include <errno.h>
-#include <float.h>
-#include <iso646.h>
-#include <limits.h>
-#include <locale.h>
-#include <math.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <wchar.h>
-#include <wctype.h>
-#include <fenv.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <tgmath.h>
-#include <stdalign.h>
-#include <stdnoreturn.h>
-#include <uchar.h>
-#include <pthread.h>
-#define complex _Complex
-    
-//c++ standard header files
 #include <iostream>
-#include <istream>
-#include <ostream>
-#include <new>
-#include <complex>
-#include <typeinfo>
-#include <thread>
-    
-//header file related to NAPI and/or v8 C++ codes
+#include <cmath>
 #include <node.h>
-#include <unistd.h>
+#include <node_api.h>
 #include <node_buffer.h>
-#include <uv.h>             // libuv library
-#include <node_api.h>       // napi library
-#include <v8.h>             // v8 library
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+
 
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ starts
 
@@ -72,17 +37,17 @@ double gammaFunction(double a)
   const double PI = 3.1415926536;
   const double E  = 2.718281828459045;
   double coefficient6 = pow( ( 1 + 1/(12*a*a) + 1/(1440*pow(a,4)) + 239/(362880*pow(a,6)) ), a);   //Nemes_6 coefficient
-  return (  ( pow( (a / E), a ) ) * ( sqrt(2 * PI / a) ) * ( coefficient6 )  );
+  return (( pow( (a / E), a ) ) * ( sqrt(2 * PI / a) ) * ( coefficient6 ));
 }
 
 double gammaDistFunction(double a, double x)
 {
   // a method for calculating gamma distribution function
-  // Reference: NIST/SEMATECH e-Handbook of statistical methods. 
-  //          : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm. 
+  // Reference: NIST/SEMATECH e-Handbook of statistical methods.
+  //          : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm.
   //          : Retrieved January 5, 2016.
     
-  return (  ( pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x)  );
+  return (( pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x));
 }
 
 double IRR(double cashFlowArray [], int cashFlowArrayLength)
@@ -109,8 +74,6 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
   return guess * 100;
 }
 
-
-
 char *PSD()
 {
   // a method for returning  a string
@@ -119,12 +82,12 @@ char *PSD()
 }
    
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ ends
-        
-      
-// now  call above pure C functions within C++ scope and generate NAPI equivalent
+
+
+// now  call above pure C functions and C/C++ function implementation within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
 {
-    // IRR as Addon_NAPI: C/C++ implementation within NAPI
+    // IRR function as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value IRRCall(napi_env env, napi_callback_info info)
     {
@@ -162,7 +125,7 @@ namespace addonNAPIScope
     }
     
   
-    // gammaFunction  as Addon_NAPI: C/C++ implementation within NAPI
+    // gammaFunction  function as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaFunctionCall(napi_env env, napi_callback_info info)
     {
@@ -185,7 +148,7 @@ namespace addonNAPIScope
     }
     
     
-    // gammaDistFunction  as Addon_NAPI: C/C++ implementation within NAPI
+    // gammaDistFunction function as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value gammaDistFunctionCall(napi_env env, napi_callback_info info)
     {
@@ -209,20 +172,20 @@ namespace addonNAPIScope
         return fn;
     }
     
-    // PSD as Addon_NAPI: C/C++ implementation within NAPI
+    // PSD function as Addon_NAPI: C/C++ implementation within NAPI
     // arguments are passed with "napi_get_cb_info" function
     napi_value PSDCall(napi_env env, napi_callback_info info)
     {
        // standard C part
-       char *psd = PSD();                                          //pointer (array of chars) = string to consume PSD()
+       char *psd = PSD();                                           //pointer (array of chars) = string to consume PSD()
        
        // convert data type and return in napi
-       napi_value fn;                                              //napi string to return as psd
-       napi_create_string_utf8(env, psd, NAPI_AUTO_LENGTH, &fn);   //convert to (create) napi string
+       napi_value fn;                                               //napi string to return as psd
+       napi_create_string_utf8(env, psd, NAPI_AUTO_LENGTH, &fn);    //convert to (create) napi string
        return fn;
     }
     
-    // export local objects (function arguments) i.e. assemble all functions for export inside initNAPI
+    // export function(s), class(es) and JavaScript object(s) => i.e. assemble all for export inside initNAPI
     napi_value initNAPI(napi_env env, napi_value exports)
     {
         // note: plain vanila, no error handle
@@ -230,8 +193,7 @@ namespace addonNAPIScope
         // declare all functions to be exported
         napi_value fn1, fn2, fn3, fn4;
         
-        // then define the functions
-      
+        // then define the finctions
         // function 1: "IRR" is the name of the exported function
         napi_create_function(env, "IRR", NAPI_AUTO_LENGTH, IRRCall, nullptr, &fn1);
         napi_set_named_property(env, exports, "IRR", fn1);
@@ -247,14 +209,35 @@ namespace addonNAPIScope
         // function 4: "PSD" is the name of the exported function
         napi_create_function(env, "PSD", NAPI_AUTO_LENGTH, PSDCall, nullptr, &fn4);
         napi_set_named_property(env, exports, "PSD", fn4);
-       
+        
+        // JavaScript object 1: creating and exporting js objects equivalent
+        static char strMessage [] = "test_object_in_JavaScript";              //c/c++ datatype
+        int intValue =  789;                                                  //c/c++ datatype
+        double doubleSum = double (intValue) + 21;                            //c/c++ datatype
+        bool booleanConfirm = true;                                           //c/c++ datatype
+        napi_value message, valueOne, valueTwo, confirm, obj;                 //napi data types: string, int32, double, boolean, object & function
+        napi_create_string_utf8(env, strMessage, NAPI_AUTO_LENGTH, &message); //create napi_value for message
+        napi_create_double(env, doubleSum, &valueOne);                        //create napi_value for valueOne
+        napi_create_int32(env, intValue, &valueTwo);                          //create napi_value for valueTwo
+        napi_get_boolean(env, booleanConfirm, &confirm);                      //create napi_value for confirm
+        napi_create_object(env, &obj);                                        //create napi_value for object => equivalent to-> const obj = {} in JavaScript
+        //add properties (napi_values) to object
+        napi_set_named_property(env, obj, "myMessage", message);              //obj.myValue   = value    => 793
+        napi_set_named_property(env, obj, "myValueOne", valueOne);            //obj.myValue   = value    => 793
+        napi_set_named_property(env, obj, "myValueTwo", valueTwo);            //obj.myValue   = value    => 793
+        napi_set_named_property(env, obj, "myConfirm", confirm);              //obj.myConfirm = confirm  => true
+        
+        //export created object as addon
+        napi_set_named_property(env, exports, "obj", obj);                    //"obj": is the name of the exported object
+        
         return exports;
     }
     
-    // export all functions as Addons on inits.
+    // export all function(s) and class(es) as Addons on inits.
     // note: "addonTest": is the name of the exported addon module inside the target "binding.gyp" file
     NAPI_MODULE(addonTest_NAPI, initNAPI)
 }
+
 
 /*
     // after generating addon module with "node-gyp" command, to use any of the
@@ -264,8 +247,17 @@ namespace addonNAPIScope
     const addonTest = require('bindings')('addonTest.node');
 
     //2. then invoke function on the module
+    const addonTest = require('bindings')('addonTest.node');
     const psd = addonTest.PSD();
     const gdf = addonTest.gammaDistFunction(0.05, 0.23);
+    const obj = addonTest.obj;
+            
+    //3. show results
     console.log("Non-hashed password : ", psd);
     console.log("Gamma Dist Function : ", gdf);
+    console.log("obj structure: ", obj);
+    console.log("obj's myMessage : ", obj.myMessage);
+    console.log("obj's myValueOne : ", obj.myValueOne);
+    console.log("obj's myValueTwo : ", obj.myValueTwo);
+    console.log("obj's myconfirm : ", obj.myConfirm);
 */
