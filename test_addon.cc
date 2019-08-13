@@ -84,7 +84,7 @@ char *PSD()
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ ends
 
 
-// now  call above pure C functions and C/C++ function implementation within C++ scope and generate NAPI equivalent
+// now  call above pure C functions implementation within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
 {
     // IRR function as Addon_NAPI: C/C++ implementation within NAPI
