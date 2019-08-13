@@ -185,7 +185,7 @@ namespace addonNAPIScope
        return fn;
     }
     
-    // export function(s), class(es) and JavaScript object(s) => i.e. assemble all for export inside initNAPI
+    // export function(s) and JavaScript object(s) => i.e. assemble all for export inside initNAPI
     napi_value initNAPI(napi_env env, napi_value exports)
     {
         // note: plain vanila, no error handle
