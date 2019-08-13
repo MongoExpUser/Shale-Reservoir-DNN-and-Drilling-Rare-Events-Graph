@@ -8,9 +8,18 @@
  *
  * ...Ecotert's test_addon.cc (released as open-source under MIT License) implements:
  *
- *  A simple demonstration of NAPI's functions and JS Object creation that can be called on Node.js server as a simple Addon.
+ *  A simple demonstration of:
+ *
+ *  1) NAPI's functions creation,
+ *
+ *  2) NAPI's function creation to invoke methods on C++ class and
+ *
+ *  3) NAPI's JavaScript Object creation
+ *
+ *  All NAPI's creation in item 1, 2 and 3 above can be called on Node.js server as simple Addon.
  *
  */
+
 
 #include <iostream>
 #include <cmath>
@@ -24,7 +33,7 @@ using std::endl;
 using std::string;
 
 
-//.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ starts
+//.... simple functions creation in pure C (No C++-related indentifier or syntax) ............................ starts
 
 double gammaFunction(double a)
 {
@@ -81,10 +90,101 @@ char *PSD()
   return psd;
 }
    
-//.... simple functions creation in pure C (No C++-related indentifier or syntax) ........................ ends
+//.... simple functions creation in pure C (No C++-related indentifier or syntax) ............................ ends
 
 
-// now  call above pure C functions implementation within C++ scope and generate NAPI equivalent
+//.... implementation of the above pure C function within C++ class i.s. as OOP............................... starts
+class TestNAPI
+{
+  
+  //constructor(s)
+  public:
+    TestNAPI(double value)
+    {
+      valueOne = value;
+    }
+    
+    TestNAPI() { }
+    
+  protected:
+    double valueOne;
+    
+  public:
+    int thisValue;
+    
+    
+    double getValueOne()
+    {
+      return valueOne;
+    }
+    
+    double gammaFunction(double a)
+    {
+      const double PI = 3.1415926536;
+      const double E  = 2.718281828459045;
+      double coefficient6 = pow( ( 1 + 1/(12*a*a) + 1/(1440*pow(a,4)) + 239/(362880*pow(a,6)) ), a);   //Nemes_6 coefficient
+      return (( pow( (a / E), a ) ) * ( sqrt(2 * PI / a) ) * ( coefficient6 ));
+    }
+    
+    double gammaDistFunction(double a, double x)
+    {
+      return ((pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x));
+    }
+    
+    double IRR(double cashFlowArray [], int cashFlowArrayLength)
+    {
+      int cfaLength     = cashFlowArrayLength;
+      double guess      = 1E-1;
+      double increment  = 1E-4;
+      double NPVout     = 0;
+    
+      do
+      {
+        guess += increment;
+        double NPV = 0;
+    
+        for (int i = 0; i < cfaLength ; i++)
+        {
+          NPV += cashFlowArray[i] / pow((1 + guess), i);
+          NPVout = NPV;
+        }
+      }
+      while (NPVout > 0);
+    
+      return guess * 100;
+    }
+    
+    char *PSD()
+    {
+      static char psd [] = "just_a_string_of_non-hashed-password";
+      return psd;
+    }
+    
+};
+//.... implementation of the above pure C function within C++ class i.s. as OOP...................................... ends
+
+
+//.... implementation of C++ function to invoke methods on the above TestNAPI class ................................. starts
+int testNAPIStuff()
+{
+  cout<< "" << endl;
+  cout<<"..........Begin TestNAPI-class call.........................." << endl;
+  TestNAPI testnapi = TestNAPI(7.53);
+  cout<< "ValueOne test: ";
+  cout << testnapi.getValueOne() << endl;
+  cout<< "Gamma Dist Function test: ";
+  cout << testnapi.gammaFunction(0.23) << endl;
+  cout << "Non-hashed password test: ";
+  cout << testnapi.PSD() << endl;
+	cout<<"..........Ended TestNAPI-class call.........................." << endl;
+	cout<< "" << endl;
+	return 0;
+}
+//.... implementation of C++ function to invoke methods on above TestNAPI class ................................. ends
+    
+
+
+//... now  call above pure C functions and C++ function implementations within C++ scope and generate NAPI equivalent
 namespace addonNAPIScope
 {
     // IRR function as Addon_NAPI: C/C++ implementation within NAPI
@@ -180,8 +280,22 @@ namespace addonNAPIScope
        char *psd = PSD();                                           //pointer (array of chars) = string to consume PSD()
        
        // convert data type and return in napi
-       napi_value fn;                                               //napi string to return as psd
+       napi_value fn;
        napi_create_string_utf8(env, psd, NAPI_AUTO_LENGTH, &fn);    //convert to (create) napi string
+       return fn;
+    }
+    
+    
+    // testNAPIStuff function as Addon_NAPI: C/C++ implementation within NAPI
+    // arguments are passed with "napi_get_cb_info" function
+    napi_value testNAPIStuffCall(napi_env env, napi_callback_info info)
+    {
+       // standard C++ part
+       int testnapistuff = testNAPIStuff();                           //testNAPIStuff() C++ function
+       
+       // convert data type and return in napi
+       napi_value fn;
+       napi_create_int32(env, testnapistuff, &fn);                    //convert to (create) napi value/int
        return fn;
     }
     
@@ -191,7 +305,7 @@ namespace addonNAPIScope
         // note: plain vanila, no error handle
         
         // declare all functions to be exported
-        napi_value fn1, fn2, fn3, fn4;
+        napi_value fn1, fn2, fn3, fn4, fn5;
         
         // then define the finctions
         // function 1: "IRR" is the name of the exported function
@@ -209,6 +323,10 @@ namespace addonNAPIScope
         // function 4: "PSD" is the name of the exported function
         napi_create_function(env, "PSD", NAPI_AUTO_LENGTH, PSDCall, nullptr, &fn4);
         napi_set_named_property(env, exports, "PSD", fn4);
+        
+        // function 5: "testNAPIStuff" is the name of the exported function
+        napi_create_function(env, "testNAPIStuff", NAPI_AUTO_LENGTH, testNAPIStuffCall, nullptr, &fn5);
+        napi_set_named_property(env, exports, "testNAPIStuff", fn5);
         
         // JavaScript object 1: creating and exporting js objects equivalent
         static char strMessage [] = "test_object_in_JavaScript";              //c/c++ datatype
@@ -246,7 +364,7 @@ namespace addonNAPIScope
     //1. required/import the addon module
     const addonTest = require('bindings')('addonTest.node');
 
-    //2. then invoke function on the module
+    //2. then invoke functions on the module
     const addonTest = require('bindings')('addonTest.node');
     const psd = addonTest.PSD();
     const gdf = addonTest.gammaDistFunction(0.05, 0.23);
@@ -260,4 +378,8 @@ namespace addonNAPIScope
     console.log("obj's myValueOne : ", obj.myValueOne);
     console.log("obj's myValueTwo : ", obj.myValueTwo);
     console.log("obj's myconfirm : ", obj.myConfirm);
+    
+    //4. invoke methods on the class(TestNAPI), developed in C++
+    const tns = addonTest.testNAPIStuff();
+    
 */
