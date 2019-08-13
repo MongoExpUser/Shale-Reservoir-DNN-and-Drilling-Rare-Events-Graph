@@ -176,9 +176,9 @@ int testNAPIStuff()
   cout << testnapi.gammaFunction(0.23) << endl;
   cout << "Non-hashed password test: ";
   cout << testnapi.PSD() << endl;
-	cout<<"..........Ended TestNAPI-class call.........................." << endl;
-	cout<< "" << endl;
-	return 0;
+  cout<<"..........Ended TestNAPI-class call.........................." << endl;
+  cout<< "" << endl;
+  return 0;
 }
 //.... implementation of C++ function to invoke methods on the above TestNAPI class .......................... ends
     
