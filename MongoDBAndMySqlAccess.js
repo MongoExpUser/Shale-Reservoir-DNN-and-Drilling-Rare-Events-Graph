@@ -142,7 +142,7 @@ class MongoDBAndMySqlAccess
                     }
                       
                     console.log(result);
-                    console.log("Confirmed TABLE(S) exist within " dbName);
+                    console.log("Confirmed TABLE(S) exist within ", dbName);
                     
                     //create a new table
                     if(createTable === true)
