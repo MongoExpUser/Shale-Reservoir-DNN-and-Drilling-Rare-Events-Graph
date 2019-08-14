@@ -113,9 +113,10 @@ class MongoDBAndMySqlAccess
                               ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert},
                               debug: connectionOptions.debug
                              }
+        
         //get database name
         const dbName = String(connectionOptions.database);
-                        
+        
         //create connection (authenticate) to database
         const nodeJSConnect = mysql.createConnection(mysqlOptions);
                 
