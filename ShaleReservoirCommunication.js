@@ -242,14 +242,14 @@ class ShaleReservoirCommunication
                
         if(action === "upload")
         {
-            const load = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
+            const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
                 
-            load.on('error', function(error)
+            upload.on('error', function(error)
             {
                 assert.ifError(error);
             });
                 
-            load.on('finish', function()
+            upload.on('finish', function()
             {
                 console.log('Done uploading' + inputFilePath + '!');
             });
