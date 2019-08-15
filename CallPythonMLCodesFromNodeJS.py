@@ -20,7 +20,7 @@
 #
 #  3) Simple creation and transformation of tensor data type with TensorFlow (Python version).
 #
-#  4) simple creation & of sqlite db for modeling drilling rear events (anomalies) detection and prevention.
+#  4) simple creation of sqlite db for modeling drilling rear events (anomalies) detection and prevention.
 #
 #
 #
