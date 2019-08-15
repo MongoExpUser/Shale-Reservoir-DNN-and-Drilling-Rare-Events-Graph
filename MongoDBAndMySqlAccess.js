@@ -46,11 +46,9 @@ class MongoDBAndMySqlAccess
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-    
-            console.log("NOW connected to MongoDB on: ", mongoose.connection.host);
-                    
         }).then(function(callbackDB)
         {
+            console.log("Finally connected to MongoDB on:", mongoose.connection.host);
             return callbackDB.connections[0];
 
         }).catch(function(err)
@@ -86,6 +84,7 @@ class MongoDBAndMySqlAccess
         if(mongoose.connection.readyState === 0 && connectionBolean === true)
         {
             //is closed/disconnected & want to connect
+            console.log("No connection to MongoDB is detected. Now connecting ......");
             MongoDBAndMySqlAccess.connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions);
         }
                 
@@ -109,18 +108,17 @@ class MongoDBAndMySqlAccess
         const fs = require('fs');
         const mysql = require('mysql');
         const mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
-                              password: connectionOptions.password, database: connectionOptions.database,
+                              password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
                               ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert},
-                              debug: connectionOptions.debug
                              }
         
         //get database name
         const dbName = String(connectionOptions.database);
         
         //create connection (authenticate) to database
-        const nodeJSConnect = mysql.createConnection(mysqlOptions);
+        const nodeJSConnection = mysql.createConnection(mysqlOptions);
                 
-        nodeJSConnect.connect(function(connectionError)
+        nodeJSConnection.connect(function(connectionError)
         {
             if(connectionError)
             {
@@ -135,7 +133,7 @@ class MongoDBAndMySqlAccess
             {
                 var mySqlQuery = "SHOW TABLES"
                 
-                nodeJSConnect.query(mySqlQuery, function (confirmTableError, result)
+                nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
                 {
                     if(confirmTableError)
                     {
@@ -151,7 +149,7 @@ class MongoDBAndMySqlAccess
                     {
                         var mySqlQuery = "CREATE TABLE reservoirType (dominantMineral VARCHAR(255), fluidContent VARCHAR(255))";
                         
-                        nodeJSConnect.query(mySqlQuery, function (createTableError, result)
+                        nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                         {
                             if(createTableError)
                             {
@@ -161,6 +159,8 @@ class MongoDBAndMySqlAccess
                             
                             console.log(result);
                             console.log("TABLE successfully created");
+                            
+                            nodeJSConnection.end();
                         });
                     }
                 });
