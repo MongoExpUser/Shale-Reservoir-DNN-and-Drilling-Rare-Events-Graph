@@ -278,7 +278,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
     # End test_check_packages_version() method
       
     def test_sqlite_drilling_rear_events_database(self):
-      # connect to "drilling_rear_events.db" or create a new "drilling_rear_events.db, f it does not exit
+      # connect to "drilling_rear_events.db" or create a new "drilling_rear_events.db, if it does not exit
       connection = sqlite3.connect('drilling_rear_events.db')
       py_connection = connection.cursor()
       
