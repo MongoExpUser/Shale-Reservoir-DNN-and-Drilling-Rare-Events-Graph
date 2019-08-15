@@ -73,7 +73,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         self.count = 0
     # End setUp() method
         
-    def ttest_sklearn_classification_with_log_regression_gnb_svm_demo(self):
+    def test_sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
       #create training dataset
       x_train, y_train = make_classification(n_samples=20, n_features=6)
@@ -130,7 +130,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       self.count = 0
     # End test_sklearn_classification_with_log_regression_gnb_svm_demo() method
     
-    def ttest_keras_tf_demo_regression(self, input_dimension="one_dimension"):
+    def test_keras_tf_demo_regression(self, input_dimension="one_dimension"):
       """
          Simple keras (with tf) DNN demo for regression problem
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
@@ -211,7 +211,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       self.count = 1
     # End test_keras_tf_demo_regression() method
     
-    def ttest_tensorflow_model(self, printing=False):
+    def test_tensorflow_model(self, printing=False):
       """
       Simple tensorflow demo: create and transform TensorFlow's tensor data types
       """
