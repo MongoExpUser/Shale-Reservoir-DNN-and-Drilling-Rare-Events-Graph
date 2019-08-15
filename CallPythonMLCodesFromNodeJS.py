@@ -1,3 +1,4 @@
+
 # ****************************************************************************************
 # ****************************************************************************************
 # * @License Starts
@@ -18,6 +19,9 @@
 #  2) Simple DNN regression with keras (contained inside TensorFlow).
 #
 #  3) Simple creation and transformation of tensor data type with TensorFlow (Python version).
+#
+#  4) simple creation & of sqlite db for modeling drilling rear events (anomalies) detection and prevention.
+#
 #
 #
 #  The motivation, for calling of machine learning codes written in Python from Node.js,
