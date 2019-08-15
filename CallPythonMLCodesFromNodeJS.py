@@ -262,7 +262,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       if printing:
         print_tensor(transformed_tensor)
         
-      self.count = 3
+      self.count = 2
     # End test_ensorflow_model(printing=False) method
     
     def test_check_packages_versions(self):
@@ -272,13 +272,9 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       print()
       print("Using Keras version", tf.keras.__version__, "on this system.")
       print()
-      
-      self.count = 4
+
+      self.count = 3
     # End test_check_packages_version() method
-    
-    def test_summary(self):
-      assert(2 == 2)
-      self.count = 5
       
     def tearDown(self):
       print("Successful test", self.count + 1, ".....ok")
