@@ -32,6 +32,7 @@
 
 try:
     """ import commonly used modules and check for import error """
+    import sqlite3
     import sys, cython
     import numpy as np
     import scipy, pandas
@@ -59,15 +60,16 @@ try:
     import statsmodels as sm, statsmodels.api as smbase, statsmodels.formula.api as smform, statsmodels.graphics.api as smgraph
 except(ImportError) as err:
     print(str(err))
+    #return
 
-class CallPythonMLCodesFromNodeJS(unittest.TestCase):
+class CallPythonMLCodesFromNodeJS(TestCase):
     """ Machine learning tests """
-    
     
     def setUp(self):
         self.count = 0
-
-    def test_sklearn_classification_with_log_regression_gnb_svm_demo(self):
+    # End setUp() method
+        
+    def ttest_sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
       #create training dataset
       x_train, y_train = make_classification(n_samples=20, n_features=6)
@@ -124,7 +126,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       self.count = 0
     # End test_sklearn_classification_with_log_regression_gnb_svm_demo() method
     
-    def test_keras_tf_demo_regression(self, input_dimension="one_dimension"):
+    def ttest_keras_tf_demo_regression(self, input_dimension="one_dimension"):
       """
          Simple keras (with tf) DNN demo for regression problem
          Topolopgy    : 5-10-10-10-1 units as 5-layers (3 hidden).
@@ -205,7 +207,7 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       self.count = 1
     # End test_keras_tf_demo_regression() method
     
-    def test_tensorflow_model(self, printing=False):
+    def ttest_tensorflow_model(self, printing=False):
       """
       Simple tensorflow demo: create and transform TensorFlow's tensor data types
       """
@@ -272,13 +274,48 @@ class CallPythonMLCodesFromNodeJS(unittest.TestCase):
       print()
       print("Using Keras version", tf.keras.__version__, "on this system.")
       print()
-
       self.count = 3
     # End test_check_packages_version() method
       
+    def test_sqlite_drilling_rear_events_database(self):
+      # connect to "drilling_rear_events.db" or create a new "drilling_rear_events.db, f it does not exit
+      connection = sqlite3.connect('drilling_rear_events.db')
+      py_connection = connection.cursor()
+      
+      # create table and save (commit) the changes
+      py_connection.execute("""CREATE TABLE Drilling_Parameters (SERIAL_NO int AUTO_INCREMENT PRIMARY KEY,
+                             ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, TQR_Ibft real, TVD_ft real, 
+                             MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, GR_api real,
+                             CALIPER_HOLE_SIZE_inches real, TIME_ymd_hms timedate)""");
+      connection.commit()
+      
+      # insert a row of data
+      py_connection.execute("INSERT INTO Drilling_Parameters VALUES (1, 3, 5, 100, 35.14, 2, 3, 5, 100, 35.14, 10, 12, 2, 3, 5, 100,35.14)")
+      connection.commit()
+      
+      # insert a new row of data, for the indicated column, note that other columns are null/None
+      py_connection.execute("INSERT INTO Drilling_Parameters (MUD_FLOW_RATE_gpm, GR_api) VALUES (30, 90)");
+      connection.commit()
+    
+      # show/view all record values in the table after updating
+      record = py_connection.execute("SELECT * FROM Drilling_Parameters")
+      print()
+      print()
+      print("All Records in the Drilling_Parameters TABLE, ")
+      for row in record:
+        print(row)
+      print()
+      connection.commit()
+      
+      # the close connection
+      connection.close()
+      
+      self.count = 4
+    # Endtest_sqlite_store() method
+      
     def tearDown(self):
       print("Successful test", self.count + 1, ".....ok")
-      
+    # End tearDown() method
 # End CallPythonMLCodesFromNodeJS() class
 
 main(verbosity=2)
