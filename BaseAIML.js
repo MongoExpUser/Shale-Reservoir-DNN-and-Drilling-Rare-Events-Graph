@@ -443,11 +443,11 @@ class BaseAIML
         let mongoDBDataFileY = "_eagle_ford_Y.csv";
         let mongoDBDataFileXList = [];
         let mongoDBDataFileYList = [];
-        let mongoDBCollectionName = "Company";
-        let dbUserName = "username";
-        let dbUserPassword = "password";
-        var dbDomainURL = "domain.com";
-        let dbName = "databaseName";
+        let mongoDBCollectionName = "mongoDBCollectionName";
+        let dbUserName = "dbUserName";
+        let dbUserPassword = "dbUserPassword";
+        var dbDomainURL = "dbDomain.com";
+        let dbName = "dbName";
         let connectedDB = undefined;
         let sslCertOptions  = {ca: fs.readFileSync('/path_to/ca.pem'), key: fs.readFileSync('/path_to/mongodb.pem'),cert: fs.readFileSync('/path_to/mongodb.pem')};
         let connectionBolean = true;
