@@ -282,30 +282,65 @@ class CallPythonMLCodesFromNodeJS(TestCase):
     # End test_check_packages_version() method
       
     def test_sqlite_drilling_rear_events_database(self):
+      #new lines for visual display formattig
+      print()
+      print()
+      
+      #error handler
+      print()
+      def handle_non_unique_error(err):
+        confirm = "UNIQUE constraint failed: Drilling_Parameters.SERIAL_NO"
+        if (str(err) == confirm) is True:
+          msg = "non-unique SERIAL_NO, cannot INSERT a new row of data."
+          print(msg) 
+        
       # connect to "drilling_rear_events.db" or create a new "drilling_rear_events.db, if it does not exit
       connection = sqlite3.connect('drilling_rear_events.db')
       py_connection = connection.cursor()
       
-      # create table and save (commit) the changes
-      py_connection.execute("""CREATE TABLE Drilling_Parameters (SERIAL_NO int AUTO_INCREMENT PRIMARY KEY,
-                             ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, TQR_Ibft real, TVD_ft real, 
-                             MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, GR_api real,
-                             CALIPER_HOLE_SIZE_inches real, TIME_ymd_hms timedate)""");
+      
+      # 1. create Drilling_Parameters TABLE, if it does not exist and save (commit) the changes
+      py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_Parameters (SERIAL_NO int AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE,
+                               ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, TQR_Ibft real, TVD_ft real, 
+                               MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, 
+                               GR_api real, CALIPER_HOLE_SIZE_inches real, SHOCK_g, BHA_TYPE text, TIME_ymd_hms text, 
+                               CHECK (0>=GR_api<= 150))
+                            """)
       connection.commit()
       
-      # insert a row of data
-      py_connection.execute("INSERT INTO Drilling_Parameters VALUES (1, 3, 5, 100, 35.14, 2, 3, 5, 100, 35.14, 10, 12, 2, 3, 5, 100,35.14)")
-      connection.commit()
+      # 2. insert a row of data for all columns
+      try:
+        py_connection.execute("""INSERT INTO Drilling_Parameters (SERIAL_NO, ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, 
+                                 SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg, MUD_WEIGHT_sg, MUD_VISC_cp, 
+                                 MUD_FLOW_RATE_gpm, GR_api, CALIPER_HOLE_SIZE_inches, SHOCK_g, BHA_TYPE, TIME_ymd_hms) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 (1, 3, 5, 100, 35.14, 2, 3, 5, 100, 35.14, 10, 12, 2, 3, 100, 12, 160, 'slick', str(datetime.utcnow()))
+                              )
+        connection.commit()
+      except(sqlite3.IntegrityError) as err:
+        handle_non_unique_error(err)
       
-      # insert a new row of data, for the indicated column, note that other columns are null/None
-      py_connection.execute("INSERT INTO Drilling_Parameters (MUD_FLOW_RATE_gpm, GR_api) VALUES (30, 90)");
+      # 3. insert new rows of data, for the indicated columns, note that other columns are null/None, expect where DEFAULT and NOT NULL are specfied
+      try:
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE) VALUES (4, 30, 1.18, 90, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE) VALUES (6, 32, 1.18, 92, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE) VALUES (8, 29, 1.18, 80, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE) VALUES (10, 39, 1.18, 30, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE) VALUES (16, 35, 1.18, 32, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_Parameters (SERIAL_NO, GR_api, BHA_TYPE, TIME_ymd_hms) VALUES (?, ?, ?, ?)", (18, 35, 'slick', str(datetime.utcnow())))
+        connection.commit()
+      except(sqlite3.IntegrityError) as err:
+         handle_non_unique_error(err)
+      
+      # 4. update selected columns of the table at specified row
+      py_connection.execute("UPDATE Drilling_Parameters SET ROP_fph=50, RPM_rpm=20, MD_ft=6708, INC_deg=40.1 WHERE SERIAL_NO=10")
+      py_connection.execute("UPDATE Drilling_Parameters SET ROP_fph=50, RPM_rpm=29, MD_ft=8000, INC_deg=42.5 WHERE SERIAL_NO=6")
       connection.commit()
     
-      # show/view all record values in the table after updating
+      # 5. show/view all record values in the table 
       record = py_connection.execute("SELECT * FROM Drilling_Parameters")
       print()
-      print()
-      print("All Records in the Drilling_Parameters TABLE, ")
+      print("All Records in the Drilling_Parameters TABLE.")
       for row in record:
         print(row)
       print()
