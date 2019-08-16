@@ -44,6 +44,7 @@
  *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
+ *
  */
 
 class BaseAIML
