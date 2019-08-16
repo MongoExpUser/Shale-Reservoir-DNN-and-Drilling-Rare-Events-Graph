@@ -14,7 +14,7 @@
  * (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
  * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
  * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- * (4) Node.js native stream modules and MongoDB's GridFS
+ * (4) Node.js native stream modles and MongoDB's GridFS
  *
  */
 
