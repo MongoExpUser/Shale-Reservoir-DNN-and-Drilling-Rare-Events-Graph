@@ -1,5 +1,3 @@
-//1. communication option for github
-
 /* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
@@ -23,7 +21,7 @@
  */
  
  
-class ShaleReservoirCommunication
+class Communication
 {
     constructor()
     {
@@ -108,7 +106,7 @@ class ShaleReservoirCommunication
             {
                 output.shift();
             }
-            
+         
             return output;
         }
              
