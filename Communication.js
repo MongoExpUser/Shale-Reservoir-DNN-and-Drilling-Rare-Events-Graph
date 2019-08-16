@@ -7,10 +7,10 @@
  * @License Ends
  *
  *
- * ...Ecotert's ShaleReservoirCommuication.js (released as open-source under MIT License) implements:
+ * ...Ecotert's Communication.js (released as open-source under MIT License) implements:
  *
  *
- * Relevant communications/data transmission methods - e.g.:
+ * Relevant communication/data transmission methods - e.g.:
  *
  * (1) read/write files on disk
  * (2) connect to MongoDB
