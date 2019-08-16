@@ -7,12 +7,25 @@
  * @License Ends
  *
  *
- * ...Ecotert's ShaleReservoirPrediction.js (released as open-source under MIT License) implements:
+ * ...Ecotert's BaseAIML.js (released as open-source under MIT License) implements helper
+ *    helper functions and dependent application(s) as follows:
  *
- * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+ * (A)
  *
- * This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
- * It is based on Node.js with option to use either gpu or cpu.
+ * Foundational helper functions for classification and regression including:
+ *
+ * 1) Modules loading
+ * 2) Results predictions, based on already saved and newly trained model
+ * 3) Formatting and printing of results to console in easily readable format
+ * 4) Run duration timing
+ *
+ *
+ * (B)
+ *
+ * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN) for
+ * hydraulically-fractured-driven  production performance prediction of shale reservoirs in the cloud.
+ *
+ * This implementation is based on Node.js with option to use either gpu or cpu.
  * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
  * Objectives:
@@ -33,7 +46,7 @@
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  */
 
-class ShaleReservoirProductionPerformance
+class BaseAIML
 {
     constructor(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
     {
@@ -118,6 +131,7 @@ class ShaleReservoirProductionPerformance
         //print "test" output: expected vs actual
         if(_y.dtype === "float32")
         {
+            
             console.log("Expected 'test' output result in Tensor format: ");
             console.log("======================================================");
             console.log(_y.name);
@@ -125,7 +139,7 @@ class ShaleReservoirProductionPerformance
             _y.print(false);
             console.log("======================================================");
         }
-        
+        //
         console.log("Actual 'test' output result in Tensor format:   ")
         console.log("======================================================");
         if(_y.dtype === "float32")
@@ -143,7 +157,7 @@ class ShaleReservoirProductionPerformance
         console.log();
                     
         //print summary & prediction time
-        ShaleReservoirProductionPerformance.runTimeDNN(beginPredictingTime, "Predicting Time");
+        BaseAIML.runTimeDNN(beginPredictingTime, "Predicting Time");
         console.log("Final Model Summary");
         _reModel.summary();
         console.log();
@@ -161,9 +175,9 @@ class ShaleReservoirProductionPerformance
             console.log("........Prediction from loaded model Begins........................");
             
             //then predict and print results
-            const srpp = ShaleReservoirProductionPerformance;
+            const bam = BaseAIML;
             var existingSavedModel = undefined;
-            srpp.predictProductionAndPrintResults(_x, _y, existingModel, existingSavedModel=true);
+            bam.predictProductionAndPrintResults(_x, _y, existingModel, existingSavedModel=true);
             
             console.log("........Prediction from loaded model Ends..........................");
             console.log();
@@ -186,22 +200,22 @@ class ShaleReservoirProductionPerformance
         const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
         return {csvFileArrayOutputToTensor:csvFileArrayOutputToTensor, inputDim:inputDim, inputSize:inputSize};
     }
-
-    productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
-                         unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
-                         loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel)
+   
+    shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
+                                        unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
+                                        loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel)
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testProductionPerformace() method below - lines 487 and 491
+        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 566 and 568
         
         const innerfileOption = this.fileOption;
         
         if(this.modelingOption === "dnn")
         {
             //import module(s) and create model
-            const srpp = ShaleReservoirProductionPerformance;
-            const commonModules = srpp.commonModules(this.gpuOption);
+            const bam = BaseAIML;
+            const commonModules = bam.commonModules(this.gpuOption);
             const tf = commonModules.tf;
             const util = commonModules.util;
             const model = commonModules.model;
@@ -248,7 +262,6 @@ class ShaleReservoirProductionPerformance
                     return
                 }
                     
-                
                 //define tensor
                 x = this.inputFromCSVFileX;
                 y = this.inputFromCSVFileY;
@@ -265,12 +278,11 @@ class ShaleReservoirProductionPerformance
                 }
             }
             
-            
             if(existingSavedModel === true)
             {
                 //predict with saved model
-                const srpp = ShaleReservoirProductionPerformance;
-                srpp.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                const bam = BaseAIML;
+                bam.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
             else
             {
@@ -278,7 +290,7 @@ class ShaleReservoirProductionPerformance
             
                 //-->a. create model (main engine) with IIFE
                 //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
-                const reModel = (function createDNNRegressionModel()
+                const reModel = (function createDNNRegressionModelEngine()
                 {
                     //create layers.....
                     const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
@@ -308,8 +320,7 @@ class ShaleReservoirProductionPerformance
                     //return model.....
                     return model;
                 })();
-            
-                                   
+                            
                 //-->b. begin training: train the model using the data and time the training
                 const beginTrainingTime = new Date();
                 console.log(" ")
@@ -342,13 +353,13 @@ class ShaleReservoirProductionPerformance
                     }
                     
                     //print training time & signify ending
-                    const srpp = ShaleReservoirProductionPerformance
-                    srpp.runTimeDNN(beginTrainingTime, "Training Time");
+                    const bam = BaseAIML
+                    bam.runTimeDNN(beginTrainingTime, "Training Time");
                     console.log("........Training Ends................................................");
                     console.log();
                     
                     //-->c. predict and print results
-                    srpp.predictProductionAndPrintResults(x, y, reModel, existingSavedModel=false);
+                    bam.predictProductionAndPrintResults(x, y, reModel, existingSavedModel=false);
                     
                     //save model's topology and weights in the specified sub-folder of the current folder
                     //this model can be called later without any need for training again
@@ -368,17 +379,17 @@ class ShaleReservoirProductionPerformance
         }
     }
     
-    testProductionPerformace()
+    testShaleReservoirProductionPerformance()
     {
         //algorithm, file option, and gpu/cpu option
         const modelingOption = "dnn";
         //const fileOption  = "csv-MongoDB"; // or
-        //const fileOption  = "csv-disk";    // or
+        //const fileOption  = "csv-disk";  // or
         const fileOption  = "default";
         const gpuOption = false;
         
         //import tf & path
-        const commonModules = ShaleReservoirProductionPerformance.commonModules(gpuOption);
+        const commonModules = BaseAIML.commonModules(gpuOption);
         const tf = commonModules.tf;
         const fs = commonModules.fs;
         const path = commonModules.path;
@@ -387,7 +398,7 @@ class ShaleReservoirProductionPerformance
         
         //training parameters
         const batchSize = 32;
-        const epochs = 200;
+        const epochs = 300;
         const validationSplit = 0;    // for large dataset, set to about 10% (0.1) aside
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
@@ -431,11 +442,11 @@ class ShaleReservoirProductionPerformance
         let mongoDBDataFileY = "_eagle_ford_Y.csv";
         let mongoDBDataFileXList = [];
         let mongoDBDataFileYList = [];
-        let mongoDBCollectionName = "collectionName";
-        let dbUserName = "dbUser";
-        let dbUserPassword = "pasd";
+        let mongoDBCollectionName = "Company";
+        let dbUserName = "username";
+        let dbUserPassword = "password";
         var dbDomainURL = "domain.com";
-        let dbName = "dbName";
+        let dbName = "databaseName";
         let connectedDB = undefined;
         let sslCertOptions  = {ca: fs.readFileSync('/path_to/ca.pem'), key: fs.readFileSync('/path_to/mongodb.pem'),cert: fs.readFileSync('/path_to/mongodb.pem')};
         let connectionBolean = true;
@@ -444,10 +455,10 @@ class ShaleReservoirProductionPerformance
         
         //load/require/import relevant modules
         const MongoDBAndMySqlAccess  = require('./MongoDBAndMySqlAccess.js').MongoDBAndMySqlAccess; 
-        const ShaleReservoirCommunication  = require('./ShaleReservoirCommunication.js').ShaleReservoirCommunication;
+        const Communication  = require('./Communication.js').Communication; 
         const mda = new MongoDBAndMySqlAccess();
-        const src = new ShaleReservoirCommunication();
-        const srpp = new ShaleReservoirProductionPerformance();
+        const cmm = new Communication();
+        const bam = new BaseAIML();
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -465,15 +476,16 @@ class ShaleReservoirProductionPerformance
                 var pathTofileY = fileLocation + csvDataYList[i];
                     
                 //read csv files, in pathTofileX and pathTofileY, to JS arrays
-                xOutput = src.readInputCSVfile(pathTofileX);
-                yOutput = src.readInputCSVfile(pathTofileY);
+                xOutput = cmm.readInputCSVfile(pathTofileX);
+                yOutput = cmm.readInputCSVfile(pathTofileY);
+                    
                     
                 ///....2. then run model  "asynchronously" as IIFE
                 (async function runModel()
                 {
                     //convert JavaScript's Arrays into TensorFlow's tensors
-                    const tensorOutputX = srpp.getTensor(xOutput);
-                    const tensorOutputY = srpp.getTensor(yOutput);
+                    const tensorOutputX = bam.getTensor(xOutput);
+                    const tensorOutputY = bam.getTensor(yOutput);
                     inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
                     inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
                             
@@ -483,18 +495,18 @@ class ShaleReservoirProductionPerformance
                     console.log("inputSize: ", inputSize);
                     console.log("inputDim: ", inputDim);
             
-                    //invoke productionPerformance() method on srpp() class
-                    const srppTwo = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption,
-                                                                            inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                                            mongoDBCollectionName, mongoDBDataFileXList[i],
-                                                                            mongoDBDataFileYList[i]);
-                    srppTwo.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                    //invoke productionPerformance() method on BaseAIML() class
+                    const bamTwo = new BaseAIML(modelingOption, fileOption, gpuOption,
+                                                inputFromCSVFileXList[i], inputFromCSVFileYList[i],
+                                                mongoDBCollectionName, mongoDBDataFileXList[i],
+                                                mongoDBDataFileYList[i]);
+                    bamTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
                                                 dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
                                                 inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
                                                 numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
                                                 pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                 }());
-              
+                
             }
             else if(fileOption === "csv-MongoDB")
             {
@@ -514,7 +526,7 @@ class ShaleReservoirProductionPerformance
                 //create connection instance to MongoDB database, just once
                 if(i == 0)
                 {
-                    connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
+                  connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
                 }
                     
                 //with connectedDB  instance: download and process cvs files
@@ -532,7 +544,8 @@ class ShaleReservoirProductionPerformance
                         // assign downloaded csv files into pathTofileX
                         var pathTofileX = mongoDBDataFileXList[i];
                         //read csv files, in pathTofileX, into JS arrays
-                        xOutput = src.readInputCSVfile(pathTofileX);
+                        xOutput = cmm.readInputCSVfile(pathTofileX);
+                        
                         
                         //download csv file (Y-file) from MongoDB database
                         const downloadY = bucket.openDownloadStreamByName(inputFilePathY).pipe(fs.createWriteStream(outputFileNameY), {'bufferSize': 1024});
@@ -543,14 +556,14 @@ class ShaleReservoirProductionPerformance
                             // assign downloaded csv files into pathTofileY
                             var pathTofileY = mongoDBDataFileYList[i];
                             // read csv files, in pathTofileY, into JS arrays
-                            yOutput = src.readInputCSVfile(pathTofileY);
+                            yOutput = cmm.readInputCSVfile(pathTofileY);
                                 
                             ///....2. then run model  "asynchronously" as IIFE
                             (async function runModel()
                             {
                                 //convert JavaScript's Arrays into TensorFlow's tensors
-                                const tensorOutputX = srpp.getTensor(xOutput);
-                                const tensorOutputY = srpp.getTensor(yOutput);
+                                const tensorOutputX = bam.getTensor(xOutput);
+                                const tensorOutputY = bam.getTensor(yOutput);
                                 inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
                                 inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
                                         
@@ -560,12 +573,12 @@ class ShaleReservoirProductionPerformance
                                 console.log("inputSize: ", inputSize);
                                 console.log("inputDim: ", inputDim);
                         
-                                //invoke productionPerformance() method on srpp() class
-                                const srppTwo = new ShaleReservoirProductionPerformance(modelingOption, fileOption, gpuOption,
-                                                                                        inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                                                        mongoDBCollectionName, mongoDBDataFileXList[i],
-                                                                                        mongoDBDataFileYList[i]);
-                                srppTwo.productionPerformace(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                                //invoke productionPerformance() method on BaseAIML() class
+                                const bamTwo = new BaseAIML(modelingOption, fileOption, gpuOption,
+                                                            inputFromCSVFileXList[i], inputFromCSVFileYList[i],
+                                                            mongoDBCollectionName, mongoDBDataFileXList[i],
+                                                            mongoDBDataFileYList[i]);
+                                bamTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
                                                             dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
                                                             inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
                                                             numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
@@ -575,28 +588,16 @@ class ShaleReservoirProductionPerformance
                     });
                     
                 }).catch(function(error)
-                {
+                    {
                     if(error)
                     {
                         console.log(error, ": Uploading file error successfully intercepted.");
                     }
-               });
+                });
             }
         }
     }
 }
     
-    
-class TestSRPP
-{
-    constructor(test=true)
-    {
-        if(test === true)
-        {
-            const srpp = new ShaleReservoirProductionPerformance().testProductionPerformace();
-        }
-        //note: all results at every timeStep are generated asychronically (non-blocking) !!!
-    }
-}
 
 module.exports = {ShaleReservoirProductionPerformance};
