@@ -7,7 +7,7 @@
  * @License Ends
  *
  *
- * ...Ecotert's BaseAIML.js (released as open-source under MIT License) implements helper
+ * ...Ecotert's BaseAIML.js (released as open-source under MIT License) implements
  *    helper functions and dependent application(s) as follows:
  *
  * (A)
