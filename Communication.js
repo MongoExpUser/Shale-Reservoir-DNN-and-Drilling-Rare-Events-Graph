@@ -10,7 +10,7 @@
  * ...Ecotert's Communication.js (released as open-source under MIT License) implements:
  *
  *
- * Relevant communication/data transmission methods - e.g.:
+ * Relevant communications/data transmission methods - e.g.:
  *
  * (1) read/write files on disk
  * (2) connect to MongoDB
@@ -106,7 +106,7 @@ class Communication
             {
                 output.shift();
             }
-         
+            
             return output;
         }
              
