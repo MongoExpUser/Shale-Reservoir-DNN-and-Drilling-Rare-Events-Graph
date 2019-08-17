@@ -408,7 +408,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       connection.close()
       
       self.count = 4
-    # End test_sqlite_store() method
+    # End test_sqlite_drilling_rear_events_database() method
       
     def tearDown(self):
       print("Successful test", self.count + 1, ".....ok")
