@@ -46,7 +46,7 @@ class CallPthonMLCodes
         {
           if(error)
           {
-              console.log("Error running Script:", callBackError);
+              console.log("Error running Script:", error);
               return;
           }
         });
@@ -56,9 +56,9 @@ class CallPthonMLCodes
             console.log(message);
         });
             
-        pyShell.end(function (err, code, signal)
+        pyShell.end(function (error, code, signal)
         {
-            if(err) {console.log(err);}
+            if(error) {console.log(error);}
             console.log("end of script");
         });
     }
