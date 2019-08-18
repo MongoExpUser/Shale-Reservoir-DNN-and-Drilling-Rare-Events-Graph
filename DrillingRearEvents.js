@@ -1,4 +1,3 @@
-/5. DrillingRearEvents for gitHub
 /*
  * Ecotert's DrillingRearEvents .js (released as open-source under MIT License) implements:
  *
@@ -10,14 +9,15 @@
 
 class DrillingRearEvents extends BaseAIML
 {
-    constructor(pyFile, pyScriptPath, pyVersionPath, pyMode)
+    constructor(pyFile, pyScriptPath, pyVersionPath, pyMode, modelingOption, fileOption, gpuOption, inputFromCSVFileX,
+                inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
     {
+        super(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY);
         this.pyFile = pyFile;
         this.pyScriptPath = pyScriptPath;
         this.pyVersionPath = pyVersionPath;
         this.pyMode = pyMode;
     }
-    
     
     drillingRearEvents()
     {
@@ -32,7 +32,6 @@ class DrillingRearEvents extends BaseAIML
         cpml.callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode);
     }
     
-    
     testDrillingRearEvents()
     {
         /// call (Python-Shell call) to AIML codes, developed in Python
@@ -46,5 +45,6 @@ class DrillingRearEvents extends BaseAIML
         cpml.callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode);
     }
 }
+
 
 module.exports = {DrillingRearEvents};
