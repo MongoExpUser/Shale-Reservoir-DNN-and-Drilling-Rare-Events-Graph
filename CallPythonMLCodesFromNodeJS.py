@@ -12,7 +12,7 @@
 # *
 # * ...Ecotert's CallPythonMLCodesFromNodeJS.py  (released as open-source under MIT License) implements:
 #
-#  Demonstration of 3 simple ML codes that can be called from Node.js, namely:
+#  Demonstration of 4 ML codes that can be called from Node.js, namely:
 #
 #  1) Simple classifications with sklearn's LogisticRegression, GaussianNB & SVC (linear & sigmoidal).
 #
@@ -20,7 +20,7 @@
 #
 #  3) Simple creation and transformation of tensor data type with TensorFlow (Python version).
 #
-#  4) simple creation of sqlite db for modeling drilling rear events (anomalies) detection and prevention.
+#  4) Creation of sqlite db for modeling drilling rear events (vibration, kick and stuck pipe) detection and prevention.
 #
 #
 #
