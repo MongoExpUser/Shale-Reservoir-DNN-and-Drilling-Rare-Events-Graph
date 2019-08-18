@@ -35,12 +35,12 @@
 
 try:
     """ import commonly used modules and check for import error """
-    import sqlite3
     import sys, cython
     import numpy as np
     import scipy, pandas
     import sklearn, skimage
     import tensorflow as tf
+    import sqlite3, networkx
     from pprint import pprint
     from sklearn.base import clone
     import matplotlib.pyplot as plt
@@ -50,6 +50,7 @@ try:
     from sklearn.pipeline import Pipeline
     from sklearn.svm import SVC, LinearSVC
     from sklearn.naive_bayes import GaussianNB
+    from datetime import date, datetime, timedelta
     from sklearn.ensemble import ExtraTreesRegressor
     from sklearn.datasets import make_classification
     from sklearn.neighbors import KNeighborsRegressor
@@ -63,7 +64,7 @@ try:
     import statsmodels as sm, statsmodels.api as smbase, statsmodels.formula.api as smform, statsmodels.graphics.api as smgraph
 except(ImportError) as err:
     print(str(err))
-    #return
+    return
 
 class CallPythonMLCodesFromNodeJS(TestCase):
     """ Machine learning tests """
@@ -279,9 +280,11 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print()
       print("Using SQLite3 version", sqlite3.version, "on this system.")
       print()
+      print("Using Networkx version", networkx.__version__, "on this system.")
+      print()
       
       self.count = 3
-    # End test_check_packages_version() method
+    # End test_check_packages_versions() method
     
     def test_sqlite_drilling_rear_events_database(self, database_name=None):
       
