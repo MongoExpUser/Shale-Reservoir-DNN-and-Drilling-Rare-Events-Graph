@@ -1,4 +1,4 @@
-# Shale-Reservoir-DNN
+# Shale-Reservoir-DNN and Drilling-Rear-Event-Graph
 
 Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
 
