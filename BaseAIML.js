@@ -11,7 +11,6 @@
  *    helper functions and dependent application(s) as follows:
  *
  * (A)
- *
  * Foundational helper functions for classification and regression including:
  *
  * 1) Modules loading
@@ -19,9 +18,7 @@
  * 3) Formatting and printing of results to console in easily readable format
  * 4) Run duration timing
  *
- *
  * (B)
- *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN) for
  * hydraulically-fractured-driven  production performance prediction of shale reservoirs in the cloud.
  *
@@ -45,6 +42,10 @@
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  *
+ * C) 
+ * Etc. i.e. Other AI/ML applications are added as deem necessary e.g. Dilling Rear Events Detection and Prevention, 
+ * Rock Image Classification, etc....
+ * 
  */
 
 class BaseAIML
