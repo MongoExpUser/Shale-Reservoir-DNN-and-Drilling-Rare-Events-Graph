@@ -64,7 +64,7 @@ try:
     import statsmodels as sm, statsmodels.api as smbase, statsmodels.formula.api as smform, statsmodels.graphics.api as smgraph
 except(ImportError) as err:
     print(str(err))
-    return
+
 
 class CallPythonMLCodesFromNodeJS(TestCase):
     """ Machine learning tests """
