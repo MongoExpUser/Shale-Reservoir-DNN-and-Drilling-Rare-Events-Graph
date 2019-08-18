@@ -42,9 +42,9 @@
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  *
- * C) 
- * Other AI/ML applications are added as deem necessary e.g. Dilling Rear Events Detection and Prevention, Rock Image Classification, etc....
- * 
+ * C)
+ * Other AI/ML applications are added as deem necessary e.g. Dilling Rear Events Detection & Prevention, Reservoir Rock Image Classification, etc....
+ *
  */
 
 class BaseAIML
