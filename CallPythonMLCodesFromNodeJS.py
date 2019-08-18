@@ -271,6 +271,19 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       self.count = 2
     # End test_ensorflow_model(printing=False) method
     
+    def test_check_packages_versions(self):
+      print("Python", sys.version, "is properly set up with miniconda3.")
+      print()
+      print("Using TensorFlow version", tf.__version__, "on this system.")
+      print()
+      print("Using Keras version", tf.keras.__version__, "on this system.")
+      print()
+      print("Using SQLite3 version", sqlite3.version, "on this system.")
+      print()
+      
+      self.count = 3
+    # End test_check_packages_version() method
+    
     def test_sqlite_drilling_rear_events_database(self, database_name=None):
       
       # 1. define helper functions
@@ -418,7 +431,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       # 13 finally, close connection to the database
       connection.close()
       
-      self.count = 3
+      self.count = 4
       
       return extracted_data
     # End test_sqlite_drilling_rear_events_database() method
