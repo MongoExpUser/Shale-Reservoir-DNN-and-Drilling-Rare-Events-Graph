@@ -15,7 +15,7 @@
  * 5) etc i.e. other helpers or foundational functions are added as deem necessary
  *
  *
-*/
+ */
 
 class BaseAIML
 {
