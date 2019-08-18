@@ -1,18 +1,19 @@
 # Shale-Reservoir-DNN and Drilling-Rear-Event-Graph
 
-Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+1) Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
 
-This module is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs in the cloud.
+2) Drilling Rear Events (Vibration, Kick and Stuck pipe) Detection and Prevention with Graph-Based Method.
 
-It is based on Node.js with option to use either gpu or cpu. 
 
-It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
+This module is based on Node.js with option to use either gpu or cpu. 
+
+The module can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
 
 This repo is based on the following languages, frameworks and packages' versions:
 
 JavaScript ES6+
 
-Node v12.8.0
+Node v12.8.1
 
 Tensorflow.js v1.2.7 (JavaScript/Node.js Version)
 
