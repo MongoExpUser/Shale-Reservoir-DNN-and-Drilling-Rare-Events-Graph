@@ -7,6 +7,8 @@
  *
  */
 
+const BaseAIML = require('./BaseAIML.js').BaseAIML;
+
 class DrillingRearEvents extends BaseAIML
 {
     constructor(pyFile, pyScriptPath, pyVersionPath, pyMode, modelingOption, fileOption, gpuOption, inputFromCSVFileX,
