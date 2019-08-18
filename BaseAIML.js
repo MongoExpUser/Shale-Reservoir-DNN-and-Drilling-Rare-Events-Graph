@@ -43,8 +43,7 @@
  *         Note: Hence, fracture directional dispersity = Sm - Sw (well direction), correct to maximum degree of 90.
  *
  * C) 
- * Etc. i.e. Other AI/ML applications are added as deem necessary e.g. Dilling Rear Events Detection and Prevention, 
- * Rock Image Classification, etc....
+ * Other AI/ML applications are added as deem necessary e.g. Dilling Rear Events Detection and Prevention, Rock Image Classification, etc....
  * 
  */
 
