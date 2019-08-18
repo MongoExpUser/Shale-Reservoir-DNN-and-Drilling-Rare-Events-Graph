@@ -11,7 +11,9 @@
  *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
  *
- * It is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs .
+ * It is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs.
+ *
+ * It inherits/extends the BaseAIML for its implementation.
  *
  * This implementation is based on Node.js with option to use either gpu or cpu.
  *
@@ -60,9 +62,7 @@ class ShaleReservoirProduction extends BaseAIML
         const model = commonModules.model;
         
         if(this.modelingOption === "dnn")
-        {
-            
-                            
+        {            
             //configure input tensor
             var x = null;
             var y = null;
