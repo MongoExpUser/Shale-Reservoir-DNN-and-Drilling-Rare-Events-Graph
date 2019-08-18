@@ -39,6 +39,9 @@
  *
  */
 
+
+const BaseAIML = require('./BaseAIML.js').BaseAIML;
+
 class ShaleReservoirProduction extends BaseAIML
 {
     constructor(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
