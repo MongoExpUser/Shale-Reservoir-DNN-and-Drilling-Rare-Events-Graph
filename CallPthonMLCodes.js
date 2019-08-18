@@ -29,7 +29,7 @@ class CallPthonMLCodes
     
     callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode)
     {
-        var {PythonShell}   = require('python-shell');          // ver 1.0.7 or above
+        var {PythonShell}   = require('python-shell');          // ver 1.0.8 or above
         pyFile              = pyFile
         pyScriptPath        = pyScriptPath;
         pyVersionPath       = pyVersionPath;
