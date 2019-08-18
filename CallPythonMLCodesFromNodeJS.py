@@ -292,16 +292,16 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       # .........................helper functions start................................
       # a. connect to database 
       def connect_to_sqlite_db(db_name):
+        conn = None
         try:
             dbn = str(db_name)
             conn = sqlite3.connect(dbn)
             print()
             print()
             print("{}{}{}".format("Connection to database (", dbn, ") is established."))
-        except Error:
-            print(Error)
-        finally:
-            return conn
+        except(sqlite3.Error) as err:
+            print(str(err))
+        return conn
             
       # b. count and print record
       def count_and_print_record(record, show=True):
