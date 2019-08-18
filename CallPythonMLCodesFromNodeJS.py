@@ -271,18 +271,11 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       self.count = 2
     # End test_ensorflow_model(printing=False) method
     
-    def test_check_packages_versions(self):
-      print("Python", sys.version, "is properly set up with miniconda3.")
-      print()
-      print("Using TensorFlow version", tf.__version__, "on this system.")
-      print()
-      print("Using Keras version", tf.keras.__version__, "on this system.")
-      print()
-      self.count = 3
-    # End test_check_packages_version() method
-      
     def test_sqlite_drilling_rear_events_database(self, database_name=None):
-      # 0. db connection function
+      
+      # 1. define helper functions
+      # .........................helper functions start................................
+      # a. connect to database 
       def connect_to_sqlite_db(db_name):
         try:
             dbn = str(db_name)
@@ -295,7 +288,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         finally:
             return conn
             
-      # 1. record counting and printing function
+      # b. count and print record
       def count_and_print_record(record, show=True):
         count = 0
         for row in record:
@@ -305,20 +298,30 @@ class CallPythonMLCodesFromNodeJS(TestCase):
             print()
         return count
       
-      # 2. error handler function, for insert statement
+      # c. error handler for insert statement
       def handle_non_unique_error_for_insert(err):
         confirm = "UNIQUE constraint failed: Drilling_Parameters.SERIAL_NO"
         if (str(err) == confirm) is True:
           msg = "non-unique SERIAL_NO, cannot INSERT a new row of data."
           print(msg) 
-        
-      # 3. connect to a temporary "drilling_rear_events.db" or create a new 
+          
+      # d. retrieve and store all extrated data, with header, in a table as a list/array
+      def retrieve_and_stored_all_data_in_a_table_as_list(record):
+        all_data_as_list = []
+        header = [row[0] for row in record.description]
+        all_data_as_list.append(list(header))
+        for row in record:
+          all_data_as_list.append(list(row))
+        return all_data_as_list
+      # .........................helper functions end......................................
+      
+      # 2. connect to a temporary "drilling_rear_events.db" or create a new 
       # "drilling_rear_events.db, if it does not exit and point to cursor
       database_name = 'drilling_rear_events.db'
       connection = connect_to_sqlite_db(database_name)
       py_connection = connection.cursor()
       
-      # 4. create Drilling_and_Formation_Parameters TABLE, if it does not exist and save (commit) the changes
+      # 3. create Drilling_and_Formation_Parameters TABLE, if it does not exist and save (commit) the changes
       py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_and_Formation_Parameters (ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, 
                                TQR_Ibft real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, 
                                GR_api real, DEEP_RESISVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer, 
@@ -328,7 +331,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
                             """)
       connection.commit()
       
-      # 5. insert a row of data for all columns
+      # 4. insert a row of data for all columns
       try:
         py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg, 
                                  MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1, 
@@ -339,7 +342,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       except(sqlite3.IntegrityError) as err:
         handle_non_unique_error_for_insert(err)
       
-      # 6. insert new rows of data, for the indicated columns, note that other columns are null/None, expect where DEFAULT and NOT NULL are specfied
+      # 5. insert new rows of data, for the indicated columns, note that other columns are null/None, expect where DEFAULT and NOT NULL are specfied
       try:
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (30, 1.18, 90, 'packed')")
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (32, 1.18, 92, 'packed')")
@@ -351,13 +354,13 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       except(sqlite3.IntegrityError) as err:
         handle_non_unique_error_for_insert(err)
       
-      # 7. update selected columns of the table at specified row
+      # 6. update selected columns of the table at specified row
       py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET MUD_WEIGHT_sg=1.15, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=2")
       py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=50, RPM_rpm=20, MD_ft=6708, INC_deg=40.1 WHERE ROWID=5")
       py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=50, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=6")
       connection.commit()
     
-      # 8. show/view all record values in the table with "HEADER"
+      # 7. show/view all record values in the table with "HEADER"
       print()
       print("All Records in the Drilling_and_Formation_Parameters TABLE")
       print("==========================================================")
@@ -366,7 +369,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print(header)
       count_and_print_record(executed_sqlite_query)
       
-      # 9. show/view some record values in the table with "HEADER", including ROWID (the default primary key)
+      # 8. show/view some record values in the table with "HEADER", including ROWID (the default primary key)
       print()
       print("Some Records in the Drilling_and_Formation_Parameters TABLE")
       print("===========================================================")
@@ -378,21 +381,29 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print(header)
       count_and_print_record(executed_sqlite_query)
       
-      #10. show/view all table names is the databases
+      # 9. show/view all table names is the databases
       print()
       print("All TABLE names in the 'drilling_rear_events.db' DATABASE")
       print("=========================================================")
       executed_sqlite_query = py_connection.execute("SELECT name FROM sqlite_master WHERE type='table';")
       count_and_print_record(executed_sqlite_query)
       
-      #11 show/view all COLUMNS or HEADER of the "Drilling_and_Formation_Parameters" TABLE
-      print("A List of COLUMN or HEADER names of the 'Drilling_and_Formation_Parameters' TABLE")
+      # 10. show/view all COLUMNS or HEADER of the "Drilling_and_Formation_Parameters" TABLE
+      print("A Listing of COLUMN or HEADER names of the 'Drilling_and_Formation_Parameters' TABLE")
       print("=================================================================================")
       py_connection.execute("SELECT * FROM Drilling_and_Formation_Parameters")
       names  = [row[0] for row in py_connection.description]
       for name in names:
         print(name)
       print()
+      
+      # 11. store all record values in the table, with "HEADER", into a list/array that can be converted 
+      # into TensorFlow's tensor data type and used as input into AIML algorithms, and print to check
+      print("All Data in the TABLE stored as a List/Array")
+      print("==============================================")
+      executed_sqlite_query = py_connection.execute("SELECT * FROM Drilling_and_Formation_Parameters")
+      extracted_data = retrieve_and_stored_all_data_in_a_table_as_list(executed_sqlite_query)
+      print(extracted_data)
       
       # 12. delete the temporary TABLE(S) in the database
       sexecuted_sqlite_query = py_connection.execute("DROP TABLE IF EXISTS Drilling_and_Formation_Parameters")
@@ -404,10 +415,12 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         print("TABLE(S) in the 'drilling_rear_events.db' DATABASE is/are now DELETED.")
         print()
       
-      # 13 finally, the close connection to the database
+      # 13 finally, close connection to the database
       connection.close()
       
-      self.count = 4
+      self.count = 3
+      
+      return extracted_data
     # End test_sqlite_drilling_rear_events_database() method
       
     def tearDown(self):
