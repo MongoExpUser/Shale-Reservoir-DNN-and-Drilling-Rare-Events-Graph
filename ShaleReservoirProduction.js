@@ -283,24 +283,24 @@ class ShaleReservoirProduction extends BaseAIML
         let inputFromCSVFileYList = [];
         let csvDataXList = [];
         let csvDataYList = [];
-        let mongoDBDataFileX = "_eagle_ford_SPE_19260-MS_X.csv";
-        let mongoDBDataFileY = "_eagle_ford_SPE_19260-MS_Y.csv";
+        let mongoDBDataFileX = "_eagle_ford.csv";
+        let mongoDBDataFileY = "_eagle_ford.csv";
         let mongoDBDataFileXList = [];
         let mongoDBDataFileYList = [];
-        let mongoDBCollectionName = "Company";
-        let dbUserName = "ecotert";
-        let dbUserPassword = "$2a$10$f6Al.cKIOBDdBcGpnovYxeALqb86OZoGWPcEsmKlxYIV4lTpHp9Ju";
-        var dbDomainURL = "ecotert.com";
-        let dbName = "urppsdb";
+        let mongoDBCollectionName = "mongoDBCollectionName";
+        let dbUserName = "dbUserName";
+        let dbUserPassword = "dbUserPassword";
+        var dbDomainURL = "domain.com";
+        let dbName = "dbName";
         let connectedDB = undefined;
-        let sslCertOptions  = {ca: fs.readFileSync('/etc/ssl/ca.pem'), key: fs.readFileSync('/etc/ssl/mongodb.pem'),cert: fs.readFileSync('/etc/ssl/mongodb.pem')};
+        let sslCertOptions  = {ca: fs.readFileSync('/path_to/ca.pem'), key: fs.readFileSync('/path_to/mongodb.pem'),cert: fs.readFileSync('/path_to/mongodb.pem')};
         let connectionBolean = true;
         let xOutput = undefined;
         let yOutput = undefined;
         
         //load/require/import relevant modules
-        //-->const MongoDBAndMySqlAccess  = require('./MongoDBAndMySqlAccess.js').MongoDBAndMySqlAccess;  //add later
-        //-->const Communication  = require('./Communication.js').Communication;  //add later
+        MongoDBAndMySqlAccess  = require('./MongoDBAndMySqlAccess.js').MongoDBAndMySqlAccess; 
+        Communication  = require('./Communication.js').Communication; 
         const mda = new MongoDBAndMySqlAccess();
         const cmm = new Communication();
         const srp = new ShaleReservoirProduction();
