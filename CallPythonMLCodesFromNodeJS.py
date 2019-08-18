@@ -23,7 +23,6 @@
 #  4) Creation of sqlite db for modeling drilling rear events (vibration, kick and stuck pipe) detection and prevention.
 #
 #
-#
 #  The motivation, for calling of machine learning codes written in Python from Node.js,
 #  is to prevent re-inventing/re-creating of existing codes in Python.
 #  This way, existing machine learning codes written in Python can easily be used within
