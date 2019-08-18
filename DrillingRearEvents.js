@@ -23,7 +23,8 @@ class DrillingRearEvents extends BaseAIML
     
     drillingRearEvents()
     {
-        // call (Python-Shell call) to AIML codes, developed in Python
+        // call AIML python script (this.pyFile) via Python-Shell 
+        // pyFile (py_file_AIML.py) implements drilling rear events detection and prevention using graph method
         var pyFile              = this.pyFile;
         var pyScriptPath        = this.pyScriptPath;
         var pyVersionPath       = this.pyVersionPath;
@@ -36,7 +37,9 @@ class DrillingRearEvents extends BaseAIML
     
     testDrillingRearEvents()
     {
-        /// call (Python-Shell call) to AIML codes, developed in Python
+        // call AIML python script (this.pyFile) via Python-Shell
+        // pyFile (test_py_file_AIML.py) implements testing of drillingRearEvents() method
+        var pyFile              = this.pyFile;
         var pyFile              = this.pyFile;
         var pyScriptPath        = this.pyScriptPath;
         var pyVersionPath       = this.pyVersionPath;
