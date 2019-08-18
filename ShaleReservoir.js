@@ -7,7 +7,7 @@
  * @License Ends
  *
  *
- * ...Ecotert's ShaleReservoirPrediction.js (released as open-source under MIT License) implements:
+ * ...Ecotert's ShaleReservoir.js (released as open-source under MIT License) implements:
  *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
  *
