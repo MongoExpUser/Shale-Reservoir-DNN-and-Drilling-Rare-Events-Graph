@@ -423,7 +423,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print(extracted_data)
       
       # 12. delete the temporary TABLE(S) in the database
-      sexecuted_sqlite_query = py_connection.execute("DROP TABLE IF EXISTS Drilling_and_Formation_Parameters")
+      executed_sqlite_query = py_connection.execute("DROP TABLE IF EXISTS Drilling_and_Formation_Parameters")
       connection.commit()
       executed_sqlite_query  = py_connection.execute("SELECT name FROM sqlite_master WHERE type='table';")
       number_of_table = count_and_print_record(executed_sqlite_query, show=False)
