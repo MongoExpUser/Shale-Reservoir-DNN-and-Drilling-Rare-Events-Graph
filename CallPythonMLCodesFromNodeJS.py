@@ -35,12 +35,14 @@
 
 try:
     """ import commonly used modules and check for import error """
+    import sqlite3
     import sys, cython
     import numpy as np
     import scipy, pandas
+    import networkx as nx
     import sklearn, skimage
     import tensorflow as tf
-    import sqlite3, networkx
+    import pygraphviz as pgv
     from pprint import pprint
     from sklearn.base import clone
     import matplotlib.pyplot as plt
