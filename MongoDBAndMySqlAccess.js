@@ -24,7 +24,8 @@ class MongoDBAndMySqlAccess
     {
       return null;
     }
-    static connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions)
+    
+    static connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL)
     {
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
@@ -32,10 +33,23 @@ class MongoDBAndMySqlAccess
         const fs = require('fs');
 
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
-        const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName)
-        const connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                             ssl: true, sslValidate: true, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key,
-                             sslCert: sslCertOptions.cert, poolSize: 20};
+        const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
+        
+        let connOptions = {};
+        
+        if(enableSSL === true)
+        {
+            connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
+                           ssl: true, sslValidate: true, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key,
+                           sslCert: sslCertOptions.cert, poolSize: 20
+                          };
+        }
+        else
+        {
+            connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
+                           ssl: false, sslValidate: false, poolSize: 20
+                          };
+        }
              
         //connect (authenticate) to database using promise
         mongoose.connect(uri, connOptions, function(err)
@@ -48,7 +62,7 @@ class MongoDBAndMySqlAccess
             }
         }).then(function(callbackDB)
         {
-            console.log("Finally connected to MongoDB on:", mongoose.connection.host);
+            console.log("Now connected to MongoDB Server on:", mongoose.connection.host);
             return callbackDB.connections[0];
 
         }).catch(function(err)
@@ -62,7 +76,7 @@ class MongoDBAndMySqlAccess
         });
     }
     
-    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean=true)
+    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean=true, enableSSL=false)
     {
         const mongoose = require('mongoose');
             
@@ -84,8 +98,9 @@ class MongoDBAndMySqlAccess
         if(mongoose.connection.readyState === 0 && connectionBolean === true)
         {
             //is closed/disconnected & want to connect
-            console.log("No connection to MongoDB is detected. Now connecting ......");
-            MongoDBAndMySqlAccess.connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions);
+            console.log();
+            console.log("Connecting......");
+            MongoDBAndMySqlAccess.connectMongoDBWithMongoose(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL);
         }
                 
         process.on('SIGINT', function()
@@ -103,20 +118,35 @@ class MongoDBAndMySqlAccess
         return mongoose.connection;
     }
     
-    connectToMySQL(sslCertOptions, connectionOptions, confirmDatabase=false, createTable=false)
+    connectToMySQL(sslCertOptions, connectionOptions, confirmDatabase=false, createTable=false, enableSSL=false)
     {
         const fs = require('fs');
         const mysql = require('mysql');
-        const mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
-                              password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
-                              ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert},
-                             }
+        let mysqlOptions = {};
+        
+        if(enableSSL === true)
+        {
+            mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
+                            ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
+                           }
+        }
+        else
+        {
+            mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug
+                           }
+            
+        }
         
         //get database name
         const dbName = String(connectionOptions.database);
         
         //create connection (authenticate) to database
         const nodeJSConnection = mysql.createConnection(mysqlOptions);
+        
+        console.log();
+        console.log("Connecting......");
                 
         nodeJSConnection.connect(function(connectionError)
         {
@@ -125,8 +155,8 @@ class MongoDBAndMySqlAccess
                 console.log("Connection Error: ", connectionError);
                 return;
             }
-                      
-            console.log("Connection to MySql server is established......");
+                    
+            console.log("Now connected to MySql server on:", connectionOptions.host);
             
             //then confirm table(s) exit(s) within database, and create table is desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
@@ -141,13 +171,19 @@ class MongoDBAndMySqlAccess
                         return;
                     }
                       
-                    console.log(result);
-                    console.log("Confirmed TABLE(S) exist within ", dbName);
                     
-                    //create a new table
+                    console.log();
+                    if(result)
+                    {
+                        console.log("It is Confirmed that the TABLE(S) below exist(s) within ", dbName, "database");
+                        console.log(result);
+                    }
+                    
+                    
                     if(createTable === true)
                     {
-                        var mySqlQuery = "CREATE TABLE reservoirType (dominantMineral VARCHAR(255), fluidContent VARCHAR(255))";
+                        //create a new table
+                        var mySqlQuery = "CREATE TABLE IF NOT EXISTS reservoirContent (ID int AUTO_INCREMENT PRIMARY KEY, dominantMineral VARCHAR(255), fluidContent VARCHAR(255))";
                         
                         nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                         {
@@ -157,10 +193,45 @@ class MongoDBAndMySqlAccess
                                 return;
                             }
                             
-                            console.log(result);
-                            console.log("TABLE successfully created");
+                            console.log();
                             
-                            nodeJSConnection.end();
+                            
+                            //update table by adding/inserting records to the table and then show all records in the table
+                            //1. update (add/insert records)
+                            var mySqlQuery = "INSERT INTO reservoirContent (dominantMineral, fluidContent) VALUES ('Carbonate', 'Condensate');";
+                            
+                            nodeJSConnection.query(mySqlQuery, function (updateTableError, result)
+                            {
+                                if(updateTableError)
+                                {
+                                    console.log("Update TABLE Error: ", updateTableError);
+                                    return;
+                                }
+                                
+                                console.log("TABLE successfully updated!");
+                                console.log(result);
+                                console.log();
+                            
+                             
+                                //2.show records
+                                var mySqlQuery = "SELECT * FROM mysql.reservoirContent";
+                                
+                                nodeJSConnection.query(mySqlQuery, function (showTableError, result)
+                                {
+                                    if(showTableError)
+                                    {
+                                        console.log("Show TABLE Error: ", showTableError);
+                                        return;
+                                    }
+                                
+                                    console.log("TABLE's records are shown below!");
+                                    console.log(result);
+                                    console.log();
+                                    
+                                    nodeJSConnection.end();
+                                    
+                                });
+                            });
                         });
                     }
                 });
