@@ -20,7 +20,7 @@
  *
  */
 
-class CallPthonMLCodes
+class CallPythonMLCodes
 {
     constructor()
     {
@@ -74,10 +74,10 @@ class TestMLCall
             var pyScriptPath  = "./";                   // or any other path to file
             var pyVersionPath = "/usr/bin/python3.7";   // or any other path e.g ".../miniconda3/bin/python3.7
             var pyMode        = "text";                 // or "json" or "binary"
-            var cpml = new CallPthonMLCodes();
+            var cpml = new CallPythonMLCodes();
             cpml.callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode);
         }
     }
 }
 
-module.exports = {CallPthonMLCodes};
+module.exports = {CallPythonMLCodes};
