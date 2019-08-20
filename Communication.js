@@ -270,4 +270,4 @@ class Communication
     }
 }
 
-module.exports = {ShaleReservoirCommunication};
+module.exports = {Communication};
