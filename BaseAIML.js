@@ -1,6 +1,6 @@
 //4. BaseAIML option for gitHub
 /*
- * Ecotert's BaseAIML.js (released as open-source under MIT License) implements the BASE class for contructing AIML applications.
+ * Ecotert's BaseAIML.js (released as open-source under MIT License) implements the BASE class for constructing AIML applications.
  *
  * AIML applications (e.g Shale reservoir production prediction, drillinng rear events prediction, rock image classification, etc.)
  *
