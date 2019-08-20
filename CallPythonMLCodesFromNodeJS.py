@@ -317,7 +317,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # c. error handler for insert statement
       def handle_non_unique_error_for_insert(err):
-        confirm = "UNIQUE constraint failed: Drilling_Parameters.SERIAL_NO"
+        confirm = "UNIQUE constraint failed: Drilling_Parameters.ROWID"
         if (str(err) == confirm) is True:
           msg = "non-unique SERIAL_NO, cannot INSERT a new row of data."
           print(msg) 
