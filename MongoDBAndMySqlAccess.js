@@ -1,3 +1,4 @@
+//3. MongoDBAndMySqlAccess option for gitHub
 /* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
@@ -118,7 +119,7 @@ class MongoDBAndMySqlAccess
         return mongoose.connection;
     }
     
-    connectToMySQL(sslCertOptions, connectionOptions, confirmDatabase=false, createTable=false, enableSSL=false)
+    connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false, createTable=false, enableSSL=false)
     {
         const fs = require('fs');
         const mysql = require('mysql');
@@ -183,7 +184,9 @@ class MongoDBAndMySqlAccess
                     if(createTable === true)
                     {
                         //create a new table
-                        var mySqlQuery = "CREATE TABLE IF NOT EXISTS reservoirContent (ID int AUTO_INCREMENT PRIMARY KEY, dominantMineral VARCHAR(255), fluidContent VARCHAR(255))";
+                        var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
+                                         " (ID int AUTO_INCREMENT PRIMARY KEY, dominantMineral VARCHAR(255)," +
+                                         " fluidContent VARCHAR(255), depth_ft DOUBLE, api_GR DOUBLE, res_Ohm_m DOUBLE)";
                         
                         nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                         {
@@ -194,11 +197,14 @@ class MongoDBAndMySqlAccess
                             }
                             
                             console.log();
+                            console.log(String(tableName) + " TABLE successfully created!")
+                            console.log();
                             
                             
                             //update table by adding/inserting records to the table and then show all records in the table
                             //1. update (add/insert records)
-                            var mySqlQuery = "INSERT INTO reservoirContent (dominantMineral, fluidContent) VALUES ('Carbonate', 'Condensate');";
+                            var mySqlQuery = "INSERT INTO " + String(tableName) + " (dominantMineral, fluidContent, depth_ft, api_GR, res_Ohm_m)" +
+                                             " VALUES ('Carbonate', 'Condensate', 2000.00, 80, 300.35);";
                             
                             nodeJSConnection.query(mySqlQuery, function (updateTableError, result)
                             {
@@ -208,13 +214,13 @@ class MongoDBAndMySqlAccess
                                     return;
                                 }
                                 
-                                console.log("TABLE successfully updated!");
+                                console.log(String(tableName) + " TABLE successfully updated!")
                                 console.log(result);
                                 console.log();
                             
                              
                                 //2.show records
-                                var mySqlQuery = "SELECT * FROM mysql.reservoirContent";
+                                var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
                                 
                                 nodeJSConnection.query(mySqlQuery, function (showTableError, result)
                                 {
@@ -224,7 +230,7 @@ class MongoDBAndMySqlAccess
                                         return;
                                     }
                                 
-                                    console.log("TABLE's records are shown below!");
+                                    console.log("Records of " + String(tableName) + " TABLE are shown below!")
                                     console.log(result);
                                     console.log();
                                     
