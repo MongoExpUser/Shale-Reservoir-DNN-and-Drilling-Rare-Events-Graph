@@ -42,13 +42,13 @@ class MongoDBAndMySqlAccess
         {
             connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
                            ssl: true, sslValidate: true, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key,
-                           sslCert: sslCertOptions.cert, poolSize: 20
+                           sslCert: sslCertOptions.cert, poolSize: 200
                           };
         }
         else
         {
             connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: false, sslValidate: false, poolSize: 20
+                           ssl: false, sslValidate: false, poolSize: 200
                           };
         }
              
