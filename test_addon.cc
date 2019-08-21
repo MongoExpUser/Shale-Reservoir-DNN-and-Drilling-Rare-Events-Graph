@@ -340,10 +340,10 @@ namespace addonNAPIScope
         napi_get_boolean(env, booleanConfirm, &confirm);                      //create napi_value for confirm
         napi_create_object(env, &obj);                                        //create napi_value for object => equivalent to-> const obj = {} in JavaScript
         //add properties (napi_values) to object
-        napi_set_named_property(env, obj, "myMessage", message);              //obj.myValue   = value    => 793
-        napi_set_named_property(env, obj, "myValueOne", valueOne);            //obj.myValue   = value    => 793
-        napi_set_named_property(env, obj, "myValueTwo", valueTwo);            //obj.myValue   = value    => 793
-        napi_set_named_property(env, obj, "myConfirm", confirm);              //obj.myConfirm = confirm  => true
+        napi_set_named_property(env, obj, "myMessage", message);              //obj.message      => "test_object_in_JavaScript";
+        napi_set_named_property(env, obj, "myValueOne", valueOne);            //obj.myValueOne   => 789 + 21 = 810
+        napi_set_named_property(env, obj, "myValueTwo", valueTwo);            //obj.myValueTwo   => 789
+        napi_set_named_property(env, obj, "myConfirm", confirm);              //obj.myConfirm    => true
         
         //export created object as addon
         napi_set_named_property(env, exports, "obj", obj);                    //"obj": is the name of the exported object
