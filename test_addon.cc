@@ -365,7 +365,6 @@ namespace addonNAPIScope
     const addonTest = require('bindings')('addonTest.node');
 
     //2. then invoke functions on the module
-    const addonTest = require('bindings')('addonTest.node');
     const psd = addonTest.PSD();
     const gdf = addonTest.gammaDistFunction(0.05, 0.23);
     const obj = addonTest.obj;
