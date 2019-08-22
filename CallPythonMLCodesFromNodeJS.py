@@ -341,8 +341,8 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       # 3. create Drilling_and_Formation_Parameters TABLE, if it does not exist and save (commit) the changes
       py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_and_Formation_Parameters (ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, 
                                TQR_Ibft real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, 
-                               GR_api real, DEEP_RESISVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer, 
-                               IS_STUCKPIPE_boolean_0_or_1 integer, BHA_TYPE_no_unit text, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISVITY_ohm_m<= 2000), 
+                               GR_api real, DEEP_RESISTIVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer, 
+                               IS_STUCKPIPE_boolean_0_or_1 integer, BHA_TYPE_no_unit text, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000), 
                                CHECK (IS_VIBRATION_boolean_0_or_1=1 OR IS_VIBRATION_boolean_0_or_1=0), CHECK (IS_KICK_boolean_0_or_1=1 OR IS_KICK_boolean_0_or_1=0), 
                                CHECK (IS_STUCKPIPE_boolean_0_or_1=1 OR IS_STUCKPIPE_boolean_0_or_1=0))
                             """)
@@ -351,7 +351,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       # 4. insert a row of data for all columns
       try:
         py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg, 
-                                 MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1, 
+                                 MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISTIVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1, 
                                  IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, BHA_TYPE_no_unit, TIME_ymd_hms)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
                                  ?, ?)""", (3, 5, 100, 35.14, 2, 3, 5, 100, 35.14, 10, 12, 2, 3, 100, 300.2, 12, 160, 1, 0, 0, 'slick', str(datetime.utcnow()))
                               )
@@ -366,7 +366,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (29, 1.18, 80, 'packed')")
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (39, 1.18, 30, 'packed')")
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (35, 1.18, 32, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (DEEP_RESISVITY_ohm_m, BHA_TYPE_no_unit, TIME_ymd_hms) VALUES (?, ?, ?)", (22.2, 'slick', str(datetime.utcnow())))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (DEEP_RESISTIVITY_ohm_m, BHA_TYPE_no_unit, TIME_ymd_hms) VALUES (?, ?, ?)", (22.2, 'slick', str(datetime.utcnow())))
         connection.commit()
       except(sqlite3.IntegrityError) as err:
         handle_non_unique_error_for_insert(err)
