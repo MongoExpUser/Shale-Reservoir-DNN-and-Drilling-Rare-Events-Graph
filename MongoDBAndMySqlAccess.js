@@ -172,7 +172,7 @@ class MongoDBAndMySqlAccess
                         console.log("Table confirmation Error: ", confirmTableError);
                         return;
                     }
-                     
+                      
                     if(result)
                     {
                         console.log("It is Confirmed that the TABLE(S) below exist(s) within ", dbName, "database");
@@ -200,10 +200,13 @@ class MongoDBAndMySqlAccess
                                 console.log(result);
                                 console.log();
                             }
-                          
+                            
                             // insert records to the table and then show all records in the table and also drop table if desired
                             //1. insert records
-                            var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName);
+                            var values = mda.drillingEventSampleValues();
+                            var values = mda.drillingEventDefaultValues();
+                            var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName, values);
+                            
                             
                             nodeJSConnection.query(mySqlQuery, function (insertTableError, result)
                             {
@@ -217,6 +220,7 @@ class MongoDBAndMySqlAccess
                                 console.log(result);
                                 console.log();
                             
+                
                                 //2.show records
                                 var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
                                 
@@ -228,10 +232,11 @@ class MongoDBAndMySqlAccess
                                         return;
                                     }
                                 
-                                    console.log("Records of " + String(tableName) + " TABLE are shown below!")
+                                    console.log("Records of " + String(tableName) + " TABLE are shown below!");
                                     console.log(result);
                                     console.log();
                                     
+                                
                                     //3. drop/delete table if desired
                                     if(dropTable === true)
                                     {
@@ -256,7 +261,6 @@ class MongoDBAndMySqlAccess
                                     {
                                         nodeJSConnection.end();
                                     }
-                                    
                                     
                                     
                                 });
@@ -335,6 +339,7 @@ class MongoDBAndMySqlAccess
         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
                             " (" + //primary key
                             "DATA_ID INT AUTO_INCREMENT PRIMARY KEY, " +
+                            
                             //data from regular drilling operation
                             "ROP_fph DOUBLE, " +
                             "RPM_rpm DOUBLE, " +
@@ -346,6 +351,7 @@ class MongoDBAndMySqlAccess
                             "MUD_VISC_cp DOUBLE, " +
                             "MUD_FLOW_RATE_gpm DOUBLE, " +
                             "BHA_TYPE_no_unit TEXT, " +
+                            
                             //data from downhole MWD/LWD tool measurements
                             "TVD_ft DOUBLE, " +
                             "MD_ft DOUBLE, " +
@@ -355,12 +361,15 @@ class MongoDBAndMySqlAccess
                             "GR_api DOUBLE, " +
                             "DEEP_RESISTIVITY_ohm_m DOUBLE, " +
                             "SHOCK_g DOUBLE, " +
+                            
                             //event data
-                            "IS_VIBRATION BOOLEAN, " +
-                            "IS_KICK BOOLEAN, " +
-                            "IS_STUCKPIPE BOOLEAN, " +
+                            "IS_VIBRATION_boolean_0_or_1 BOOLEAN, " +
+                            "IS_KICK_boolean_0_or_1 BOOLEAN, " +
+                            "IS_STUCKPIPE_boolean_0_or_1 BOOLEAN, " +
+                            
                             //time data
-                            "TIME_ymd_hms TEXT, " +
+                            "TIME_ymd_hms DATETIME, " +
+                            
                             //constraints on some LWD data
                             "CHECK (0>=GR_api<=150), " +
                             "CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)" +
@@ -369,13 +378,37 @@ class MongoDBAndMySqlAccess
             return mySqlQuery;
     }
        
-    drillingEventInsertRecordInMySQL(tableName)
+    drillingEventInsertRecordInMySQL(tableName, values)
     {
-        const value = true;
-            
-        if(value === true)
+        const valueSeperator = ", ";
+        
+        if(values !== null && values !== undefined)
         {
+            const actualValues =    values.ROP_fph + valueSeperator +
+                                    values.RPM_rpm + valueSeperator +
+                                    values.SPP_psi + valueSeperator +
+                                    values.DWOB_lb + valueSeperator +
+                                    values.SWOB_lb + valueSeperator +
+                                    values.TQR_Ibft + valueSeperator +
+                                    values.MUD_WEIGHT_sg + valueSeperator +
+                                    values.MUD_VISC_cp + valueSeperator +
+                                    values.MUD_FLOW_RATE_gpm + valueSeperator +
+                                    values.BHA_TYPE_no_unit + valueSeperator +
+                                    values.TVD_ft + valueSeperator +
+                                    values.MD_ft + valueSeperator +
+                                    values.INC_deg + valueSeperator +
+                                    values.AZIM_deg + valueSeperator +
+                                    values.CALIPER_HOLE_SIZE_inches + valueSeperator +
+                                    values.GR_api + valueSeperator +
+                                    values.DEEP_RESISTIVITY_ohm_m + valueSeperator +
+                                    values.SHOCK_g + valueSeperator +
+                                    values.IS_VIBRATION_boolean_0_or_1 + valueSeperator +
+                                    values.IS_KICK_boolean_0_or_1 + valueSeperator +
+                                    values.IS_STUCKPIPE_boolean_0_or_1 + valueSeperator +
+                                    values.TIME_ymd_hms;
+            
             var mySqlQuery = "INSERT INTO " + String(tableName) +
+                                //data from regular drilling operation
                                 " (ROP_fph, " +
                                 "RPM_rpm, " +
                                 "SPP_psi, " +
@@ -396,16 +429,75 @@ class MongoDBAndMySqlAccess
                                 "DEEP_RESISTIVITY_ohm_m, " +
                                 "SHOCK_g, " +
                                 //event data
-                                "IS_VIBRATION, " +
-                                "IS_KICK, " +
-                                "IS_STUCKPIPE, " +
+                                "IS_VIBRATION_boolean_0_or_1, " +
+                                "IS_KICK_boolean_0_or_1, " +
+                                "IS_STUCKPIPE_boolean_0_or_1, " +
                                 //time data
                                 "TIME_ymd_hms)" +
-                                " VALUE (30, 300, 100, 350, 200, 95, 1.18, 3, 35.14, 'slick', 1000, 1200, 67, 110, 8.5, 50, 120, 20, FALSE, FALSE, FALSE, '10:22'" +
+                                //populate columns with actual values
+                                " VALUE (" + actualValues + ")"
                             ")";
         }
             
         return mySqlQuery;
+    }
+    
+    drillingEventDefaultValues()
+    {
+        const values = {"ROP_fph": null,
+                        "RPM_rpm": null,
+                        "SPP_psi": null,
+                        "DWOB_lb": null,
+                        "SWOB_lb": null,
+                        "TQR_Ibft": null,
+                        "MUD_WEIGHT_sg": null,
+                        "MUD_VISC_cp": null,
+                        "MUD_FLOW_RATE_gpm": null,
+                        "BHA_TYPE_no_unit": null,
+                        "TVD_ft": null,
+                        "MD_ft": null,
+                        "INC_deg": null,
+                        "AZIM_deg": null,
+                        "CALIPER_HOLE_SIZE_inches": null,
+                        "GR_api": null,
+                        "DEEP_RESISTIVITY_ohm_m": null,
+                        "SHOCK_g": null,
+                        "IS_VIBRATION_boolean_0_or_1": null,
+                        "IS_KICK_boolean_0_or_1": null,
+                        "IS_STUCKPIPE_boolean_0_or_1": null,
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"
+        }
+        
+        return values;
+    }
+    
+    drillingEventSampleValues()
+    {
+        const values = {"ROP_fph": 30,
+                        "RPM_rpm": 300,
+                        "SPP_psi": 100,
+                        "DWOB_lb": 350,
+                        "SWOB_lb": 200,
+                        "TQR_Ibft": 95,
+                        "MUD_WEIGHT_sg": 1.18,
+                        "MUD_VISC_cp": 3,
+                        "MUD_FLOW_RATE_gpm": 35.14,
+                        "BHA_TYPE_no_unit": JSON.stringify('slick'),
+                        "TVD_ft": 1000,
+                        "MD_ft": 1200,
+                        "INC_deg": 67.2,
+                        "AZIM_deg": 110.5,
+                        "CALIPER_HOLE_SIZE_inches": 6,
+                        "GR_api": 20,
+                        "DEEP_RESISTIVITY_ohm_m": 303.3,
+                        "SHOCK_g": 3,
+                        "IS_VIBRATION_boolean_0_or_1": false,
+                        "IS_KICK_boolean_0_or_1": false,
+                        "IS_STUCKPIPE_boolean_0_or_1": false,
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"
+        }
+        
+        return values;
     }
 }
 
