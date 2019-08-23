@@ -1,4 +1,3 @@
-//3. MongoDBAndMySqlAccess option for gitHub
 /* @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
@@ -175,7 +174,6 @@ class MongoDBAndMySqlAccess
                     }
                       
                     
-                    
                     if(result)
                     {
                         console.log("It is Confirmed that the TABLE(S) below exist(s) within ", dbName, "database");
@@ -206,8 +204,8 @@ class MongoDBAndMySqlAccess
                             }
                             
                             
-                            // insert records to the table and then show all records in the table
-                            // also drop table if desired
+                            // insert records to the table and then show all records in the table and also drop table if desired
+                            
                             //1. insert records
                             var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName);
                             
@@ -260,11 +258,8 @@ class MongoDBAndMySqlAccess
                                             console.log();
                                             
                                             nodeJSConnection.end();
-                                            
                                         });
-                                        
                                     }
-                                    
                                 });
                             });
                             
@@ -273,7 +268,6 @@ class MongoDBAndMySqlAccess
                 });
             }
         });
-        
         
         return nodeJSConnection;
     }
