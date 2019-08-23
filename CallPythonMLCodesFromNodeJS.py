@@ -282,7 +282,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print()
       print("Using SQLite3 version", sqlite3.version, "on this system.")
       print()
-      print("Using Networkx version", networkx.__version__, "on this system.")
+      print("Using Networkx version", nx.__version__, "on this system.")
       print()
       
       self.count = 3
