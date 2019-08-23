@@ -4,7 +4,7 @@
 
 2) Drilling Rear Events (Vibration, Kick and Stuck pipe) Detection and Prevention with Graph-Based Method.
 
-
+#
 This module is based on Node.js with option to use either gpu or cpu. 
 
 The module can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
