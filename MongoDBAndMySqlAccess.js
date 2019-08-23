@@ -204,7 +204,6 @@ class MongoDBAndMySqlAccess
                             // insert records to the table and then show all records in the table and also drop table if desired
                             //1. insert records
                             var values = mda.drillingEventSampleValues();
-                            var values = mda.drillingEventDefaultValues();
                             var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName, values);
                             
                             
