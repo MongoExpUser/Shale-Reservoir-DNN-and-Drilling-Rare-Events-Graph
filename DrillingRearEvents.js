@@ -21,7 +21,7 @@ class DrillingRearEvents extends BaseAIML
         this.pyMode = pyMode;
     }
     
-     drillingEventCreateTableInMySQL(tableName)
+    drillingEventCreateTableInMySQL(tableName)
     {
 
         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
