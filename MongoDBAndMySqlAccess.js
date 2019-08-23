@@ -129,13 +129,14 @@ class MongoDBAndMySqlAccess
         {
             mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
                             password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
-                            ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
+                            timezone: 'Z', supportBigNumbers: true, ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
                            }
         }
         else
         {
             mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
-                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug
+                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
+                            timezone: 'Z', supportBigNumbers: true, ssl: enableSSL
                            }
             
         }
@@ -143,8 +144,11 @@ class MongoDBAndMySqlAccess
         //get database name
         const dbName = String(connectionOptions.database);
         
+
         //create connection (authenticate) to database
         const nodeJSConnection = mysql.createConnection(mysqlOptions);
+        
+        console.log(nodeJSConnection);
         
         console.log();
         console.log("Connecting......");
@@ -337,7 +341,7 @@ class MongoDBAndMySqlAccess
     {
         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
                             " (" + //primary key
-                            "DATA_ID INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "ROWID INT AUTO_INCREMENT PRIMARY KEY, " +
                             
                             //data from regular drilling operation
                             "ROP_fph DOUBLE, " +
