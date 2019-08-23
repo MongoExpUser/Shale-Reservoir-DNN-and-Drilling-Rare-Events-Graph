@@ -339,7 +339,6 @@ class MongoDBAndMySqlAccess
     
     drillingEventCreateTableInMySQL(tableName)
     {
-
         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
                             " (" + //primary key
                             "DATA_ID INT AUTO_INCREMENT PRIMARY KEY, " +
