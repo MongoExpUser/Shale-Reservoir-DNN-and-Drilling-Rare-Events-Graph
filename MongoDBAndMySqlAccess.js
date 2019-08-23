@@ -64,6 +64,7 @@ class MongoDBAndMySqlAccess
         }).then(function(callbackDB)
         {
             console.log("Now connected to MongoDB Server on:", mongoose.connection.host);
+            console.log();
             return callbackDB.connections[0];
 
         }).catch(function(err)
@@ -119,7 +120,7 @@ class MongoDBAndMySqlAccess
         return mongoose.connection;
     }
     
-    connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false, createTable=false, enableSSL=false)
+    connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false, createTable=false, dropTable=false, enableSSL=false)
     {
         const fs = require('fs');
         const mysql = require('mysql');
@@ -158,8 +159,9 @@ class MongoDBAndMySqlAccess
             }
                     
             console.log("Now connected to MySql server on:", connectionOptions.host);
+            console.log();
             
-            //then confirm table(s) exit(s) within database, and create table is desired, using callbacks/asynchronously
+            //then confirm table(s) exit(s) within database, and create table if desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
             {
                 var mySqlQuery = "SHOW TABLES"
@@ -173,20 +175,20 @@ class MongoDBAndMySqlAccess
                     }
                       
                     
-                    console.log();
+                    
                     if(result)
                     {
                         console.log("It is Confirmed that the TABLE(S) below exist(s) within ", dbName, "database");
                         console.log(result);
+                        console.log();
                     }
                     
                     
                     if(createTable === true)
                     {
                         //create a new table
-                        var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
-                                         " (ID int AUTO_INCREMENT PRIMARY KEY, dominantMineral VARCHAR(255)," +
-                                         " fluidContent VARCHAR(255), depth_ft DOUBLE, api_GR DOUBLE, res_Ohm_m DOUBLE)";
+                        const mda = new MongoDBAndMySqlAccess();
+                        var mySqlQuery = mda.drillingEventCreateTableInMySQL(tableName);
                         
                         nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                         {
@@ -196,28 +198,32 @@ class MongoDBAndMySqlAccess
                                 return;
                             }
                             
-                            console.log();
-                            console.log(String(tableName) + " TABLE successfully created!")
-                            console.log();
-                            
-                            
-                            //update table by adding/inserting records to the table and then show all records in the table
-                            //1. update (add/insert records)
-                            var mySqlQuery = "INSERT INTO " + String(tableName) + " (dominantMineral, fluidContent, depth_ft, api_GR, res_Ohm_m)" +
-                                             " VALUES ('Carbonate', 'Condensate', 2000.00, 80, 300.35);";
-                            
-                            nodeJSConnection.query(mySqlQuery, function (updateTableError, result)
+                            if(result.affectedRows > 0)
                             {
-                                if(updateTableError)
+                                console.log(String(tableName) + " TABLE successfully created!");
+                                console.log(result);
+                                console.log();
+                            }
+                            
+                            
+                            // insert records to the table and then show all records in the table
+                            // also drop table if desired
+                            //1. insert records
+                            var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName);
+                            
+                            nodeJSConnection.query(mySqlQuery, function (insertTableError, result)
+                            {
+                                if(insertTableError)
                                 {
-                                    console.log("Update TABLE Error: ", updateTableError);
+                                    console.log("Update TABLE Error: ", insertTableError);
                                     return;
                                 }
                                 
-                                console.log(String(tableName) + " TABLE successfully updated!")
+                                console.log("Records inserted into " + String(tableName) + " TABLE successfully!");
                                 console.log(result);
                                 console.log();
                             
+                             
                              
                                 //2.show records
                                 var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
@@ -234,15 +240,42 @@ class MongoDBAndMySqlAccess
                                     console.log(result);
                                     console.log();
                                     
-                                    nodeJSConnection.end();
+                                    
+                                    
+                                    //3. drop/delete table if desired
+                                    if(dropTable === true)
+                                    {
+                                        var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
+                                        
+                                        nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
+                                        {
+                                            if(dropTableError)
+                                            {
+                                                console.log("Drop/Delete TABLE Error: ", dropTableError);
+                                                return;
+                                            }
+                                        
+                                            console.log(String(tableName) + " TABLE " + " is successfully dropped/deleted!")
+                                            console.log(result);
+                                            console.log();
+                                            
+                                            nodeJSConnection.end();
+                                            
+                                        });
+                                        
+                                    }
                                     
                                 });
                             });
+                            
                         });
                     }
                 });
             }
         });
+        
+        
+        return nodeJSConnection;
     }
         
     uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
@@ -302,6 +335,87 @@ class MongoDBAndMySqlAccess
                 console.log(error, " : Uploading file error successfully intercepted and handled.");
             }
         });
+    }
+    
+    
+    drillingEventCreateTableInMySQL(tableName)
+    {
+
+        var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
+                            " (" + //primary key
+                            "DATA_ID INT AUTO_INCREMENT PRIMARY KEY, " +
+                            //data from regular drilling operation
+                            "ROP_fph DOUBLE, " +
+                            "RPM_rpm DOUBLE, " +
+                            "SPP_psi DOUBLE, " +
+                            "DWOB_lb DOUBLE, " +
+                            "SWOB_lb DOUBLE, " +
+                            "TQR_Ibft DOUBLE, " +
+                            "MUD_WEIGHT_sg DOUBLE, " +
+                            "MUD_VISC_cp DOUBLE, " +
+                            "MUD_FLOW_RATE_gpm DOUBLE, " +
+                            "BHA_TYPE_no_unit TEXT, " +
+                            //data from downhole MWD/LWD tool measurements
+                            "TVD_ft DOUBLE, " +
+                            "MD_ft DOUBLE, " +
+                            "INC_deg DOUBLE, " +
+                            "AZIM_deg DOUBLE, " +
+                            "CALIPER_HOLE_SIZE_inches DOUBLE, " +
+                            "GR_api DOUBLE, " +
+                            "DEEP_RESISTIVITY_ohm_m DOUBLE, " +
+                            "SHOCK_g DOUBLE, " +
+                            //event data
+                            "IS_VIBRATION BOOLEAN, " +
+                            "IS_KICK BOOLEAN, " +
+                            "IS_STUCKPIPE BOOLEAN, " +
+                            //time data
+                            "TIME_ymd_hms TEXT, " +
+                            //constraints on some LWD data
+                            "CHECK (0>=GR_api<=150), " +
+                            "CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)" +
+                        ")";
+            
+            return mySqlQuery;
+    }
+       
+            
+    drillingEventInsertRecordInMySQL(tableName)
+    {
+        const value = true;
+            
+        if(value === true)
+        {
+            var mySqlQuery = "INSERT INTO " + String(tableName) +
+                                " (ROP_fph, " +
+                                "RPM_rpm, " +
+                                "SPP_psi, " +
+                                "DWOB_lb, " +
+                                "SWOB_lb, " +
+                                "TQR_Ibft, " +
+                                "MUD_WEIGHT_sg, " +
+                                "MUD_VISC_cp, " +
+                                "MUD_FLOW_RATE_gpm, " +
+                                "BHA_TYPE_no_unit, " +
+                                //data from downhole MWD/LWD tool measurements
+                                "TVD_ft, " +
+                                "MD_ft, " +
+                                "INC_deg, " +
+                                "AZIM_deg, " +
+                                "CALIPER_HOLE_SIZE_inches, " +
+                                "GR_api, " +
+                                "DEEP_RESISTIVITY_ohm_m, " +
+                                "SHOCK_g, " +
+                                //event data
+                                "IS_VIBRATION, " +
+                                "IS_KICK, " +
+                                "IS_STUCKPIPE, " +
+                                //time data
+                                "TIME_ymd_hms)" +
+                                " VALUE (30, 300, 100, 350, 200, 95, 1.18, 3, 35.14, 'slick', 1000, 1200, 67, 110, 8.5, 50, 120, 20, FALSE, FALSE, FALSE, '10:22'" +
+                            ")";
+        }
+            
+        return mySqlQuery;
     }
 }
 
