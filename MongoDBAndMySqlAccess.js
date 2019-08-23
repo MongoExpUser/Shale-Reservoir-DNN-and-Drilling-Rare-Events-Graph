@@ -337,7 +337,6 @@ class MongoDBAndMySqlAccess
         });
     }
     
-    
     drillingEventCreateTableInMySQL(tableName)
     {
 
@@ -378,7 +377,6 @@ class MongoDBAndMySqlAccess
             return mySqlQuery;
     }
        
-            
     drillingEventInsertRecordInMySQL(tableName)
     {
         const value = true;
