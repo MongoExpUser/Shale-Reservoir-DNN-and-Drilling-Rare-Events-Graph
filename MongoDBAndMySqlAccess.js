@@ -172,15 +172,13 @@ class MongoDBAndMySqlAccess
                         console.log("Table confirmation Error: ", confirmTableError);
                         return;
                     }
-                      
-                    
+                     
                     if(result)
                     {
                         console.log("It is Confirmed that the TABLE(S) below exist(s) within ", dbName, "database");
                         console.log(result);
                         console.log();
                     }
-                    
                     
                     if(createTable === true)
                     {
@@ -202,10 +200,8 @@ class MongoDBAndMySqlAccess
                                 console.log(result);
                                 console.log();
                             }
-                            
-                            
+                          
                             // insert records to the table and then show all records in the table and also drop table if desired
-                            
                             //1. insert records
                             var mySqlQuery = mda.drillingEventInsertRecordInMySQL(tableName);
                             
@@ -221,8 +217,6 @@ class MongoDBAndMySqlAccess
                                 console.log(result);
                                 console.log();
                             
-                             
-                             
                                 //2.show records
                                 var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
                                 
@@ -237,8 +231,6 @@ class MongoDBAndMySqlAccess
                                     console.log("Records of " + String(tableName) + " TABLE are shown below!")
                                     console.log(result);
                                     console.log();
-                                    
-                                    
                                     
                                     //3. drop/delete table if desired
                                     if(dropTable === true)
@@ -260,6 +252,13 @@ class MongoDBAndMySqlAccess
                                             nodeJSConnection.end();
                                         });
                                     }
+                                    else if(dropTable !== true)
+                                    {
+                                        nodeJSConnection.end();
+                                    }
+                                    
+                                    
+                                    
                                 });
                             });
                             
