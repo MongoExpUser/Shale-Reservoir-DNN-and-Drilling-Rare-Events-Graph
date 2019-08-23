@@ -9,7 +9,7 @@ This module is based on Node.js with option to use either gpu or cpu.
 
 The module can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
 
-This repo is based on the following languages, frameworks and packages' versions:
+This repo is based on the following languages, frameworks, packages and database Servers :
 
 JavaScript ES6+
 
@@ -30,3 +30,9 @@ Keras v2.2.4
 C11
 
 C++17
+
+MongoDB v4.0.12 on ubuntu 18.04.1
+
+MySQL v5.7.27 on ubuntu 18.04.1
+
+SQLite3 2.6.0 within Python v3.7 on ubuntu 18.04.1
