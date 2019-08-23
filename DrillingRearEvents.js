@@ -21,8 +21,9 @@ class DrillingRearEvents extends BaseAIML
         this.pyMode = pyMode;
     }
     
-    drillingEventCreateTableInMySQL(tableName)
+     drillingEventCreateTableInMySQL(tableName)
     {
+
         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
                             " (" + //primary key
                             "DATA_ID INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -51,16 +52,15 @@ class DrillingRearEvents extends BaseAIML
                             "IS_KICK BOOLEAN, " +
                             "IS_STUCKPIPE BOOLEAN, " +
                             //time data
-                            "TIME_ymd_hms TEXT" +
+                            "TIME_ymd_hms TEXT, " +
                             //constraints on some LWD data
-                            "CHECK (0 >= GR_api <= 150), " +
-                            "CHECK (0 >= DEEP_RESISTIVITY_ohm_m <= 2000)" +
+                            "CHECK (0>=GR_api<=150), " +
+                            "CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)" +
                         ")";
-      
+            
             return mySqlQuery;
     }
-       
-            
+          
     drillingEventInsertRecordInMySQL(tableName)
     {
         const value = true;
