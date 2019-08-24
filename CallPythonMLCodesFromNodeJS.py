@@ -353,7 +353,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg, 
                                  MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISTIVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1, 
                                  IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, BHA_TYPE_no_unit, TIME_ymd_hms)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                                 ?, ?)""", (3, 5, 100, 35.14, 2, 3, 5, 100, 35.14, 10, 12, 2, 3, 100, 300.2, 12, 160, 1, 0, 0, 'slick', str(datetime.utcnow()))
+                                 ?, ?)""", (35, 65, 235, 20000, 10000, 800, 8000, 12000, 67.2, 110.5, 1.18, 1.03, 98.14, 20, 303.3, 6, 26, 0, 0, 0, 'slick', str(datetime.utcnow()))
                               )
         connection.commit()
       except(sqlite3.IntegrityError) as err:
@@ -361,20 +361,20 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 5. insert new rows of data, for the indicated columns, note that other columns are null/None, expect where DEFAULT and NOT NULL are specfied
       try:
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (30, 1.18, 90, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (32, 1.18, 92, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (29, 1.18, 80, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (39, 1.18, 30, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (35, 1.18, 32, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (DEEP_RESISTIVITY_ohm_m, BHA_TYPE_no_unit, TIME_ymd_hms) VALUES (?, ?, ?)", (22.2, 'slick', str(datetime.utcnow())))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (90.20, 1.18, 22, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (104.5, 1.17, 25, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (97.44, 1.16, 18, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (120.1, 1.18, 27, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (101.2, 1.17, 29, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (DEEP_RESISTIVITY_ohm_m, BHA_TYPE_no_unit, TIME_ymd_hms) VALUES (?, ?, ?)", (222.2, 'slick', str(datetime.utcnow())))
         connection.commit()
       except(sqlite3.IntegrityError) as err:
         handle_non_unique_error_for_insert(err)
       
       # 6. update selected columns of the table at specified row
       py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET MUD_WEIGHT_sg=1.15, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=2")
-      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=50, RPM_rpm=20, MD_ft=6708, INC_deg=40.1 WHERE ROWID=5")
-      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=50, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=6")
+      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=48.7, RPM_rpm=68.1, MD_ft=11002, INC_deg=65.1 WHERE ROWID=5")
+      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=43.3, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=6")
       connection.commit()
     
       # 7. show/view all record values in the table with "HEADER"
@@ -436,7 +436,6 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       connection.close()
       
       self.count = 4
-      
       return extracted_data
     # End test_sqlite_drilling_rear_events_database() method
       
