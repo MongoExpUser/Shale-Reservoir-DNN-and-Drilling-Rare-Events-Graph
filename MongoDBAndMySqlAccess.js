@@ -70,7 +70,7 @@ class MongoDBAndMySqlAccess
                                     MUD_WEIGHT_sg: values.MUD_WEIGHT_sg,
                                     MUD_VISC_cp: values.MUD_VISC_cp,
                                     MUD_FLOW_RATE_gpm: values.MUD_FLOW_RATE_gpm,
-                                    BHA_TYPE_no_unit: JSON.parse(values.BHA_TYPE_no_unit), //parse value back to String Object in JavaScript/NodeJS format
+                                    BHA_TYPE_no_unit: JSON.parse(values.BHA_TYPE_no_unit), // parse value to String Object (JavaScript/NodeJS format)
                                     TVD_ft: values.TVD_ft,
                                     MD_ft: values.MD_ft,
                                     INC_deg: values.INC_deg,
@@ -82,7 +82,7 @@ class MongoDBAndMySqlAccess
                                     IS_VIBRATION_boolean_0_or_1: values.IS_VIBRATION_boolean_0_or_1,
                                     IS_KICK_boolean_0_or_1: values.IS_KICK_boolean_0_or_1,
                                     IS_STUCKPIPE_boolean_0_or_1: values.IS_STUCKPIPE_boolean_0_or_1,
-                                    TIME_ymd_hms: new Date() // GMT_ISO dateTime in JavaScript/NodeJS format
+                                    TIME_ymd_hms: new Date()                                // GMT_ISO dateTime (JavaScript/NodeJS format)
             }
             
             return actualValues;
@@ -221,7 +221,7 @@ class MongoDBAndMySqlAccess
                         "IS_VIBRATION_boolean_0_or_1": null,
                         "IS_KICK_boolean_0_or_1": null,
                         "IS_STUCKPIPE_boolean_0_or_1": null,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()" // dateTime in MySQL format
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
         }
         
         return values;
@@ -238,7 +238,7 @@ class MongoDBAndMySqlAccess
                         "MUD_WEIGHT_sg": 1.18,
                         "MUD_VISC_cp": 1.03,
                         "MUD_FLOW_RATE_gpm": 98.14,
-                        "BHA_TYPE_no_unit": JSON.stringify('slick'),
+                        "BHA_TYPE_no_unit": JSON.stringify('slick'), // stringify value to string (MySQL input format)
                         "TVD_ft": 8000,
                         "MD_ft": 12000,
                         "INC_deg": 67.2,
@@ -250,7 +250,7 @@ class MongoDBAndMySqlAccess
                         "IS_VIBRATION_boolean_0_or_1": false,
                         "IS_KICK_boolean_0_or_1": false,
                         "IS_STUCKPIPE_boolean_0_or_1": false,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()" // dateTime in MySQL format
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
         }
         
         return values;
