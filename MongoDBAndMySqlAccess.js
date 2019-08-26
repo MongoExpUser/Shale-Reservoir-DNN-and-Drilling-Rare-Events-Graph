@@ -328,8 +328,7 @@ class MongoDBAndMySqlAccess
                     {
                         //create collection (TABLE equivalent in MySQL)
                         //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
-                        db.createCollection(collectionName, {strict: true, autoIndexID: true}, function(createCollectionError, createdCollection)
-                        {
+                        db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)                        {
                             if(createCollectionError && createCollectionError.name === "MongoError")
                             {
                                 console.log("Error: Existing COLLLECTION Error or other Error(s)");
