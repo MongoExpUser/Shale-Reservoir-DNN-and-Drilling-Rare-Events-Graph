@@ -70,7 +70,7 @@ class MongoDBAndMySqlAccess
                                     MUD_WEIGHT_sg: values.MUD_WEIGHT_sg,
                                     MUD_VISC_cp: values.MUD_VISC_cp,
                                     MUD_FLOW_RATE_gpm: values.MUD_FLOW_RATE_gpm,
-                                    BHA_TYPE_no_unit: values.BHA_TYPE_no_unit,
+                                    BHA_TYPE_no_unit: JSON.parse(values.BHA_TYPE_no_unit), //parse value back to String Object in JavaScript/NodeJS format
                                     TVD_ft: values.TVD_ft,
                                     MD_ft: values.MD_ft,
                                     INC_deg: values.INC_deg,
