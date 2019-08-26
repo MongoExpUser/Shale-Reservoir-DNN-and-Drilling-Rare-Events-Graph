@@ -379,11 +379,7 @@ class MongoDBAndMySqlAccess
                                     var specifiedFields =  {_id: 0,  MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
                                     var documentNames = {};
                                 }
-                                
-                                console.log("sortByField", sortByField);
-                                console.log("specifiedFields ", specifiedFields);
-                                console.log("documentNames", documentNames);
-                                
+        
                                 db.collection(collectionName).find(documentNames, {projection: specifiedFields}).sort(sortByField).toArray(function(showCollectionError, foundCollection)
                                 {
                                     if(showCollectionError)
