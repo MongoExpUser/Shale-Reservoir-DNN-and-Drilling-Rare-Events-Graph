@@ -12,13 +12,13 @@ The module can also be adapted for use in the browser with the tfjs-vis library 
 
 #
 
-This repo is based on the following languages, frameworks, packages and database Servers :
+This repo is based on the following languages, frameworks, packages and database servers :
 
 JavaScript ES6+
 
 Node v12.9.0
 
-Tensorflow.js v1.2.7 (JavaScript/Node.js Version)
+Tensorflow.js v1.2.8 (JavaScript/Node.js Version)
 
 Python-shell.js v1.0.8
 
