@@ -262,7 +262,7 @@ class MongoDBAndMySqlAccess
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
         const fs = require('fs');
-        //remove following "Deprecation Warnings" globally
+        //set mongoose to remove globally, the "deprecation warnings" related to these 3 options
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
