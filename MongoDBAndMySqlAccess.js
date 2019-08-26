@@ -256,15 +256,17 @@ class MongoDBAndMySqlAccess
         return values;
     }
     
-    static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
-                                sslCertOptions, createCollection=false, dropCollection=false, enableSSL=false,
-                                documentDisplayOption=undefined)
+    static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
+                                createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
-        mongoose.set('useCreateIndex', true);
         const fs = require('fs');
-
+        //remove following "Deprecation Warnings" globally
+        mongoose.set('useNewUrlParser', true);
+        mongoose.set('useFindAndModify', false);
+        mongoose.set('useCreateIndex', true);
+        
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         
@@ -272,15 +274,14 @@ class MongoDBAndMySqlAccess
         
         if(enableSSL === true)
         {
-            connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: true, sslValidate: true, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key,
-                           sslCert: sslCertOptions.cert, poolSize: 200
+            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
+                           ssl: true, sslValidate: true, poolSize: 200, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert,
                           };
         }
         else
         {
-            connOptions = {useNewUrlParser: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: false, sslValidate: false, poolSize: 200
+            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
+                           ssl: false, sslValidate: true, poolSize: 200
                           };
         }
              
