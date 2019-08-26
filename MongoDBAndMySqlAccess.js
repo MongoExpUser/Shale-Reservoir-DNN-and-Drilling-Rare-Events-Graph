@@ -238,7 +238,7 @@ class MongoDBAndMySqlAccess
                         "MUD_WEIGHT_sg": 1.18,
                         "MUD_VISC_cp": 1.03,
                         "MUD_FLOW_RATE_gpm": 98.14,
-                        "BHA_TYPE_no_unit": JSON.stringify('slick'), // stringify value to string (MySQL input format)
+                        "BHA_TYPE_no_unit": JSON.stringify('slick'), // stringify value to string (MySQL format)
                         "TVD_ft": 8000,
                         "MD_ft": 12000,
                         "INC_deg": 67.2,
