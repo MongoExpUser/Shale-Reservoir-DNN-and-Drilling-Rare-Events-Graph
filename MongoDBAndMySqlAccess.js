@@ -82,7 +82,7 @@ class MongoDBAndMySqlAccess
                                     IS_VIBRATION_boolean_0_or_1: values.IS_VIBRATION_boolean_0_or_1,
                                     IS_KICK_boolean_0_or_1: values.IS_KICK_boolean_0_or_1,
                                     IS_STUCKPIPE_boolean_0_or_1: values.IS_STUCKPIPE_boolean_0_or_1,
-                                    TIME_ymd_hms: new Date()  // GMT_ISO date in JavaScript format
+                                    TIME_ymd_hms: new Date() // GMT_ISO dateTime in JavaScript/NodeJS format
             }
             
             return actualValues;
@@ -221,7 +221,7 @@ class MongoDBAndMySqlAccess
                         "IS_VIBRATION_boolean_0_or_1": null,
                         "IS_KICK_boolean_0_or_1": null,
                         "IS_STUCKPIPE_boolean_0_or_1": null,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()" // dateTime in MySQL format
         }
         
         return values;
@@ -250,14 +250,15 @@ class MongoDBAndMySqlAccess
                         "IS_VIBRATION_boolean_0_or_1": false,
                         "IS_KICK_boolean_0_or_1": false,
                         "IS_STUCKPIPE_boolean_0_or_1": false,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"
+                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()" // dateTime in MySQL format
         }
         
         return values;
     }
     
     static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
-                                sslCertOptions, createCollection=false, dropCollection=false, enableSSL=false)
+                                sslCertOptions, createCollection=false, dropCollection=false, enableSSL=false,
+                                documentDisplayOption=undefined)
     {
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
@@ -305,7 +306,6 @@ class MongoDBAndMySqlAccess
             //then confirm collection(s) exit(s) within database, and create collection if desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
             {
-                
                 dbm.listCollections().toArray(function(confirmCollectionError, existingCollections)
                 {
                     if(confirmCollectionError)
@@ -327,14 +327,13 @@ class MongoDBAndMySqlAccess
                     if(createCollection === true)
                     {
                         //create collection (TABLE equivalent in MySQL)
-                        //note: "strict: true" ensures unique collectionName, like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
-                        db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
+                        //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
+                        db.createCollection(collectionName, {strict: true, autoIndexID: true}, function(createCollectionError, createdCollection)
                         {
                             if(createCollectionError && createCollectionError.name === "MongoError")
                             {
                                 console.log("Error: Existing COLLLECTION Error or other Error(s)");
                             }
-                            
                             
                             if(createdCollection)
                             {
@@ -342,9 +341,8 @@ class MongoDBAndMySqlAccess
                                 console.log();
                             }
                             
-                            
                             // insert document and its field values (COLUMN values equivalent in MySQL) into collection,
-                            // show all records in the collection and also drop collection if desired
+                            // show all records in the collection and also drop collection, if desired
                             
                             //1. insert
                             var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
@@ -361,8 +359,32 @@ class MongoDBAndMySqlAccess
                                 console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
                                 console.log();
                                 
-                                //2.  show all documents and their field values in the COLLECTION
-                                db.collection(collectionName).find({}).toArray(function(showCollectionError, foundCollection)
+                                //2. show
+                                // note: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
+                                //       field values in the COLLECTION will be displayed based on MongoDB default ordering
+                                // note: empty {} documentNames signifies all document names in the collection
+                                
+                                if(documentDisplayOption === "all")
+                                {
+                                    //option a: show all documents & their field values in the COLLECTION (sorted by dateTime in ascending order)
+                                    var sortByField = {TIME_ymd_hms: 1};
+                                    var specifiedFields = {};
+                                    var documentNames = {};
+                                }
+                                else if(documentDisplayOption === "wellTrajectory")
+                                {
+                                    //option b: show all documents & specified field values (with _id field excluded) in the COLLECTION (sorted by dateTime in ascending order)
+                                    //note: specified fields (except TIME_ymd_hms) are related to "well trajectory"
+                                    var sortByField = {TIME_ymd_hms: 1};
+                                    var specifiedFields =  {_id: 0,  MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
+                                    var documentNames = {};
+                                }
+                                
+                                console.log("sortByField", sortByField);
+                                console.log("specifiedFields ", specifiedFields);
+                                console.log("documentNames", documentNames);
+                                
+                                db.collection(collectionName).find(documentNames, {projection: specifiedFields}).sort(sortByField).toArray(function(showCollectionError, foundCollection)
                                 {
                                     if(showCollectionError)
                                     {
@@ -396,7 +418,6 @@ class MongoDBAndMySqlAccess
                                     else if(dropCollection !== true)
                                     {
                                         db.close();
-                                        
                                     }
                                 });
                             });
@@ -404,8 +425,6 @@ class MongoDBAndMySqlAccess
                     }
                 });
             }
-            
-            return mongoose.connection
 
         }).catch(function(err)
         {
@@ -416,11 +435,11 @@ class MongoDBAndMySqlAccess
                 return;
             };
         });
-        
     }
     
     connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
-                    connectionBolean=true, createCollection=false, dropCollection=false, enableSSL=false)
+                     connectionBolean=true, createCollection=false, dropCollection=false, enableSSL=false,
+                     documentDisplayOption=undefined)
     {
         const mongoose = require('mongoose');
             
@@ -445,7 +464,7 @@ class MongoDBAndMySqlAccess
             console.log();
             console.log("Connecting......");
             MongoDBAndMySqlAccess.connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
-                                                       sslCertOptions, createCollection, dropCollection, enableSSL);
+                                                       sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
                 
         process.on('SIGINT', function()
@@ -612,10 +631,7 @@ class MongoDBAndMySqlAccess
                     }
                 });
             }
-            
         });
-        
-        return nodeJSConnection;
     }
     
     uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
