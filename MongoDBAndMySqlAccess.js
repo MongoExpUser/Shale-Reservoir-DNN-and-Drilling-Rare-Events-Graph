@@ -749,7 +749,7 @@ class TestMongoDBAndMySqlAccess
           const dbUserPassword = "dbUserPassword";
           const dbDomainURL = "db.domain.com";
           const dbName = "dbName";
-          const collectionName = "collectionName";
+          const collectionName = "Drilling_Rare_Events";
           const confirmDatabase = true;
           const connectionBolean = true;
           const sslCertOptions = {
@@ -777,7 +777,7 @@ class TestMongoDBAndMySqlAccess
             port: 'port',
             user: 'user',
             password: 'password',
-            database: 'databaseName',
+            database: 'Drilling_Rare_Events' //=> databaseName,
             debug: false,
             ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
           };
