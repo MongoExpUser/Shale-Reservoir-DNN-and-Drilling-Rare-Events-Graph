@@ -39,7 +39,7 @@ class MongoDBAndMySqlAccess
                 }
             }
         }
-                            
+        
         return namesList;
     }
     
@@ -348,7 +348,6 @@ class MongoDBAndMySqlAccess
                                     console.log();
                                 }
                             });
-                            
                         }().then(function()
                         {
                             //4. insert document and its field values (COLUMN values equivalent in MySQL) into collection,
@@ -367,9 +366,7 @@ class MongoDBAndMySqlAccess
                                         
                                     console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
-                                
                                 });
-                                
                             }().then(function()
                             {
                                 //5. show records
@@ -378,7 +375,6 @@ class MongoDBAndMySqlAccess
                                 // note b: empty {} documentNames signifies all document names in the collection
                                 const mongoDBQueries = async function()
                                 {
-                                
                                     if(documentDisplayOption === "all")
                                     {
                                         //option a: show all documents & their field values in the COLLECTION (sorted by dateTime in ascending order)
@@ -406,9 +402,7 @@ class MongoDBAndMySqlAccess
                                         console.log("All documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
-                                        
                                     });
-                                    
                                 }().then(function()
                                 {
                                     const mongoDBQueries = async function()
@@ -434,7 +428,6 @@ class MongoDBAndMySqlAccess
                                         {
                                             db.close();
                                         }
-                                        
                                     }().catch(function(error){throw error});
                                     
                                 }).catch(function(error){throw error});
@@ -466,7 +459,6 @@ class MongoDBAndMySqlAccess
                     console.log(err);
                     return;
                 }
-                    
                 console.log('NOW disconnected from MongoDB-server');
             });
         }
@@ -520,13 +512,8 @@ class MongoDBAndMySqlAccess
         
         //get database name
         const dbName = String(connectionOptions.database);
-        
-
         //create connection (authenticate) to database
         const nodeJSConnection = mysql.createConnection(mysqlOptions);
-        
-        //console.log(nodeJSConnection);
-        
         console.log();
         console.log("Connecting......");
                 
@@ -541,7 +528,7 @@ class MongoDBAndMySqlAccess
             console.log("Now connected to MySql server on: ", connectionOptions.host);
             console.log();
             
-            //then confirm table(s) exit(s) within database, and create table if desired, using callbacks/asynchronously
+            //then confirm table(s) exit(s) within database, and create table if desired
             if(confirmDatabase === true && dbName !== null)
             {
                 var mySqlQuery = "SHOW TABLES"
@@ -580,7 +567,6 @@ class MongoDBAndMySqlAccess
                                 console.log();
                             }
                             
-                            
                             // insert column values into the table, show all records in the table and also drop table, if desired
                             //1. insert column values
                             var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
@@ -597,7 +583,6 @@ class MongoDBAndMySqlAccess
                                 console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
                                 console.log();
                             
-                
                                 //2. show all rows and column values in the TABLE
                                 var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
                                 
@@ -613,7 +598,6 @@ class MongoDBAndMySqlAccess
                                     console.log(result);
                                     console.log();
                                     
-                                
                                     //3. drop/delete table if desired
                                     if(dropTable === true)
                                     {
@@ -629,7 +613,6 @@ class MongoDBAndMySqlAccess
                                         
                                             console.log(String(tableName) + " TABLE is successfully dropped/deleted!")
                                             console.log();
-                                            
                                             nodeJSConnection.end();
                                         });
                                     }
@@ -707,5 +690,6 @@ class MongoDBAndMySqlAccess
         });
     }
 }
+
 
 module.exports = {MongoDBAndMySqlAccess};
