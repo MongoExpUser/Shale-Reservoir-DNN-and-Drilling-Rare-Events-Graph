@@ -286,11 +286,11 @@ class MongoDBAndMySqlAccess
         }
              
         //connect (authenticate) to database using promise
-        mongoose.connect(uri, connOptions, function(err)
+        mongoose.connect(uri, connOptions, function(connectionError)
         {
-            if(err)
+            if(connectionError)
             {
-                console.log(err);
+                console.log(connectionError);
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
@@ -299,138 +299,155 @@ class MongoDBAndMySqlAccess
         {
             console.log("Now connected to MongoDB Server on: ", mongoose.connection.host);
             console.log();
-            
             const db  = mongoose.connection;  // or callbackDB.connections[0];
             const dbm = db.client.db(dbName);
             console.log();
             
-            //then confirm collection(s) exit(s) within database, and create collection if desired, using callbacks/asynchronously
             if(confirmDatabase === true && dbName !== null)
             {
-                dbm.listCollections().toArray(function(confirmCollectionError, existingCollections)
+                //1. confirm collection(s) exit(s) within database
+                const mongoDBQueries = async function()
                 {
-                    if(confirmCollectionError)
+                    dbm.listCollections().toArray(function(confirmCollectionError, existingCollections)
                     {
-                        console.log("confirm Collection Error: ", confirmCollectionError);
-                        return;
-                    }
+                        if(confirmCollectionError)
+                        {
+                            console.log("confirm Collection Error: ", confirmCollectionError);
+                            return;
+                        }
+                        
+                        //2. check if "collectionName" exists in collection(s)
+                        const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                        
+                        if(existingCollections.length > 0)
+                        {
+                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
+                            console.log(collectionNamesList);
+                            console.log();
+                        }
+                    });
                     
-                    //check if collectionName exists
-                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
-                    
-                    if(existingCollections.length > 0)
-                    {
-                        console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
-                        console.log(collectionNamesList);
-                        console.log();
-                    }
-                    
+                }().then(function()
+                {
                     if(createCollection === true)
                     {
-                        //create collection (TABLE equivalent in MySQL)
-                        //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
-                        db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)                        {
-                            if(createCollectionError && createCollectionError.name === "MongoError")
+                        //3. create collection (TABLE equivalent in MySQL), if desired
+                        const mongoDBQueries = async function()
+                        {
+                            //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
+                            db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
                             {
-                                console.log("Error: Existing COLLLECTION Error or other Error(s)");
-                            }
-                            
-                            if(createdCollection)
-                            {
-                                console.log(collectionName, " COLLECTION successfully created!");
-                                console.log();
-                            }
-                            
-                            // insert document and its field values (COLUMN values equivalent in MySQL) into collection,
-                            // show all records in the collection and also drop collection, if desired
-                            
-                            //1. insert
-                            var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
-                            var documentObject = MongoDBAndMySqlAccess.drillingEventInsertRecordInMongoDB(collectionName, values);
-                            
-                            db.collection(collectionName).insertOne(documentObject, function(insertCollectError, insertedObject)
-                            {
-                                if(insertCollectError)
+                                if(createCollectionError && createCollectionError.name === "MongoError")
                                 {
-                                    console.log("Insert Collection Error: ", insertCollectError);
-                                    return;
+                                    console.log("Error: Existing COLLLECTION Error or other Error(s)");
                                 }
                                 
-                                console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
-                                console.log();
-                                
-                                //2. show
-                                // note: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
-                                //       field values in the COLLECTION will be displayed based on MongoDB default ordering
-                                // note: empty {} documentNames signifies all document names in the collection
-                                
-                                if(documentDisplayOption === "all")
+                                if(createdCollection)
                                 {
-                                    //option a: show all documents & their field values in the COLLECTION (sorted by dateTime in ascending order)
-                                    var sortByField = {TIME_ymd_hms: 1};
-                                    var specifiedFields = {};
-                                    var documentNames = {};
+                                    console.log(collectionName, " COLLECTION successfully created!");
+                                    console.log();
                                 }
-                                else if(documentDisplayOption === "wellTrajectory")
+                            });
+                            
+                        }().then(function()
+                        {
+                            //4. insert document and its field values (COLUMN values equivalent in MySQL) into collection,
+                            const mongoDBQueries = async function()
+                            {
+                                var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
+                                var documentObject = MongoDBAndMySqlAccess.drillingEventInsertRecordInMongoDB(collectionName, values);
+                                    
+                                db.collection(collectionName).insertOne(documentObject, function(insertCollectError, insertedObject)
                                 {
-                                    //option b: show all documents & specified field values (with _id field excluded) in the COLLECTION (sorted by dateTime in ascending order)
-                                    //note: specified fields (except TIME_ymd_hms) are related to "well trajectory"
-                                    var sortByField = {TIME_ymd_hms: 1};
-                                    var specifiedFields =  {_id: 0,  MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
-                                    var documentNames = {};
-                                }
-        
-                                db.collection(collectionName).find(documentNames, {projection: specifiedFields}).sort(sortByField).toArray(function(showCollectionError, foundCollection)
-                                {
-                                    if(showCollectionError)
+                                    if(insertCollectError)
                                     {
-                                        console.log("Show COLLECTION Error: ", showCollectionError);
+                                        console.log("Insert Collection Error: ", insertCollectError);
                                         return;
                                     }
-                                
-                                    console.log("All documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
-                                    console.log(foundCollection);
+                                        
+                                    console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                 
-                                    //3. drop/delete collection, if desired
-                                    if(dropCollection === true)
-                                    {
-                                        db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
-                                        {
-                                            if(dropCollectionError)
-                                            {
-                                                console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
-                                                return;
-                                            }
-                                                        
-                                            console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
-                                            console.log("Dropped?: ", droppedCollectionConfirmation);
-                                            console.log();
-                                
-                                            db.close();
-                                            
-                                        });
-                                    }
-                                    else if(dropCollection !== true)
-                                    {
-                                        db.close();
-                                    }
                                 });
-                            });
-                        });
+                                
+                            }().then(function()
+                            {
+                                //5. show records
+                                // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
+                                //         field values in the COLLECTION will be displayed based on MongoDB default ordering
+                                // note b: empty {} documentNames signifies all document names in the collection
+                                const mongoDBQueries = async function()
+                                {
+                                
+                                    if(documentDisplayOption === "all")
+                                    {
+                                        //option a: show all documents & their field values in the COLLECTION (sorted by dateTime in ascending order)
+                                        var sortByField = {TIME_ymd_hms: 1};
+                                        var specifiedFields = {};
+                                        var documentNames = {};
+                                    }
+                                    else if(documentDisplayOption === "wellTrajectory")
+                                    {
+                                        //option b: show all documents & specified field values (with _id field excluded) in the COLLECTION (sorted by dateTime in ascending order)
+                                        //note: specified fields (except TIME_ymd_hms) are related to "well trajectory"
+                                        var sortByField = {TIME_ymd_hms: 1};
+                                        var specifiedFields =  {_id: 0,  MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
+                                        var documentNames = {};
+                                    }
+                                    
+                                    db.collection(collectionName).find(documentNames, {projection: specifiedFields}).sort(sortByField).toArray(function(showCollectionError, foundCollection)
+                                    {
+                                        if(showCollectionError)
+                                        {
+                                            console.log("Show COLLECTION Error: ", showCollectionError);
+                                            return;
+                                        }
+                                    
+                                        console.log("All documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
+                                        console.log(foundCollection);
+                                        console.log();
+                                        
+                                    });
+                                    
+                                }().then(function()
+                                {
+                                    const mongoDBQueries = async function()
+                                    {
+                                        //6. drop/delete collection, if desired
+                                        if(dropCollection === true)
+                                        {
+                                            db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
+                                            {
+                                                if(dropCollectionError)
+                                                {
+                                                    console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
+                                                    return;
+                                                }
+                                                            
+                                                console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
+                                                console.log("Dropped?: ", droppedCollectionConfirmation);
+                                                console.log();
+                                                db.close();
+                                            });
+                                        }
+                                        else if(dropCollection !== true)
+                                        {
+                                            db.close();
+                                        }
+                                        
+                                    }().catch(function(error){throw error});
+                                    
+                                }).catch(function(error){throw error});
+                                
+                            }).catch(function(error){throw error});
+                            
+                        }).catch(function(error){throw error});
                     }
-                });
+                    
+                }).catch(function(error){throw error});
             }
-
-        }).catch(function(err)
-        {
-            if(err)
-            {
-                console.log(err);
-                console.log("Connection error: Connection refusal error detected and successfully handled.");
-                return;
-            };
-        });
+            
+        }).catch(function(error){throw error});
     }
     
     connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
