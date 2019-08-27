@@ -285,7 +285,7 @@ class MongoDBAndMySqlAccess
                           };
         }
              
-        //connect (authenticate) to database using promise
+        //0. connect (authenticate) to database - using promise
         mongoose.connect(uri, connOptions, function(connectionError)
         {
             if(connectionError)
@@ -305,8 +305,8 @@ class MongoDBAndMySqlAccess
             
             if(confirmDatabase === true && dbName !== null)
             {
-                //1. confirm collection(s) exit(s) within database
-                const mongoDBQueries = async function()
+                //1. confirm collection(s) exit(s) within database - using Async IIFE
+                (async function()
                 {
                     dbm.listCollections().toArray(function(confirmCollectionError, existingCollections)
                     {
@@ -327,12 +327,12 @@ class MongoDBAndMySqlAccess
                         }
                     });
                     
-                }().then(function()
+                })().then(function()
                 {
                     if(createCollection === true)
                     {
-                        //3. create collection (TABLE equivalent in MySQL), if desired
-                        const mongoDBQueries = async function()
+                        //3. create collection (TABLE equivalent in MySQL), if desired - using Async IIFE
+                        (async function()
                         {
                             //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
                             db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
@@ -348,10 +348,11 @@ class MongoDBAndMySqlAccess
                                     console.log();
                                 }
                             });
-                        }().then(function()
+                            
+                        })().then(function()
                         {
-                            //4. insert document and its field values (COLUMN values equivalent in MySQL) into collection,
-                            const mongoDBQueries = async function()
+                            //4. insert document and its field values (COLUMN values equivalent in MySQL) into collection - using Async IIFE
+                            (async function()
                             {
                                 var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
                                 var documentObject = MongoDBAndMySqlAccess.drillingEventInsertRecordInMongoDB(collectionName, values);
@@ -367,13 +368,14 @@ class MongoDBAndMySqlAccess
                                     console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                 });
-                            }().then(function()
+                                
+                            })().then(function()
                             {
-                                //5. show records
+                                //5. show records - using Async IIFE
                                 // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
                                 //         field values in the COLLECTION will be displayed based on MongoDB default ordering
                                 // note b: empty {} documentNames signifies all document names in the collection
-                                const mongoDBQueries = async function()
+                                (async function()
                                 {
                                     if(documentDisplayOption === "all")
                                     {
@@ -403,11 +405,12 @@ class MongoDBAndMySqlAccess
                                         console.log(foundCollection);
                                         console.log();
                                     });
-                                }().then(function()
+                                    
+                                })().then(function()
                                 {
-                                    const mongoDBQueries = async function()
+                                    //6. drop/delete collection, if desired - using Async IIFE
+                                    (async function()
                                     {
-                                        //6. drop/delete collection, if desired
                                         if(dropCollection === true)
                                         {
                                             db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
@@ -428,7 +431,8 @@ class MongoDBAndMySqlAccess
                                         {
                                             db.close();
                                         }
-                                    }().catch(function(error){throw error});
+                                        
+                                    })().catch(function(error){throw error});
                                     
                                 }).catch(function(error){throw error});
                                 
@@ -516,118 +520,155 @@ class MongoDBAndMySqlAccess
         const nodeJSConnection = mysql.createConnection(mysqlOptions);
         console.log();
         console.log("Connecting......");
-                
-        nodeJSConnection.connect(function(connectionError)
+           
+        //0. connect to database - using Async IIFE
+        (async function()
         {
-            if(connectionError)
+            nodeJSConnection.connect(function(connectionError)
             {
-                console.log("Connection Error: ", connectionError);
-                return;
-            }
-                    
-            console.log("Now connected to MySql server on: ", connectionOptions.host);
-            console.log();
+                if(connectionError)
+                {
+                    console.log("Connection Error: ", connectionError);
+                    return;
+                }
+                        
+                console.log("Now connected to MySql server on: ", connectionOptions.host);
+                console.log();
             
-            //then confirm table(s) exit(s) within database, and create table if desired
+            });
+            
+        })().then(function()
+        {
             if(confirmDatabase === true && dbName !== null)
             {
-                var mySqlQuery = "SHOW TABLES"
-                
-                nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
+                //1. confirm table(s) exit(s) within database - using Async IIFE
+                (async function()
                 {
-                    if(confirmTableError)
-                    {
-                        console.log("Confirm TABLE Error: ", confirmTableError);
-                        return;
-                    }
-                      
-                    if(result)
-                    {
-                        console.log("It is confirmed that the TABLE(S) below exist(s) within ", dbName, " database");
-                        console.log(result);
-                        console.log();
-                    }
+                    var mySqlQuery = "SHOW TABLES"
                     
+                    nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
+                    {
+                        if(confirmTableError)
+                        {
+                            console.log("Confirm TABLE Error: ", confirmTableError);
+                            return;
+                        }
+                          
+                        if(result)
+                        {
+                            console.log("It is confirmed that the TABLE(S) below exist(s) within ", dbName, " database");
+                            console.log(result);
+                            console.log();
+                        }
+                    });
+                    
+                })().then(function()
+                {
                     if(createTable === true)
                     {
-                        //create a new table
-                        var mySqlQuery = MongoDBAndMySqlAccess.drillingEventCreateTableInMySQL(tableName);
-                        
-                        nodeJSConnection.query(mySqlQuery, function (createTableError, result)
+                        //2. create a new table, if desired - using Async IIFE
+                        (async function()
                         {
-                            if(createTableError)
-                            {
-                                console.log("Create TABLE Error: ", createTableError);
-                                return;
-                            }
+                            var mySqlQuery = MongoDBAndMySqlAccess.drillingEventCreateTableInMySQL(tableName);
                             
-                            if(result)
+                            nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                             {
-                                console.log(String(tableName) + " TABLE successfully created!");
-                                console.log();
-                            }
-                            
-                            // insert column values into the table, show all records in the table and also drop table, if desired
-                            //1. insert column values
-                            var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
-                            var mySqlQuery = MongoDBAndMySqlAccess.drillingEventInsertRecordInMySQL(tableName, values);
-                            
-                            nodeJSConnection.query(mySqlQuery, function (insertTableError, result)
-                            {
-                                if(insertTableError)
+                                if(createTableError)
                                 {
-                                    console.log("Insert TABLE Error: ", insertTableError);
+                                    console.log("Create TABLE Error: ", createTableError);
                                     return;
                                 }
                                 
-                                console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
-                                console.log();
-                            
-                                //2. show all rows and column values in the TABLE
-                                var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
-                                
-                                nodeJSConnection.query(mySqlQuery, function (showTableError, result)
+                                if(result)
                                 {
-                                    if(showTableError)
+                                    console.log(String(tableName) + " TABLE successfully created!");
+                                    console.log();
+                                }
+                            });
+                            
+                        })().then(function()
+                        {
+                            (async function()
+                            {
+                                //3. insert column values - using Async IIFE
+                                var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
+                                var mySqlQuery = MongoDBAndMySqlAccess.drillingEventInsertRecordInMySQL(tableName, values);
+                                
+                                nodeJSConnection.query(mySqlQuery, function (insertTableError, result)
+                                {
+                                    if(insertTableError)
                                     {
-                                        console.log("Show TABLE Error: ", showTableError);
+                                        console.log("Insert TABLE Error: ", insertTableError);
                                         return;
                                     }
-                                
-                                    console.log("All rows and column values in " + String(tableName) + " TABLE are shown below!");
-                                    console.log(result);
+                                    
+                                    console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
                                     console.log();
-                                    
-                                    //3. drop/delete table if desired
-                                    if(dropTable === true)
-                                    {
-                                        var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
-                                        
-                                        nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
-                                        {
-                                            if(dropTableError)
-                                            {
-                                                console.log("Drop/Delete TABLE Error: ", dropTableError);
-                                                return;
-                                            }
-                                        
-                                            console.log(String(tableName) + " TABLE is successfully dropped/deleted!")
-                                            console.log();
-                                            nodeJSConnection.end();
-                                        });
-                                    }
-                                    else if(dropTable !== true)
-                                    {
-                                        nodeJSConnection.end();
-                                    }
-                                    
                                 });
-                            });
-                        });
+                            
+                            })().then(function()
+                            {
+                                //4. show all rows and column values in the TABLE - using Async IIFE
+                                (async function()
+                                {
+                                    var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
+                                    
+                                    nodeJSConnection.query(mySqlQuery, function (showTableError, result)
+                                    {
+                                        if(showTableError)
+                                        {
+                                            console.log("Show TABLE Error: ", showTableError);
+                                            return;
+                                        }
+                                    
+                                        console.log("All rows and column values in " + String(tableName) + " TABLE are shown below!");
+                                        console.log(result);
+                                        console.log();
+                                    });
+                                
+                                })().then(function()
+                                {
+                                    //5. drop/delete table, if desired - using Async IIFE
+                                    (async function()
+                                    {
+                                        if(dropTable === true)
+                                        {
+                                            var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
+                                            
+                                            nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
+                                            {
+                                                if(dropTableError)
+                                                {
+                                                    console.log("Drop/Delete TABLE Error: ", dropTableError);
+                                                    return;
+                                                }
+                                            
+                                                console.log(String(tableName) + " TABLE is successfully dropped/deleted!")
+                                                console.log();
+                                                nodeJSConnection.end();
+                                            });
+                                        }
+                                        else if(dropTable !== true)
+                                        {
+                                            nodeJSConnection.end();
+                                        }
+                                        
+                                    }()).catch(function(error){throw error});
+                                    
+                                    
+                                }).catch(function(error){throw error});
+                                
+                            }).catch(function(error){throw error});
+                            
+                        }).catch(function(error){throw error});
+                        
                     }
-                });
+                    
+                }).catch(function(error){throw error});
+            
             }
-        });
+            
+        }).catch(function(error){throw error});
     }
     
     uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
@@ -690,6 +731,5 @@ class MongoDBAndMySqlAccess
         });
     }
 }
-
 
 module.exports = {MongoDBAndMySqlAccess};
