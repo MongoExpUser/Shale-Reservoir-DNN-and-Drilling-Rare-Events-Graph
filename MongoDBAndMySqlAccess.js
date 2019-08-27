@@ -761,7 +761,8 @@ class TestMongoDBAndMySqlAccess
           const dropCollection = true;
           const enableSSL = false;
           const documentDisplayOption = "all";
-          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions, connectionBolean, createCollection, dropCollection, enableSSL, documentDisplayOption);
+          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
+                               connectionBolean, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
         
         if(test === true && dbType == 'MySql')
