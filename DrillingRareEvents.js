@@ -1,7 +1,7 @@
 /*
- * Ecotert's DrillingRearEvents .js (released as open-source under MIT License) implements:
+ * Ecotert's DrillingRareEvents .js (released as open-source under MIT License) implements:
  *
- * Drilling Rear Events or Anomalies (vibration, kick and stuckpipe) detection and prevention with graph-based method.
+ * Drilling Rare Events or Anomalies (vibration, kick and stuckpipe) detection and prevention with graph-based method.
  *
  * It inherits/extends the BaseAIML for its implementation.
  *
@@ -9,7 +9,7 @@
 
 const BaseAIML = require('./BaseAIML.js').BaseAIML;
 
-class DrillingRearEvents extends BaseAIML
+class DrillingRareEvents extends BaseAIML
 {
     constructor(pyFile, pyScriptPath, pyVersionPath, pyMode, modelingOption, fileOption, gpuOption, inputFromCSVFileX,
                 inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
@@ -21,10 +21,10 @@ class DrillingRearEvents extends BaseAIML
         this.pyMode = pyMode;
     }
     
-    drillingRearEvents()
+    drillingRareEvents()
     {
         // call AIML python script (this.pyFile) via Python-Shell
-        // pyFile (py_file_AIML.py) implements drilling rear events detection and prevention using graph method
+        // pyFile (py_file_AIML.py) implements drilling rare events detection and prevention using graph method
         var pyFile              = this.pyFile;
         var pyScriptPath        = this.pyScriptPath;
         var pyVersionPath       = this.pyVersionPath;
@@ -35,10 +35,10 @@ class DrillingRearEvents extends BaseAIML
         cpml.callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode);
     }
     
-    testDrillingRearEvents()
+    testDrillingRareEvents()
     {
         // call AIML python script (this.pyFile) via Python-Shell
-        // pyFile (test_py_file_AIML.py) implements testing of drillingRearEvents() method
+        // pyFile (test_py_file_AIML.py) implements testing of drillingRareEvents() method
         var pyFile              = this.pyFile;
         var pyFile              = this.pyFile;
         var pyScriptPath        = this.pyScriptPath;
@@ -49,5 +49,6 @@ class DrillingRearEvents extends BaseAIML
         var cpml = new CallPthonMLCodes();
         cpml.callPythonMLScriptFromNodeJS(pyFile, pyScriptPath, pyVersionPath, pyMode);
     }
+}
     
 module.exports = {DrillingRearEvents};
