@@ -7,16 +7,18 @@
  * @License Ends
  *
  *
- * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements MongoDBAndMySQLAccess() class for:
+ * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
+ 
+ * A) MongoDBAndMySQLAccess(): to get access (cconnect & CRUD) to MongoDB and MySQL databases and file i/o using:
  *
- * Relevant access to MongoDB and MySQL databases and file i/o using:
+ *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
+ *    (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
+ *    (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
+ *    (4) Node.js native stream modules and MongoDB's GridFS
  *
- * (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
- * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
- * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- * (4) Node.js native stream modules and MongoDB's GridFS
- * 
- * It also implements a test class (TestMongoDBAndMySqlAccess()) for testing MongoDBAndMySQLAccess().
+ * B) TestMongoDBAndMySqlAccess(): a test class for testing MongoDBAndMySQLAccess()
+ *
+ *
  */
 
 class MongoDBAndMySqlAccess
@@ -736,7 +738,7 @@ class MongoDBAndMySqlAccess
 
 class TestMongoDBAndMySqlAccess
 {
-    constructor(test=true, dbType=undefined, action=undefined)
+    constructor(test=true, dbType=undefined)
     {
         const fs = require('fs');
         const mda = new MongoDBAndMySqlAccess();
@@ -774,7 +776,7 @@ class TestMongoDBAndMySqlAccess
             port: 'port',
             user: 'user',
             password: 'password',
-            database: 'urppsdb',
+            database: 'databaseName',
             debug: false,
             ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
           };
