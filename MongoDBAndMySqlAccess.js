@@ -7,7 +7,7 @@
  * @License Ends
  *
  *
- * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
+ * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements MongoDBAndMySQLAccess() class for:
  *
  * Relevant access to MongoDB and MySQL databases and file i/o using:
  *
@@ -15,7 +15,8 @@
  * (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
  * (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
  * (4) Node.js native stream modules and MongoDB's GridFS
- *
+ * 
+ * It also implements a test class (TestMongoDBAndMySqlAccess()) for testing MongoDBAndMySQLAccess().
  */
 
 class MongoDBAndMySqlAccess
@@ -732,4 +733,59 @@ class MongoDBAndMySqlAccess
     }
 }
 
-module.exports = {MongoDBAndMySqlAccess};
+
+class TestMongoDBAndMySqlAccess
+{
+    constructor(test=true, dbType=undefined, action=undefined)
+    {
+        const fs = require('fs');
+        const mda = new MongoDBAndMySqlAccess();
+            
+        if(test === true && dbType == 'MongoDB')
+        {
+          const dbUserName = "dbUserName";
+          const dbUserPassword = "dbUserPassword";
+          const dbDomainURL = "db.domain.com";
+          const dbName = "dbName";
+          const collectionName = "collectionName";
+          const confirmDatabase = true;
+          const connectionBolean = true;
+          const sslCertOptions = {
+            ca: fs.readFileSync('/path_to_/ca.pem'),
+            key: fs.readFileSync('//path_to_/key.pem'),
+            cert: fs.readFileSync('//path_to_/cert.pem')
+          };
+          const createCollection = true;
+          const dropCollection = true;
+          const enableSSL = false;
+          const documentDisplayOption = "all";
+          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions, connectionBolean, createCollection, dropCollection, enableSSL, documentDisplayOption);
+        }
+        
+        if(test === true && dbType == 'MySql')
+        {
+          const sslCertOptions = {
+            ca: fs.readFileSync('/path_to_/ca.pem'),
+            key: fs.readFileSync('/path_to_/client-key.pem'),
+            cert: fs.readFileSync('/path_to_/client-cert.pem'),
+          };
+          const connectionOptions = {
+            host: 'host',
+            port: 'port',
+            user: 'user',
+            password: 'password',
+            database: 'urppsdb',
+            debug: false,
+            ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
+          };
+          const tableName = "tableName"
+          const confirmDatabase = true;
+          const createTable = true;
+          const dropTable = true;
+          const enableSSL = false;
+          mda.connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL);
+        }
+    }
+}
+
+module.exports = {MongoDBAndMySqlAccess, TestMongoDBAndMySqlAccess};
