@@ -2,7 +2,7 @@
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
  *
  * @License Ends
  *
