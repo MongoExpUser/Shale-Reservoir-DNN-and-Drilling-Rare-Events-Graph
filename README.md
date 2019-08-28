@@ -38,4 +38,4 @@ MongoDB v4.0.12 on ubuntu 18.04.1
 
 MySQL v5.7.27 on ubuntu 18.04.1
 
-SQLite3 2.6.0 within Python v3.7 on ubuntu 18.04.1m
+SQLite3 2.6.0 within Python v3.7 on ubuntu 18.04.1
