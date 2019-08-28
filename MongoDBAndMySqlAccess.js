@@ -2,14 +2,14 @@
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
  *
  * @License Ends
  *
  *
  * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
  
- * A) MongoDBAndMySQLAccess(): to get access (connect & CRUD) to MongoDB and MySQL databases and file i/o using:
+ * A) MongoDBAndMySQLAccess(): to get access (cconnect & CRUD) to MongoDB and MySQL databases and file i/o using:
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
  *    (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
