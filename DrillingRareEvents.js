@@ -59,4 +59,4 @@ class DrillingRareEvents extends BaseAIML
     }
 }
     
-module.exports = {DrillingRearEvents};
+module.exports = {DrillingRareEvents};
