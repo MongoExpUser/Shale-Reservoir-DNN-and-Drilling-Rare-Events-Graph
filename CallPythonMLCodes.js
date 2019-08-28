@@ -2,12 +2,12 @@
  *
  * Copyright © 2015 - present. MongoExpUser
  *
- * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN/blob/master/LICENSE
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
  *
  * @License Ends
  *
  *
- * ...Ecotert's CallPthonMLCodes.js (released as open-source under MIT License) implements:
+ * ...Ecotert's CallPythonMLCodes.js (released as open-source under MIT License) implements:
  *
  *
  *  Calling of machine learning codes (or any other code) written in Python from Node.js.
