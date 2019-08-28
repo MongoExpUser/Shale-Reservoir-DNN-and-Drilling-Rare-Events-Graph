@@ -1,4 +1,12 @@
-/*
+ /* @License Starts
+ *
+ * Copyright © 2015 - present. MongoExpUser
+ *
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
+ *
+ * @License Ends
+ *
+ *
  * Ecotert's DrillingRareEvents .js (released as open-source under MIT License) implements:
  *
  * Drilling Rare Events or Anomalies (vibration, kick and stuckpipe) detection and prevention with graph-based method.
