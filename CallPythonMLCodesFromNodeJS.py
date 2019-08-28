@@ -19,7 +19,7 @@
 #
 #  3) Simple creation and transformation of tensor data type with TensorFlow (Python version).
 #
-#  4) Creation of sqlite db for modeling drilling rear events (vibration, kick and stuck pipe) detection and prevention.
+#  4) Creation of sqlite db for modeling drilling rare events (vibration, kick and stuck pipe) detection and prevention.
 #
 #
 #  The motivation, for calling of machine learning codes written in Python from Node.js,
@@ -287,7 +287,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       self.count = 3
     # End test_check_packages_versions() method
     
-    def test_sqlite_drilling_rear_events_database(self, database_name=None):
+    def test_sqlite_drilling_rare_events_database(self, database_name=None):
       
       # 1. define helper functions
       # .........................helper functions start................................
@@ -331,9 +331,9 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         return all_data_as_list
       # .........................helper functions end......................................
       
-      # 2. connect to a temporary "drilling_rear_events.db" or create a new 
-      # "drilling_rear_events.db, if it does not exit and point to cursor
-      database_name = 'drilling_rear_events.db'
+      # 2. connect to a temporary "drilling_events.db" or create a new 
+      # "drilling_events.db, if it does not exit and point to cursor
+      database_name = 'drilling_events.db'
       connection = connect_to_sqlite_db(database_name)
       py_connection = connection.cursor()
       
@@ -399,7 +399,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 9. show/view all table names is the databases
       print()
-      print("All TABLE names in the 'drilling_rear_events.db' DATABASE")
+      print("All TABLE names in the 'drilling_events.db' DATABASE")
       print("=========================================================")
       executed_sqlite_query = py_connection.execute("SELECT name FROM sqlite_master WHERE type='table';")
       count_and_print_record(executed_sqlite_query)
@@ -428,7 +428,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       number_of_table = count_and_print_record(executed_sqlite_query, show=False)
       if executed_sqlite_query == 0:
         print()
-        print("TABLE(S) in the 'drilling_rear_events.db' DATABASE is/are now DELETED.")
+        print("TABLE(S) in the 'drilling_events.db' DATABASE is/are now DELETED.")
         print()
       
       # 13 finally, close connection to the database
@@ -436,7 +436,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       self.count = 4
       return extracted_data
-    # End test_sqlite_drilling_rear_events_database() method
+    # End test_sqlite_drilling_rare_events_database() method
       
     def tearDown(self):
       print("Successful test", self.count + 1, ".....ok")
