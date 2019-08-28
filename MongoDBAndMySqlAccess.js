@@ -61,7 +61,6 @@ class MongoDBAndMySqlAccess
     
     static drillingEventInsertRecordInMongoDB(collectionName, values)
     {
-        
         if(values !== null && values !== undefined)
         {
             const actualValues = {  ROP_fph: values.ROP_fph,
@@ -90,7 +89,6 @@ class MongoDBAndMySqlAccess
             
             return actualValues;
         }
-        
     }
        
     static drillingEventInsertRecordInMySQL(tableName, values)
@@ -354,7 +352,7 @@ class MongoDBAndMySqlAccess
                             
                         })().then(function()
                         {
-                            //4. insert document and its field values (COLUMN values equivalent in MySQL) into collection - using Async IIFE
+                            //4. insert document and its key-value pairs (ROWS-COLUMN_VALUES equivalent in MySQL) into collection - using Async IIFE
                             (async function()
                             {
                                 var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
@@ -376,20 +374,20 @@ class MongoDBAndMySqlAccess
                             {
                                 //5. show records - using Async IIFE
                                 // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
-                                //         field values in the COLLECTION will be displayed based on MongoDB default ordering
+                                //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
                                 // note b: empty {} documentNames signifies all document names in the collection
                                 (async function()
                                 {
                                     if(documentDisplayOption === "all")
                                     {
-                                        //option a: show all documents & their field values in the COLLECTION (sorted by dateTime in ascending order)
+                                        //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
                                         var sortByField = {TIME_ymd_hms: 1};
                                         var specifiedFields = {};
                                         var documentNames = {};
                                     }
                                     else if(documentDisplayOption === "wellTrajectory")
                                     {
-                                        //option b: show all documents & specified field values (with _id field excluded) in the COLLECTION (sorted by dateTime in ascending order)
+                                        //option b: show all documents & key-value pairs, based on specified key (with " _id" key excluded), in the COLLECTION (sorted by dateTime in ascending order)
                                         //note: specified fields (except TIME_ymd_hms) are related to "well trajectory"
                                         var sortByField = {TIME_ymd_hms: 1};
                                         var specifiedFields =  {_id: 0,  MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
@@ -677,7 +675,6 @@ class MongoDBAndMySqlAccess
     uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
     {
         // method to upload and download file from MongoDB database in GridFS format
-        
         const mongodb         = require('mongodb');
         const fs              = require('fs');
         const assert          = require('assert');
