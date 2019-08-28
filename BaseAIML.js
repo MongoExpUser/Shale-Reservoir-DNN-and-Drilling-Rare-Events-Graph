@@ -1,17 +1,28 @@
-//4. BaseAIML option for gitHub
-/*
+/* @License Starts
+ *
+ * Copyright © 2015 - present. MongoExpUser
+ *
+ * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
+ *
+ * @License Ends
+ *
+ *
  * Ecotert's BaseAIML.js (released as open-source under MIT License) implements the BASE class for constructing AIML applications.
  *
- * AIML applications (e.g Shale reservoir production prediction, drillinng rear events prediction, rock image classification, etc.)
+ * AIML applications (e.g Shale reservoir production prediction, drilling rare events prediction, rock image classification, etc.)
  *
  * inherits or extends the BASE class (BaseAIML) for their implementations.
  *
  * The BaseAIML class contains implementation of the following foundational functions for classification, regression and graph-based methods:
  *
  * 1) Modules loading
+ *
  * 2) Results predictions, based on already saved, newly trained or evolving real-rime model
+ *
  * 3) Formatting and printing of results to console in easily readable format
+ *
  * 4) Run duration timing
+ *
  * 5) etc i.e. other helpers or foundational functions are added as deem necessary
  *
  *
