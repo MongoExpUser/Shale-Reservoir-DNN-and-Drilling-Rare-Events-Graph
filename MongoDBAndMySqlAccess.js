@@ -638,7 +638,7 @@ class MongoDBAndMySqlAccess
                                             return;
                                         }
                                     
-                                        console.log("All rows and column values in " + String(tableName) + " TABLE are shown below!");
+                                        console.log("Some or all rows and column values in " + String(tableName) + " TABLE are shown below!");
                                         console.log(result);
                                         console.log();
                                     });
