@@ -63,31 +63,30 @@ class MongoDBAndMySqlAccess
     {
         if(values !== null && values !== undefined)
         {
-            const actualValues = {  ROP_fph: values.ROP_fph,
-                                    RPM_rpm: values.RPM_rpm,
-                                    SPP_psi: values.SPP_psi,
-                                    DWOB_lb: values.DWOB_lb,
-                                    SWOB_lb: values.SWOB_lb,
-                                    TQR_Ibft: values.TQR_Ibft,
-                                    MUD_WEIGHT_sg: values.MUD_WEIGHT_sg,
-                                    MUD_VISC_cp: values.MUD_VISC_cp,
-                                    MUD_FLOW_RATE_gpm: values.MUD_FLOW_RATE_gpm,
-                                    BHA_TYPE_no_unit: JSON.parse(values.BHA_TYPE_no_unit), // parse value to String Object (JavaScript/NodeJS format)
-                                    TVD_ft: values.TVD_ft,
-                                    MD_ft: values.MD_ft,
-                                    INC_deg: values.INC_deg,
-                                    AZIM_deg: values.AZIM_deg,
-                                    CALIPER_HOLE_SIZE_inches: values.CALIPER_HOLE_SIZE_inches,
-                                    GR_api: values.GR_api,
-                                    DEEP_RESISTIVITY_ohm_m: values.DEEP_RESISTIVITY_ohm_m,
-                                    SHOCK_g: values.SHOCK_g,
-                                    IS_VIBRATION_boolean_0_or_1: values.IS_VIBRATION_boolean_0_or_1,
-                                    IS_KICK_boolean_0_or_1: values.IS_KICK_boolean_0_or_1,
-                                    IS_STUCKPIPE_boolean_0_or_1: values.IS_STUCKPIPE_boolean_0_or_1,
-                                    TIME_ymd_hms: new Date()                                // GMT_ISO dateTime (JavaScript/NodeJS format)
+            //return key-value pairs
+            return {    ROP_fph: values.ROP_fph,
+                        RPM_rpm: values.RPM_rpm,
+                        SPP_psi: values.SPP_psi,
+                        DWOB_lb: values.DWOB_lb,
+                        SWOB_lb: values.SWOB_lb,
+                        TQR_Ibft: values.TQR_Ibft,
+                        MUD_WEIGHT_sg: values.MUD_WEIGHT_sg,
+                        MUD_VISC_cp: values.MUD_VISC_cp,
+                        MUD_FLOW_RATE_gpm: values.MUD_FLOW_RATE_gpm,
+                        BHA_TYPE_no_unit: JSON.parse(values.BHA_TYPE_no_unit), // parse value to String Object (JavaScript/NodeJS format)
+                        TVD_ft: values.TVD_ft,
+                        MD_ft: values.MD_ft,
+                        INC_deg: values.INC_deg,
+                        AZIM_deg: values.AZIM_deg,
+                        CALIPER_HOLE_SIZE_inches: values.CALIPER_HOLE_SIZE_inches,
+                        GR_api: values.GR_api,
+                        DEEP_RESISTIVITY_ohm_m: values.DEEP_RESISTIVITY_ohm_m,
+                        SHOCK_g: values.SHOCK_g,
+                        IS_VIBRATION_boolean_0_or_1: values.IS_VIBRATION_boolean_0_or_1,
+                        IS_KICK_boolean_0_or_1: values.IS_KICK_boolean_0_or_1,
+                        IS_STUCKPIPE_boolean_0_or_1: values.IS_STUCKPIPE_boolean_0_or_1,
+                        TIME_ymd_hms: new Date()                                // GMT_ISO dateTime (JavaScript/NodeJS format)
             }
-            
-            return actualValues;
         }
     }
        
@@ -97,164 +96,154 @@ class MongoDBAndMySqlAccess
         
         if(values !== null && values !== undefined)
         {
-            const actualValues =    values.ROP_fph + valueSeperator +
-                                    values.RPM_rpm + valueSeperator +
-                                    values.SPP_psi + valueSeperator +
-                                    values.DWOB_lb + valueSeperator +
-                                    values.SWOB_lb + valueSeperator +
-                                    values.TQR_Ibft + valueSeperator +
-                                    values.MUD_WEIGHT_sg + valueSeperator +
-                                    values.MUD_VISC_cp + valueSeperator +
-                                    values.MUD_FLOW_RATE_gpm + valueSeperator +
-                                    values.BHA_TYPE_no_unit + valueSeperator +
-                                    values.TVD_ft + valueSeperator +
-                                    values.MD_ft + valueSeperator +
-                                    values.INC_deg + valueSeperator +
-                                    values.AZIM_deg + valueSeperator +
-                                    values.CALIPER_HOLE_SIZE_inches + valueSeperator +
-                                    values.GR_api + valueSeperator +
-                                    values.DEEP_RESISTIVITY_ohm_m + valueSeperator +
-                                    values.SHOCK_g + valueSeperator +
-                                    values.IS_VIBRATION_boolean_0_or_1 + valueSeperator +
-                                    values.IS_KICK_boolean_0_or_1 + valueSeperator +
-                                    values.IS_STUCKPIPE_boolean_0_or_1 + valueSeperator +
-                                    values.TIME_ymd_hms;
+            const allValues =   values.ROP_fph + valueSeperator +
+                                values.RPM_rpm + valueSeperator +
+                                values.SPP_psi + valueSeperator +
+                                values.DWOB_lb + valueSeperator +
+                                values.SWOB_lb + valueSeperator +
+                                values.TQR_Ibft + valueSeperator +
+                                values.MUD_WEIGHT_sg + valueSeperator +
+                                values.MUD_VISC_cp + valueSeperator +
+                                values.MUD_FLOW_RATE_gpm + valueSeperator +
+                                values.BHA_TYPE_no_unit + valueSeperator +
+                                values.TVD_ft + valueSeperator +
+                                values.MD_ft + valueSeperator +
+                                values.INC_deg + valueSeperator +
+                                values.AZIM_deg + valueSeperator +
+                                values.CALIPER_HOLE_SIZE_inches + valueSeperator +
+                                values.GR_api + valueSeperator +
+                                values.DEEP_RESISTIVITY_ohm_m + valueSeperator +
+                                values.SHOCK_g + valueSeperator +
+                                values.IS_VIBRATION_boolean_0_or_1 + valueSeperator +
+                                values.IS_KICK_boolean_0_or_1 + valueSeperator +
+                                values.IS_STUCKPIPE_boolean_0_or_1 + valueSeperator +
+                                values.TIME_ymd_hms;
             
-            var mySqlQuery = "INSERT INTO " + String(tableName) +
-                                //data from regular drilling operation
-                                " (ROP_fph, " +
-                                "RPM_rpm, " +
-                                "SPP_psi, " +
-                                "DWOB_lb, " +
-                                "SWOB_lb, " +
-                                "TQR_Ibft, " +
-                                "MUD_WEIGHT_sg, " +
-                                "MUD_VISC_cp, " +
-                                "MUD_FLOW_RATE_gpm, " +
-                                "BHA_TYPE_no_unit, " +
-                                //data from downhole MWD/LWD tool measurements
-                                "TVD_ft, " +
-                                "MD_ft, " +
-                                "INC_deg, " +
-                                "AZIM_deg, " +
-                                "CALIPER_HOLE_SIZE_inches, " +
-                                "GR_api, " +
-                                "DEEP_RESISTIVITY_ohm_m, " +
-                                "SHOCK_g, " +
-                                //event data
-                                "IS_VIBRATION_boolean_0_or_1, " +
-                                "IS_KICK_boolean_0_or_1, " +
-                                "IS_STUCKPIPE_boolean_0_or_1, " +
-                                //time data
-                                "TIME_ymd_hms)" +
-                                //populate columns with actual values
-                                " VALUE (" + actualValues + ")"
-                            ")";
+            //return insert query
+            return "INSERT INTO " + String(tableName) +
+                    //data from regular drilling operation
+                    " (ROP_fph, " +
+                    "RPM_rpm, " +
+                    "SPP_psi, " +
+                    "DWOB_lb, " +
+                    "SWOB_lb, " +
+                    "TQR_Ibft, " +
+                    "MUD_WEIGHT_sg, " +
+                    "MUD_VISC_cp, " +
+                    "MUD_FLOW_RATE_gpm, " +
+                    "BHA_TYPE_no_unit, " +
+                    //data from downhole MWD/LWD tool measurements
+                    "TVD_ft, " +
+                    "MD_ft, " +
+                    "INC_deg, " +
+                    "AZIM_deg, " +
+                    "CALIPER_HOLE_SIZE_inches, " +
+                    "GR_api, " +
+                    "DEEP_RESISTIVITY_ohm_m, " +
+                    "SHOCK_g, " +
+                    //event data
+                    "IS_VIBRATION_boolean_0_or_1, " +
+                    "IS_KICK_boolean_0_or_1, " +
+                    "IS_STUCKPIPE_boolean_0_or_1, " +
+                    //time data
+                    "TIME_ymd_hms)" +
+                    //populate columns with all values
+                    " VALUES (" + [allValues] + ")";
         }
-            
-        return mySqlQuery;
     }
     
     static drillingEventCreateTableInMySQL(tableName)
     {
-        var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) +
-                            " (" + //primary key
-                            "ROWID INT AUTO_INCREMENT PRIMARY KEY, " +
-                            
-                            //data from regular drilling operation
-                            "ROP_fph DOUBLE, " +
-                            "RPM_rpm DOUBLE, " +
-                            "SPP_psi DOUBLE, " +
-                            "DWOB_lb DOUBLE, " +
-                            "SWOB_lb DOUBLE, " +
-                            "TQR_Ibft DOUBLE, " +
-                            "MUD_WEIGHT_sg DOUBLE, " +
-                            "MUD_VISC_cp DOUBLE, " +
-                            "MUD_FLOW_RATE_gpm DOUBLE, " +
-                            "BHA_TYPE_no_unit TEXT, " +
-                            
-                            //data from downhole MWD/LWD tool measurements
-                            "TVD_ft DOUBLE, " +
-                            "MD_ft DOUBLE, " +
-                            "INC_deg DOUBLE, " +
-                            "AZIM_deg DOUBLE, " +
-                            "CALIPER_HOLE_SIZE_inches DOUBLE, " +
-                            "GR_api DOUBLE, " +
-                            "DEEP_RESISTIVITY_ohm_m DOUBLE, " +
-                            "SHOCK_g DOUBLE, " +
-                            
-                            //event data
-                            "IS_VIBRATION_boolean_0_or_1 BOOLEAN, " +
-                            "IS_KICK_boolean_0_or_1 BOOLEAN, " +
-                            "IS_STUCKPIPE_boolean_0_or_1 BOOLEAN, " +
-                            
-                            //time data
-                            "TIME_ymd_hms DATETIME, " +
-                            
-                            //constraints on some LWD data
-                            "CHECK (0>=GR_api<=150), " +
-                            "CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)" +
-                        ")";
-            
-            return mySqlQuery;
+        //return create query
+        return  "CREATE TABLE IF NOT EXISTS " + String(tableName) +
+                " (" + //primary key
+                    "ROWID INT AUTO_INCREMENT PRIMARY KEY, " +
+                    //data from regular drilling operation
+                    "ROP_fph DOUBLE, " +
+                    "RPM_rpm DOUBLE, " +
+                    "SPP_psi DOUBLE, " +
+                    "DWOB_lb DOUBLE, " +
+                    "SWOB_lb DOUBLE, " +
+                    "TQR_Ibft DOUBLE, " +
+                    "MUD_WEIGHT_sg DOUBLE, " +
+                    "MUD_VISC_cp DOUBLE, " +
+                    "MUD_FLOW_RATE_gpm DOUBLE, " +
+                    "BHA_TYPE_no_unit TEXT, " +
+                    //data from downhole MWD/LWD tool measurements
+                    "TVD_ft DOUBLE, " +
+                    "MD_ft DOUBLE, " +
+                    "INC_deg DOUBLE, " +
+                    "AZIM_deg DOUBLE, " +
+                    "CALIPER_HOLE_SIZE_inches DOUBLE, " +
+                    "GR_api DOUBLE, " +
+                    "DEEP_RESISTIVITY_ohm_m DOUBLE, " +
+                    "SHOCK_g DOUBLE, " +
+                    //event data
+                    "IS_VIBRATION_boolean_0_or_1 BOOLEAN, " +
+                    "IS_KICK_boolean_0_or_1 BOOLEAN, " +
+                    "IS_STUCKPIPE_boolean_0_or_1 BOOLEAN, " +
+                    //time data
+                    "TIME_ymd_hms DATETIME, " +
+                    //constraints on some LWD data
+                    "CHECK (0>=GR_api<=150), " +
+                    "CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)" +
+                ")";
     }
     
     static drillingEventDefaultValues()
     {
-        const values = {"ROP_fph": null,
-                        "RPM_rpm": null,
-                        "SPP_psi": null,
-                        "DWOB_lb": null,
-                        "SWOB_lb": null,
-                        "TQR_Ibft": null,
-                        "MUD_WEIGHT_sg": null,
-                        "MUD_VISC_cp": null,
-                        "MUD_FLOW_RATE_gpm": null,
-                        "BHA_TYPE_no_unit": null,
-                        "TVD_ft": null,
-                        "MD_ft": null,
-                        "INC_deg": null,
-                        "AZIM_deg": null,
-                        "CALIPER_HOLE_SIZE_inches": null,
-                        "GR_api": null,
-                        "DEEP_RESISTIVITY_ohm_m": null,
-                        "SHOCK_g": null,
-                        "IS_VIBRATION_boolean_0_or_1": null,
-                        "IS_KICK_boolean_0_or_1": null,
-                        "IS_STUCKPIPE_boolean_0_or_1": null,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
+        //return key-value pairs
+        return {    "ROP_fph": null,
+                    "RPM_rpm": null,
+                    "SPP_psi": null,
+                    "DWOB_lb": null,
+                    "SWOB_lb": null,
+                    "TQR_Ibft": null,
+                    "MUD_WEIGHT_sg": null,
+                    "MUD_VISC_cp": null,
+                    "MUD_FLOW_RATE_gpm": null,
+                    "BHA_TYPE_no_unit": null,
+                    "TVD_ft": null,
+                    "MD_ft": null,
+                    "INC_deg": null,
+                    "AZIM_deg": null,
+                    "CALIPER_HOLE_SIZE_inches": null,
+                    "GR_api": null,
+                    "DEEP_RESISTIVITY_ohm_m": null,
+                    "SHOCK_g": null,
+                    "IS_VIBRATION_boolean_0_or_1": null,
+                    "IS_KICK_boolean_0_or_1": null,
+                    "IS_STUCKPIPE_boolean_0_or_1": null,
+                    "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
         }
-        
-        return values;
     }
     
     static drillingEventSampleValues()
     {
-        const values = {"ROP_fph": 35,
-                        "RPM_rpm": 65,
-                        "SPP_psi": 235,
-                        "DWOB_lb": 20000,
-                        "SWOB_lb": 10000,
-                        "TQR_Ibft": 800,
-                        "MUD_WEIGHT_sg": 1.18,
-                        "MUD_VISC_cp": 1.03,
-                        "MUD_FLOW_RATE_gpm": 98.14,
-                        "BHA_TYPE_no_unit": JSON.stringify('slick'), // stringify value to string (MySQL format)
-                        "TVD_ft": 8000,
-                        "MD_ft": 12000,
-                        "INC_deg": 67.2,
-                        "AZIM_deg": 110.5,
-                        "CALIPER_HOLE_SIZE_inches": 6,
-                        "GR_api": 20,
-                        "DEEP_RESISTIVITY_ohm_m": 303.3,
-                        "SHOCK_g": 26,
-                        "IS_VIBRATION_boolean_0_or_1": false,
-                        "IS_KICK_boolean_0_or_1": false,
-                        "IS_STUCKPIPE_boolean_0_or_1": false,
-                        "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
+        //return key-value pairs
+        return {    "ROP_fph": 35,
+                    "RPM_rpm": 65,
+                    "SPP_psi": 235,
+                    "DWOB_lb": 20000,
+                    "SWOB_lb": 10000,
+                    "TQR_Ibft": 800,
+                    "MUD_WEIGHT_sg": 1.18,
+                    "MUD_VISC_cp": 1.03,
+                    "MUD_FLOW_RATE_gpm": 98.14,
+                    "BHA_TYPE_no_unit": JSON.stringify('slick'), // stringify value to string (MySQL format)
+                    "TVD_ft": 8000,
+                    "MD_ft": 12000,
+                    "INC_deg": 67.2,
+                    "AZIM_deg": 110.5,
+                    "CALIPER_HOLE_SIZE_inches": 6,
+                    "GR_api": 20,
+                    "DEEP_RESISTIVITY_ohm_m": 303.3,
+                    "SHOCK_g": 26,
+                    "IS_VIBRATION_boolean_0_or_1": false,
+                    "IS_KICK_boolean_0_or_1": false,
+                    "IS_STUCKPIPE_boolean_0_or_1": false,
+                    "TIME_ymd_hms": "CURRENT_TIMESTAMP()"       // dateTime (MySQL format)
         }
-        
-        return values;
     }
     
     static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
@@ -378,7 +367,7 @@ class MongoDBAndMySqlAccess
                                 // note b: empty {} documentNames signifies all document names in the collection
                                 (async function()
                                 {
-                                    if(documentDisplayOption === "all")
+                                    if(documentDisplayOption === "all" || documentDisplayOption === null || documentDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
                                         var sortByField = {TIME_ymd_hms: 1};
@@ -493,7 +482,7 @@ class MongoDBAndMySqlAccess
     }
     
     connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
-                   createTable=false, dropTable=false, enableSSL=false)
+                   createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         const fs = require('fs');
         const mysql = require('mysql');
@@ -517,6 +506,7 @@ class MongoDBAndMySqlAccess
         
         //get database name
         const dbName = String(connectionOptions.database);
+        
         //create connection (authenticate) to database
         const nodeJSConnection = mysql.createConnection(mysqlOptions);
         console.log();
@@ -593,6 +583,7 @@ class MongoDBAndMySqlAccess
                             {
                                 //3. insert column values - using Async IIFE
                                 var values = MongoDBAndMySqlAccess.drillingEventSampleValues();
+                                
                                 var mySqlQuery = MongoDBAndMySqlAccess.drillingEventInsertRecordInMySQL(tableName, values);
                                 
                                 nodeJSConnection.query(mySqlQuery, function (insertTableError, result)
@@ -609,12 +600,37 @@ class MongoDBAndMySqlAccess
                             
                             })().then(function()
                             {
-                                //4. show all rows and column values in the TABLE - using Async IIFE
+                                //4. show rows and column values in the TABLE - using Async IIFE
                                 (async function()
                                 {
-                                    var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
-                                    
-                                    nodeJSConnection.query(mySqlQuery, function (showTableError, result)
+                                    if(tableDisplayOption === "all" || tableDisplayOption === null || tableDisplayOption === undefined)
+                                    {
+                                        //a. all rows and columns
+                                        var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
+                                        var rowID = {}; //implies all rows
+                                    }
+                                    else if(tableDisplayOption === "wellTrajectoryAllRows")
+                                    {
+                                        //b. all rows and and columns values related to "well trajectory" and "TIME"
+                                        var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
+                                        var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName);
+                                        var rowID = {}; //implies all rows
+                                    }
+                                    else if(tableDisplayOption === "wellTrajectoryOneRow")
+                                    {
+                                        //c. one row and and columns values related to "well trajectory" and "TIME"
+                                        var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
+                                        var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName) + " WHERE ROWID=?";
+                                        var rowID = 1;
+                                    }
+                                    else
+                                    {
+                                        //default: same as all
+                                        var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
+                                        var rowID = {}; //implies all rows
+                                    }
+
+                                    nodeJSConnection.query(mySqlQuery, [rowID], function (showTableError, result)
                                     {
                                         if(showTableError)
                                         {
@@ -732,7 +748,6 @@ class MongoDBAndMySqlAccess
     }
 }
 
-
 class TestMongoDBAndMySqlAccess
 {
     constructor(test=true, dbType=undefined)
@@ -757,7 +772,7 @@ class TestMongoDBAndMySqlAccess
           const createCollection = true;
           const dropCollection = true;
           const enableSSL = false;
-          const documentDisplayOption = "all";
+          const documentDisplayOption = "all"; //or "wellTrajectory"
           mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                                connectionBolean, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
@@ -783,7 +798,8 @@ class TestMongoDBAndMySqlAccess
           const createTable = true;
           const dropTable = true;
           const enableSSL = false;
-          mda.connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL);
+          //const tableDisplayOption = "all"; // or "wellTrajectoryOne" or "wellTrajectoryAll"
+          mda.connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
         }
     }
 }
