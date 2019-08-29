@@ -37,7 +37,7 @@ using std::string;
 
 double gammaFunction(double a)
 {
-  // a method for calculating gamma function
+  // a function for calculating gamma function
   // Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
   //           In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
   // Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
@@ -51,7 +51,7 @@ double gammaFunction(double a)
 
 double gammaDistFunction(double a, double x)
 {
-  // a method for calculating gamma distribution function
+  // a function for calculating gamma distribution function
   // Reference: NIST/SEMATECH e-Handbook of statistical methods.
   //          : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm.
   //          : Retrieved January 5, 2016.
@@ -61,7 +61,7 @@ double gammaDistFunction(double a, double x)
 
 double IRR(double cashFlowArray [], int cashFlowArrayLength)
 {
-  // a method for calculating internal rate of return (IRR)
+  // a function for calculating internal rate of return (IRR)
   int cfaLength     = cashFlowArrayLength;
   double guess      = 1E-1;
   double increment  = 1E-4;
@@ -85,7 +85,7 @@ double IRR(double cashFlowArray [], int cashFlowArrayLength)
 
 char *PSD()
 {
-  // a method for returning  a string
+  // a function for returning  a string
   static char psd [] = "just_a_string_of_non-hashed-password";
   return psd;
 }
