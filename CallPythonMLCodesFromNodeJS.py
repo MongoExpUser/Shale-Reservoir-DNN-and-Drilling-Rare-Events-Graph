@@ -291,7 +291,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 1. define helper functions
       # .........................helper functions start................................
-      # a. connect to database 
+      # a. connect to database
       def connect_to_sqlite_db(db_name):
         conn = None
         try:
@@ -319,7 +319,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         confirm = "UNIQUE constraint failed: Drilling_Parameters.ROWID"
         if (str(err) == confirm) is True:
           msg = "non-unique SERIAL_NO, cannot INSERT a new row of data."
-          print(msg) 
+          print(msg)
           
       # d. retrieve and store all extrated data, with header, in a table as a list/array
       def retrieve_and_stored_all_data_in_a_table_as_list(record):
@@ -331,27 +331,27 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         return all_data_as_list
       # .........................helper functions end......................................
       
-      # 2. connect to a temporary "drilling_events.db" or create a new 
+      # 2. connect to a temporary "drilling_events.db" or create a new
       # "drilling_events.db, if it does not exit and point to cursor
       database_name = 'drilling_events.db'
       connection = connect_to_sqlite_db(database_name)
       py_connection = connection.cursor()
       
       # 3. create Drilling_and_Formation_Parameters TABLE, if it does not exist and save (commit) the changes
-      py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_and_Formation_Parameters (ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real, 
-                               TQR_Ibft real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real, 
-                               GR_api real, DEEP_RESISTIVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer, 
-                               IS_STUCKPIPE_boolean_0_or_1 integer, BHA_TYPE_no_unit text, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000), 
-                               CHECK (IS_VIBRATION_boolean_0_or_1=1 OR IS_VIBRATION_boolean_0_or_1=0), CHECK (IS_KICK_boolean_0_or_1=1 OR IS_KICK_boolean_0_or_1=0), 
+      py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_and_Formation_Parameters (ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real,
+                               TQR_Ibft real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real,
+                               GR_api real, DEEP_RESISTIVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer,
+                               IS_STUCKPIPE_boolean_0_or_1 integer, BHA_TYPE_no_unit text, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000),
+                               CHECK (IS_VIBRATION_boolean_0_or_1=1 OR IS_VIBRATION_boolean_0_or_1=0), CHECK (IS_KICK_boolean_0_or_1=1 OR IS_KICK_boolean_0_or_1=0),
                                CHECK (IS_STUCKPIPE_boolean_0_or_1=1 OR IS_STUCKPIPE_boolean_0_or_1=0))
                             """)
       connection.commit()
       
       # 4. insert a row of data for all columns
       try:
-        py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg, 
-                                 MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISTIVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1, 
-                                 IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, BHA_TYPE_no_unit, TIME_ymd_hms)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+        py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg,
+                                 MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISTIVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1,
+                                 IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, BHA_TYPE_no_unit, TIME_ymd_hms)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                                  ?, ?)""", (35, 65, 235, 20000, 10000, 800, 8000, 12000, 67.2, 110.5, 1.18, 1.03, 98.14, 20, 303.3, 6, 26, 0, 0, 0, 'slick', str(datetime.utcnow()))
                               )
         connection.commit()
@@ -360,20 +360,20 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 5. insert new rows of data, for the indicated columns, note that other columns are null/None, expect where DEFAULT and NOT NULL are specfied
       try:
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (90.20, 1.18, 22, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (104.5, 1.17, 25, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (97.44, 1.16, 18, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (120.1, 1.18, 27, 'packed')")
-        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (101.2, 1.17, 29, 'packed')")
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (?, ?, ?, ?)", (90.20, 1.18, 22, 'packed'))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (?, ?, ?, ?)", (104.5, 1.17, 25, 'packed'))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (?, ?, ?, ?)", (97.44, 1.16, 18, 'packed'))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (?, ?, ?, ?)", (120.1, 1.18, 27, 'packed'))
+        py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (MUD_FLOW_RATE_gpm, MUD_WEIGHT_sg, GR_api, BHA_TYPE_no_unit) VALUES (?, ?, ?, ?)", (101.2, 1.17, 29, 'packed'))
         py_connection.execute("INSERT INTO Drilling_and_Formation_Parameters (DEEP_RESISTIVITY_ohm_m, BHA_TYPE_no_unit, TIME_ymd_hms) VALUES (?, ?, ?)", (222.2, 'slick', str(datetime.utcnow())))
         connection.commit()
       except(sqlite3.IntegrityError) as err:
         handle_non_unique_error_for_insert(err)
       
       # 6. update selected columns of the table at specified row
-      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET MUD_WEIGHT_sg=1.15, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=2")
-      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=48.7, RPM_rpm=68.1, MD_ft=11002, INC_deg=65.1 WHERE ROWID=5")
-      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=43.3, IS_KICK_boolean_0_or_1=1, IS_STUCKPIPE_boolean_0_or_1=1 WHERE ROWID=6")
+      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET MUD_WEIGHT_sg=?, IS_KICK_boolean_0_or_1=?, IS_STUCKPIPE_boolean_0_or_1=? WHERE ROWID=?", (1.15, 1, 1,2))
+      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=?, RPM_rpm=?, MD_ft=?, INC_deg=? WHERE ROWID=?", (48.7, 68.1, 11002, 65.1, 5))
+      py_connection.execute("UPDATE Drilling_and_Formation_Parameters SET ROP_fph=?, IS_KICK_boolean_0_or_1=?, IS_STUCKPIPE_boolean_0_or_1=? WHERE ROWID=?", (43.3, 1, 1, 6))
       connection.commit()
     
       # 7. show/view all record values in the table with "HEADER"
@@ -389,7 +389,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print()
       print("Some Records in the Drilling_and_Formation_Parameters TABLE")
       print("===========================================================")
-      executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, 
+      executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api,
                                               SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
                                            """)
       connection.commit()
@@ -413,7 +413,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         print(name)
       print()
       
-      # 11. store all record values in the table, with "HEADER", into a list/array that can be converted 
+      # 11. store all record values in the table, with "HEADER", into a list/array that can be converted
       # into TensorFlow's tensor data type and used as input into AIML algorithms, and print to check
       print("All Data in the TABLE stored as a List/Array")
       print("==============================================")
