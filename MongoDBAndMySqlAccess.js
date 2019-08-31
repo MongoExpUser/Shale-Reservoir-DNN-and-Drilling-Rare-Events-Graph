@@ -91,7 +91,6 @@ class MongoDBAndMySqlAccess
             {
                 keys = keys + inputKeys[index] + " DATETIME, ";
             }
-            
         }
         
         //add constraints on some LWD data
@@ -174,7 +173,6 @@ class MongoDBAndMySqlAccess
     static drillingEventDocumentValues()
     {
         //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
-        
         return [    //data from regular drilling operation
                     35, 65, 235, 20000, 10000, 800, 1.18, 1.03, 98.14, 'slick',
                     
@@ -209,7 +207,6 @@ class MongoDBAndMySqlAccess
     static drillingEventDefaultValues()
     {
         //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
-        
         return [    //data from regular drilling operation
                     null, null, null, null, null, null, null, null, null, null,
                     
@@ -223,11 +220,7 @@ class MongoDBAndMySqlAccess
                     null
                 ];
     }
-    
-    
-    //////..........................................
-    
-    
+   
     static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                                 createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
