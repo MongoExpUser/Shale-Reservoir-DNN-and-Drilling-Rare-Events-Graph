@@ -175,13 +175,10 @@ class MongoDBAndMySqlAccess
         //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
         return [    //data from regular drilling operation
                     35, 65, 235, 20000, 10000, 800, 1.18, 1.03, 98.14, 'slick',
-                    
                     //data from downhole MWD/LWD tool measurements
                     8000, 12000, 67.2, 110.5, 6, 20, 303.3, 26,
-                    
                     //event data from MWD/LWD MWD/LWD tool measurements and other sources
                     0, 0, 0,
-                    
                     //time data
                     new Date()
                 ];
@@ -209,13 +206,10 @@ class MongoDBAndMySqlAccess
         //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
         return [    //data from regular drilling operation
                     null, null, null, null, null, null, null, null, null, null,
-                    
                     //data from downhole MWD/LWD tool measurements
                     null, null, null, null, null, null, null, null,
-                    
                     //event data from MWD/LWD MWD/LWD tool measurements and other sources
                     null, null, null,
-                    
                     //time data
                     null
                 ];
