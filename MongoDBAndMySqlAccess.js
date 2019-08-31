@@ -61,75 +61,85 @@ class MongoDBAndMySqlAccess
     
     static drillingEventTableSchema()
     {
-        let keys = "";
-        let closeBracket = ") ";
-        let closeBracketFinally = ")";
+        //define schema variable and bracket, with correct spaces & commas
+        let schema = "";
+        let closeBracket = ")";
+        
+        //define input keys
         let inputKeys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
         
-        //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
-        keys = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
+        //define data types, with correct spaces and commas
+        const doubleDataType = " DOUBLE, ";
+        const textDataType = " TEXT, ";
+        const booleanDataType = " BOOLEAN, ";
+        const datatimeDataType = " DATETIME, ";
         
+        //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
+        schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
+        
+        //then concatenate all keys, data types, spaces and commas
         for(let index = 0; index < inputKeys.length; index++)
         {
             if(index < 9)
             {
-                keys = keys + inputKeys[index] + " DOUBLE, ";
+                schema = schema + inputKeys[index] + doubleDataType;
             }
             else if(index === 9)
             {
-                keys = keys + inputKeys[index] + " TEXT, ";
+                schema = schema + inputKeys[index] + textDataType;
             }
             else if(index > 9  && index < 17)
             {
-                keys = keys + inputKeys[index] + " DOUBLE, ";
+                schema = schema + inputKeys[index] + doubleDataType;
             }
             else if(index >= 17  && index < 21)
             {
-                keys = keys + inputKeys[index] + " BOOLEAN, ";
+                schema = schema + inputKeys[index] + booleanDataType;
             }
             else
             {
-                keys = keys + inputKeys[index] + " DATETIME, ";
+                schema = schema + inputKeys[index] + datatimeDataType;
             }
         }
         
         //add constraints on some LWD data
         let constraints = "CHECK (0>=GR_api<=150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)";
         
-        const tableSchema = keys + constraints + closeBracketFinally;
+        //finally concatenate all, including constraints and close bracket to get the "tableSchema"
+        const tableSchema = schema + constraints + closeBracket;
         
         return tableSchema;
     }
     
     static drillingEventTableKeys()
     {
-        return " " +
-                //data from regular drilling operation
-                "(ROP_fph, " +
-                "RPM_rpm, " +
-                "SPP_psi, " +
-                "DWOB_lb, " +
-                "SWOB_lb, " +
-                "TQR_Ibft, " +
-                "MUD_WEIGHT_sg, " +
-                "MUD_VISC_cp, " +
-                "MUD_FLOW_RATE_gpm, " +
-                "BHA_TYPE_no_unit, " +
-                //data from downhole MWD/LWD tool measurements
-                "TVD_ft, " +
-                "MD_ft, " +
-                "INC_deg, " +
-                "AZIM_deg, " +
-                "CALIPER_HOLE_SIZE_inches, " +
-                "GR_api, " +
-                "DEEP_RESISTIVITY_ohm_m, " +
-                "SHOCK_g, " +
-                //event data from MWD/LWD MWD/LWD tool measurements and other sources
-                "IS_VIBRATION_boolean_0_or_1, " +
-                "IS_KICK_boolean_0_or_1, " +
-                "IS_STUCKPIPE_boolean_0_or_1, " +
-                //time data
-                "TIME_ymd_hms)";
+        //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+        let keys = "";
+        let seperator =  ", ";
+        let openBracket = " ("
+        let closeBracket = ")";
+        
+        //define input keys
+        let inputKeys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
+        
+        //then concatenate opening bracket, all keys, spaces, commas and close bracket
+        keys = keys + openBracket;
+        
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index < (inputKeys.length-1))
+            {
+                keys = keys + inputKeys[index] + seperator;
+            }
+            else
+            {
+                keys = keys + inputKeys[index];
+            }
+        }
+        
+        keys = keys + closeBracket;
+    
+        return keys
     }
 
     static drillingEventTableValues()
@@ -201,20 +211,6 @@ class MongoDBAndMySqlAccess
         return keyValuePairs;
     }
     
-    static drillingEventDefaultValues()
-    {
-        //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
-        return [    //data from regular drilling operation
-                    null, null, null, null, null, null, null, null, null, null,
-                    //data from downhole MWD/LWD tool measurements
-                    null, null, null, null, null, null, null, null,
-                    //event data from MWD/LWD MWD/LWD tool measurements and other sources
-                    null, null, null,
-                    //time data
-                    null
-                ];
-    }
-   
     static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                                 createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
@@ -776,7 +772,7 @@ class TestMongoDBAndMySqlAccess
           const createTable = true;
           const dropTable = true;
           const enableSSL = false;
-          //const tableDisplayOption = "all"; // or "wellTrajectoryOne" or "wellTrajectoryAll"
+          const tableDisplayOption = "all"; // or "wellTrajectoryOne" or "wellTrajectoryAll"
           mda.connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
         }
     }
