@@ -555,6 +555,7 @@ class MongoDBAndMySqlAccess
                             {
                                 var keys = MongoDBAndMySqlAccess.drillingEventTableKeys();
                                 
+                                //note: "values" is an Array/List of values (double, text/string, boolean & datetime/date data types)
                                 var values = MongoDBAndMySqlAccess.drillingEventTableValues();
 
                                 var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?,"
