@@ -133,7 +133,7 @@ class ShaleReservoirProduction extends BaseAIML
             }
             else
             {
-                //(a) create, (a) train and (c) predict new model
+                //(a) create, (b) train and (c) predict new model
             
                 //-->a. create model (main engine) with IIFE
                 //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
