@@ -208,6 +208,20 @@ class MongoDBAndMySqlAccess
             }
         }
         
+        //add constraints on some LWD data
+     
+        // 1. GR_api constraint => 0>=GR_api<=150 
+        if((keyValuePairs[keys[15]]) < 0 || (keyValuePairs[keys[15]] > 150))
+        {
+          keyValuePairs[keys[15]] = NaN;
+        }
+     
+        // 2. DEEP_RESISTIVITY_ohm_m constraint => 0>=DEEP_RESISTIVITY_ohm_m<= 2000
+        if((keyValuePairs[keys[16]]) < 0 || (keyValuePairs[keys[16]] > 2000))
+        {
+          keyValuePairs[keys[16]] = NaN;
+        }
+        
         return keyValuePairs;
     }
     
