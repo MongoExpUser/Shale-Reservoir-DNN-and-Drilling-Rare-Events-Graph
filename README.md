@@ -16,9 +16,9 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node v12.9.1
+Node v12.10.0
 
-Tensorflow.js v1.2.8 (JavaScript/Node.js Version)
+Tensorflow.js v1.2.9/v1.2.8 (JavaScript/Node.js Version)
 
 Python-shell.js v1.0.8
 
