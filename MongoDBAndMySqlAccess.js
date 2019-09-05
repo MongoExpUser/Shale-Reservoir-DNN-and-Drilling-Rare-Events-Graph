@@ -171,7 +171,7 @@ class MongoDBAndMySqlAccess
                 "GR_api",
                 "DEEP_RESISTIVITY_ohm_m",
                 "SHOCK_g",
-                //event data from MWD/LWD MWD/LWD tool measurements and other sources
+                //event data from MWD/LWD tool measurements and other sources
                 "IS_VIBRATION_boolean_0_or_1",
                 "IS_KICK_boolean_0_or_1",
                 "IS_STUCKPIPE_boolean_0_or_1",
@@ -187,7 +187,7 @@ class MongoDBAndMySqlAccess
                     35, 65, 235, 20000, 10000, 800, 1.18, 1.03, 98.14, 'slick',
                     //data from downhole MWD/LWD tool measurements
                     8000, 12000, 67.2, 110.5, 6, 20, 303.3, 26,
-                    //event data from MWD/LWD MWD/LWD tool measurements and other sources
+                    //event data from MWD/LWD tool measurements and other sources
                     0, 0, 0,
                     //time data
                     new Date()
