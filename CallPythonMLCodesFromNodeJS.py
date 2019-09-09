@@ -73,6 +73,22 @@ class CallPythonMLCodesFromNodeJS(TestCase):
     def setUp(self):
         self.count = 0
     # End setUp() method
+    
+    def print_separator(self):
+      print("......................................................")
+    # End print_separator() method
+    
+    def test_check_all_installed_packages_and_version(self):
+      from pip._internal.utils.misc import get_installed_distributions
+      packages = get_installed_distributions()
+      sorted(packages)
+      packages_len = len(packages)
+      print()
+      self.print_separator()
+      for index, item in enumerate(packages):
+          print(index+1,".", packages[packages_len-1-index])
+      self.print_separator()
+    # End test_check_all_installed_packages_and_version() method
         
     def test_sklearn_classification_with_log_regression_gnb_svm_demo(self):
       
