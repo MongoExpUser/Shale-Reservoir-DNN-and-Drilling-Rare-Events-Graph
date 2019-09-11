@@ -245,12 +245,13 @@ class MongoDBAndMySqlAccess
         {
             connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
                            ssl: true, sslValidate: true, poolSize: 200, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert,
+                           useUnifiedTopology: true
                           };
         }
         else
         {
             connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: false, sslValidate: true, poolSize: 200
+                           ssl: false, sslValidate: true, poolSize: 200, useUnifiedTopology: true
                           };
         }
              
