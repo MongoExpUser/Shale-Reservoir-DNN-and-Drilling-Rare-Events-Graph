@@ -244,13 +244,16 @@ class MongoDBAndMySqlAccess
         
         if(enableSSL === true)
         {
-            connOptions = {readPreference: 'primaryPreferred', maxStalenessSeconds: 90, ssl: true, sslValidate: true, 
-                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert, poolSize: 200, 
-                          };
+            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
+                           readPreference: 'primaryPreferred', maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
+                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
+            };
         }
         else
         {
-            connOptions = {readPreference: 'primaryPreferred', maxStalenessSeconds: 90, ssl: false, sslValidate: false, poolSize: 200};
+            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
+                           readPreference: 'primaryPreferred', maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
+            };
         }
              
         //0. connect (authenticate) to database - using promise
