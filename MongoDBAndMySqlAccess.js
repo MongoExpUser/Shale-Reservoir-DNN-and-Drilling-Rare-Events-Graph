@@ -235,6 +235,7 @@ class MongoDBAndMySqlAccess
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
+        mongoose.set('useUnifiedTopology', true);
         
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
@@ -243,16 +244,13 @@ class MongoDBAndMySqlAccess
         
         if(enableSSL === true)
         {
-            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: true, sslValidate: true, poolSize: 200, sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert,
-                           useUnifiedTopology: true
+            connOptions = {readPreference: 'primaryPreferred', maxStalenessSeconds: 90, ssl: true, sslValidate: true, 
+                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert, poolSize: 200, 
                           };
         }
         else
         {
-            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, readPreference: 'primaryPreferred', maxStalenessSeconds: 90,
-                           ssl: false, sslValidate: true, poolSize: 200, useUnifiedTopology: true
-                          };
+            connOptions = {readPreference: 'primaryPreferred', maxStalenessSeconds: 90, ssl: false, sslValidate: false, poolSize: 200};
         }
              
         //0. connect (authenticate) to database - using promise
