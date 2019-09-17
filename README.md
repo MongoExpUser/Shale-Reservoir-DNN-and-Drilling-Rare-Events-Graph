@@ -34,8 +34,14 @@ C11
 
 C++17
 
-MongoDB v4.0.12 on ubuntu 18.04.1
+MongoDB Server v4.0.12 on ubuntu 18.04.1
 
-MySQL v5.7.27 on ubuntu 18.04.1
+MongoDB Node.js Driver v3.3.2
+
+Mongoose ORM v5.7.1
+
+MySQL Server v5.7.27 on ubuntu 18.04.1
+
+MySQl Node.js Driver 2.17.1
 
 SQLite3 2.6.0 within Python v3.7 on ubuntu 18.04.1
