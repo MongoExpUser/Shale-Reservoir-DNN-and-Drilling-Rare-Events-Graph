@@ -40,7 +40,7 @@ MongoDB Node.js Driver v3.3.2
 
 Mongoose ORM v5.7.1
 
-MySQL Server v5.7.27 on ubuntu 18.04.1 (With Option for Document Store, i.e. MySQL X Plugin)
+MySQL Server v5.7.27 on ubuntu 18.04.1 - With Option for Document Store/NoSQL (i.e. MySQL X Plugin)
 
 MySQL Node.js Driver 2.17.1
 
