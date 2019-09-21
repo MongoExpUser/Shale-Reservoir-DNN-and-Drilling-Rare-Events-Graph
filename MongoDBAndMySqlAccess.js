@@ -236,6 +236,7 @@ class MongoDBAndMySqlAccess
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
+        const mongoClient = require('mongodb').MongoClient;
         
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
@@ -255,9 +256,9 @@ class MongoDBAndMySqlAccess
                            readPreference: 'primaryPreferred', maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
             };
         }
-             
-        //0. connect (authenticate) to database - using promise
-        mongoose.connect(uri, connOptions, function(connectionError)
+        
+        //0. connect (authenticate) to database - using promise with mongoose ORM for connection
+        const mongooseORMConnnection  = mongoose.connect(uri, connOptions, function(connectionError)
         {
             if(connectionError)
             {
@@ -265,21 +266,24 @@ class MongoDBAndMySqlAccess
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-            
-        }).then(function(callbackDB)
+        });
+    
+        mongooseORMConnnection.then(function(callback)
         {
             console.log("Now connected to MongoDB Server on: ", mongoose.connection.host);
             console.log();
-            const db  = mongoose.connection;  // or callbackDB.connections[0];
-            const dbm = db.client.db(dbName);
-            console.log();
+            const dbConnection  = mongoose.connection;  // or callback.connections[0];
+            
+            //reference the client's "db" directly so that CRUD operations and queries on the "db" are carried
+            //out with MongoDB native "client" APIs (see: https://mongodb.github.io/node-mongodb-native/)
+            const db = dbConnection.client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
             {
                 //1. confirm collection(s) exit(s) within database - using Async IIFE
                 (async function()
                 {
-                    dbm.listCollections().toArray(function(confirmCollectionError, existingCollections)
+                    db.listCollections().toArray(function(confirmCollectionError, existingCollections)
                     {
                         if(confirmCollectionError)
                         {
@@ -397,12 +401,12 @@ class MongoDBAndMySqlAccess
                                                 console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
                                                 console.log("Dropped?: ", droppedCollectionConfirmation);
                                                 console.log();
-                                                db.close();
+                                                dbConnection.close();
                                             });
                                         }
                                         else if(dropCollection !== true)
                                         {
-                                            db.close();
+                                            dbConnection.close();
                                         }
                                         
                                     })().catch(function(error){throw error});
