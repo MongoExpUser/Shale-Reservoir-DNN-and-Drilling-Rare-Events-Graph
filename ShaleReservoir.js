@@ -373,7 +373,8 @@ class ShaleReservoirProduction extends BaseAIML
                 const inputFilePathY = mongoDBDataFileYList[i];
                 const outputFileNameY = mongoDBDataFileYList[i] + "_" + String(i);
                 
-                // ....2. connect to mongoDB server with MongoDB native driver and download cvs file (with GridFS) and process the files
+                // ....2. connect to mongoDB server with MongoDB native driver,
+                // ...... download  cvs files  with GridFS and process the files
                 mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
                 {
                     if(connectionError)
@@ -441,7 +442,6 @@ class ShaleReservoirProduction extends BaseAIML
                                                             pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                             }());
                             
-                            process.exit(0);
                             //....4. finally close client
                             client.close()
                         });
