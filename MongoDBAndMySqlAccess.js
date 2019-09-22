@@ -9,13 +9,13 @@
  *
  * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
  
- * A) MongoDBAndMySQLAccess(): to get access (connect & CRUD) to MongoDB and MySQL databases and file i/o using:
+ * A) MongoDBAndMySQLAccess() class: to get access (connect, CRUD & simple queries) to MongoDB & MySQL databases and files upload/download
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
  *    (2) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- *    (3) Node.js native stream modules and MongoDB's GridFS
+ *    (3) Node.js native file stream module and MongoDB's GridFS
  *
- * B) TestMongoDBAndMySqlAccess(): a test class for testing MongoDBAndMySQLAccess()
+ * B) TestMongoDBAndMySqlAccess() class : a test class for testing MongoDBAndMySQLAccess()
  *
  *
  */
@@ -222,31 +222,52 @@ class MongoDBAndMySqlAccess
         return keyValuePairs;
     }
     
+
+    mongoDBConnectionOptions(sslCertOptions, enableSSL)
+    {
+        if(enableSSL === true)
+        {
+            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                    maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
+                    sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
+            };
+        }
+        else
+        {
+            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                    maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
+            };
+        }
+    }
+    
+    mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions)
+    {
+        if(enableSSL === true)
+        {
+            return {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+                    password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
+                    timezone: 'Z', supportBigNumbers: true, ssl:{ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
+            };
+        }
+        else
+        {
+            return {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
+                    password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
+                    timezone: 'Z', supportBigNumbers: true, ssl: enableSSL
+            };
+            
+        }
+    }
+    
     connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                      createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
         const mongodb = require('mongodb');
         const fs = require('fs');
-
-        //const uri = 'mongodb://username:pasd@domain.com/dbName';
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
-        let connOptions = {};
+        const mda = new MongoDBAndMySqlAccess();
+        const connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
-        if(enableSSL === true)
-        {
-            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                           maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
-                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
-            };
-        }
-        else
-        {
-            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                           maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
-            };
-        }
-        
-
         mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
         {
             // 0.connect (authenticate) to database with mongoDB nativeclient
@@ -414,23 +435,8 @@ class MongoDBAndMySqlAccess
     {
         const fs = require('fs');
         const mysql = require('mysql');
-        let mysqlOptions = {};
-        
-        if(enableSSL === true)
-        {
-            mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
-                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
-                            timezone: 'Z', supportBigNumbers: true, ssl:{ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
-                           }
-        }
-        else
-        {
-            mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
-                            password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
-                            timezone: 'Z', supportBigNumbers: true, ssl: enableSSL
-                           }
-            
-        }
+        const mda = new MongoDBAndMySqlAccess();
+        const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions)
         
         //get database name
         const dbName = String(connectionOptions.database);
@@ -624,28 +630,15 @@ class MongoDBAndMySqlAccess
         }).catch(function(error){throw error});
     }
     
-    uploadDownloadFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
+    mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
                                   collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
         const fs = require('fs');
         const assert = require('assert');
         const mongodb = require('mongodb');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
-        let connOptions = {};
-        
-        if(enableSSL === true)
-        {
-            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                           maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
-                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
-            };
-        }
-        else
-        {
-            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                           maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
-            };
-        }
+        const mda = new MongoDBAndMySqlAccess();
+        const connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
         {
@@ -695,23 +688,6 @@ class MongoDBAndMySqlAccess
                 });
             }
         });
-    }
-    
-    mongoDBConnectionOptions(sslCertOptions, enableSSL)
-    {
-        if(enableSSL === true)
-        {
-            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                    maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
-                    sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
-            };
-        }
-        else
-        {
-            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
-                    maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
-            };
-        }
     }
 }
 
