@@ -6,9 +6,7 @@
  *
  * @License Ends
  *
- *
  * ...Ecotert's Communication.js (released as open-source under MIT License) implements:
- *
  *
  * Relevant communications/data transmission methods - e.g.:
  *
@@ -16,7 +14,6 @@
  * (2) connect to MongoDB
  * (3) read read/write files
  * (4) etc.
- *
  *
  */
  
@@ -226,6 +223,5 @@ class Communication
         }
     }
 }
-
 
 module.exports = {Communication};
