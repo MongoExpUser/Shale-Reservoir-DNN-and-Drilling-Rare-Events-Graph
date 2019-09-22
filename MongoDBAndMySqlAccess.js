@@ -301,7 +301,9 @@ class MongoDBAndMySqlAccess
                         
                         if(existingCollections.length > 0)
                         {
-                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
+                            console.log("Total number of COLLECTION(S) within", dbName, "database:", existingCollections.length);
+                            console.log();
+                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within", dbName, "database:");
                             console.log(collectionNamesList);
                             console.log();
                         }
@@ -413,21 +415,14 @@ class MongoDBAndMySqlAccess
                                         {
                                             client.close();
                                         }
-                                        
                                     })().catch(function(error){throw error});
-                                    
                                 }).catch(function(error){throw error});
-                                
                             }).catch(function(error){throw error});
-                            
                         }).catch(function(error){throw error});
                     }
-                    
                 }).catch(function(error){throw error});
             }
-            
         });
-        
     }
     
     connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
