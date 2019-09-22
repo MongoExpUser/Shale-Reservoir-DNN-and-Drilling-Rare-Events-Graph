@@ -9,7 +9,7 @@
  *
  * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
  
- * A) MongoDBAndMySQLAccess(): to get access (cconnect & CRUD) to MongoDB and MySQL databases and file i/o using:
+ * A) MongoDBAndMySQLAccess(): to get access (connect & CRUD) to MongoDB and MySQL databases and file i/o using:
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
  *    (2) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
