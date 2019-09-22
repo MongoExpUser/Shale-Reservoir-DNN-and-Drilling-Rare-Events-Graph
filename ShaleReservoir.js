@@ -297,7 +297,8 @@ class ShaleReservoirProduction extends BaseAIML
         let dbName = "dbName";
         let connectedDB = undefined;
         let sslCertOptions  = {ca: fs.readFileSync('/path_to/ca.pem'), key: fs.readFileSync('/path_to/mongodb.pem'),cert: fs.readFileSync('/path_to/mongodb.pem')};
-        let connectionBolean = true;
+        let enableSSL = true;
+        let uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         let xOutput = undefined;
         let yOutput = undefined;
         
@@ -307,6 +308,7 @@ class ShaleReservoirProduction extends BaseAIML
         const mda = new MongoDBAndMySqlAccess();
         const cmm = new Communication();
         const srp = new ShaleReservoirProduction();
+        let connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -371,18 +373,19 @@ class ShaleReservoirProduction extends BaseAIML
                 const inputFilePathY = mongoDBDataFileYList[i];
                 const outputFileNameY = mongoDBDataFileYList[i] + "_" + String(i);
                 
-                //create connection instance to MongoDB database, just once
-                if(i == 0)
+                // ....2. connect to mongoDB server with MongoDB native driver and download cvs file (with GridFS) and process the files
+                mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
                 {
-                  connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
-                }
+                    if(connectionError)
+                    {
+                        console.log(connectionError);
+                        console.log("Connection error: MongoDB-server is down or refusing connection.");
+                        return;
+                    }
                     
-                //with connectedDB  instance: download and process cvs files
-                connectedDB.then(function()
-                {
-                    const db = connectedDB.db;
+                    const db = client.db(dbName);
                     const bucket = new mongodb.GridFSBucket(db, {bucketName: mongoDBCollectionName, chunkSizeBytes: 1024});
-                        
+                
                     //download csv file (X-file) from MongoDB database
                     const downloadX = bucket.openDownloadStreamByName(inputFilePathX).pipe(fs.createWriteStream(outputFileNameX), {'bufferSize': 1024});
                     
@@ -394,9 +397,14 @@ class ShaleReservoirProduction extends BaseAIML
                         //read csv files, in pathTofileX, into JS arrays
                         xOutput = cmm.readInputCSVfile(pathTofileX);
                         
-                        
                         //download csv file (Y-file) from MongoDB database
                         const downloadY = bucket.openDownloadStreamByName(inputFilePathY).pipe(fs.createWriteStream(outputFileNameY), {'bufferSize': 1024});
+                         
+                        downloadY.on('error', function(error)
+                        {
+                            assert.ifError(error);
+                        });
+                            
                             
                         downloadY.on('finish', function()
                         {
@@ -406,7 +414,7 @@ class ShaleReservoirProduction extends BaseAIML
                             // read csv files, in pathTofileY, into JS arrays
                             yOutput = cmm.readInputCSVfile(pathTofileY);
                                 
-                            ///....2. then run model  "asynchronously" as IIFE
+                            ///....3. then run model  "asynchronously" as IIFE
                             (async function runModel()
                             {
                                 //convert JavaScript's Arrays into TensorFlow's tensors
@@ -432,19 +440,18 @@ class ShaleReservoirProduction extends BaseAIML
                                                             numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
                                                             pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                             }());
+                            
+                            process.exit(0);
+                            //....4. finally close client
+                            client.close()
                         });
                     });
                     
-                }).catch(function(error)
-                    {
-                    if(error)
-                    {
-                        console.log(error, ": Uploading file error successfully intercepted.");
-                    }
                 });
             }
         }
     }
 }
+
 
 module.exports = {ShaleReservoir};
