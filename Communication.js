@@ -14,12 +14,11 @@
  *
  * (1) read/write files on disk
  * (2) connect to MongoDB
- * (3) read read/write files from MongoDB
+ * (3) read read/write files
  * (4) etc.
  *
  *
  */
- 
  
 class Communication
 {
@@ -226,48 +225,7 @@ class Communication
             });
         }
     }
-    
-    uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
-    {
-        // method to upload and download file from MongoDB database in GridFS format
-        
-        const mongodb         = require('mongodb');
-        const fs              = require('fs');
-        const assert          = require('assert');
-        const db              = connectedDB.db;
-            
-        const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
-               
-        if(action === "upload")
-        {
-            const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
-                
-            upload.on('error', function(error)
-            {
-                assert.ifError(error);
-            });
-                
-            upload.on('finish', function()
-            {
-                console.log('Done uploading' + inputFilePath + '!');
-            });
-        }
-                
-        if(action === "download")
-        {
-            const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
-                
-            download.on('error', function(error)
-            {
-                assert.ifError(error);
-            });
-                
-            download.on('finish', function()
-            {
-                console.log('Done downloading ' + outputFileName + '!');
-            });
-        }
-    }
 }
+
 
 module.exports = {Communication};
