@@ -225,7 +225,7 @@ class MongoDBAndMySqlAccess
     connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                      createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
-        const mongoClient = require('mongodb').MongoClient;
+        const mongodb = require('mongodb');
         const fs = require('fs');
 
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
@@ -247,7 +247,7 @@ class MongoDBAndMySqlAccess
         }
         
 
-        mongoClient.connect(uri, connOptions, function(connectionError, client)
+        mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
         {
             // 0.connect (authenticate) to database with mongoDB nativeclient
             if(connectionError)
@@ -628,8 +628,7 @@ class MongoDBAndMySqlAccess
     {
         const fs = require('fs');
         const assert = require('assert');
-        const mongodb = require('mongodb')
-        const mongoClient = require('mongodb').MongoClient;
+        const mongodb = require('mongodb');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         let connOptions = {};
         
@@ -647,7 +646,7 @@ class MongoDBAndMySqlAccess
             };
         }
         
-        mongoClient.connect(uri, connOptions, function(connectionError, client)
+        mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
         {
             if(connectionError)
             {
