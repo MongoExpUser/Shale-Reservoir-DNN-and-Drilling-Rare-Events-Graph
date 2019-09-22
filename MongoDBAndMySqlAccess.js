@@ -260,26 +260,34 @@ class MongoDBAndMySqlAccess
             console.log();
             console.log("Now connected to MongoDB Server on: ", dbDomainURL);
             console.log();
-            
             const db = client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
             {
-                //1. confirm collection(s) exit(s) within database - using promise
-                var listColl = db.listCollections().toArray();
-                
-                listColl.then(function(existingCollections)
+                //1. confirm collection(s) exit(s) within database - using Async IIFE
+                (async function()
                 {
-                    //2. check if "collectionName" exists in collection(s)
-                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
-                        
-                    if(existingCollections.length > 0)
+                    db.listCollections().toArray(function(confirmCollectionError, existingCollections)
                     {
-                        console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
-                        console.log(collectionNamesList);
-                        console.log();
-                    }
-                     
+                        if(confirmCollectionError)
+                        {
+                            console.log("confirm Collection Error: ", confirmCollectionError);
+                            return;
+                        }
+                        
+                        //2. check if "collectionName" exists in collection(s)
+                        const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                        
+                        if(existingCollections.length > 0)
+                        {
+                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
+                            console.log(collectionNamesList);
+                            console.log();
+                        }
+                    });
+                    
+                })().then(function()
+                {
                     if(createCollection === true)
                     {
                         //3. create collection (TABLE equivalent in MySQL), if desired - using Async IIFE
@@ -394,14 +402,7 @@ class MongoDBAndMySqlAccess
                         }).catch(function(error){throw error});
                     }
                     
-                }).catch(function(confirmCollectionError)
-                {
-                    if(confirmCollectionError)
-                    {
-                        console.log("confirm Collection Error: ", confirmCollectionError);
-                        return;
-                    }
-                });
+                }).catch(function(error){throw error});
             }
             
         });
@@ -674,7 +675,6 @@ class MongoDBAndMySqlAccess
                     console.log('Done uploading' + inputFilePath + '!');
                     client.close();
                     process.exit(0);
-                    
                 });
             }
                     
