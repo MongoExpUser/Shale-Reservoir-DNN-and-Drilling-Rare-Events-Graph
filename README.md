@@ -38,8 +38,6 @@ MongoDB Server v4.0.12 on Ubuntu 18.04.1
 
 MongoDB Node.js Driver v3.3.2
 
-Mongoose ORM v5.7.1
-
 MySQL Server v8.0.17 on Ubuntu 18.04.1
 
 MySQL Node.js Driver 2.17.1
