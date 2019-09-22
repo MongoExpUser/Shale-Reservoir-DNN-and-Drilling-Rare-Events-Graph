@@ -9,12 +9,11 @@
  *
  * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
  
- * A) MongoDBAndMySQLAccess(): to get access (connect & CRUD) to MongoDB and MySQL databases and file i/o using:
+ * A) MongoDBAndMySQLAccess(): to get access (cconnect & CRUD) to MongoDB and MySQL databases and file i/o using:
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
- *    (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
- *    (3) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- *    (4) Node.js native stream modules and MongoDB's GridFS
+ *    (2) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
+ *    (3) Node.js native stream modules and MongoDB's GridFS
  *
  * B) TestMongoDBAndMySqlAccess(): a test class for testing MongoDBAndMySQLAccess()
  *
@@ -171,7 +170,7 @@ class MongoDBAndMySqlAccess
                 "GR_api",
                 "DEEP_RESISTIVITY_ohm_m",
                 "SHOCK_g",
-                //event data from MWD/LWD tool measurements and other sources
+                //event data from MWD/LWD MWD/LWD tool measurements and other sources
                 "IS_VIBRATION_boolean_0_or_1",
                 "IS_KICK_boolean_0_or_1",
                 "IS_STUCKPIPE_boolean_0_or_1",
@@ -187,7 +186,7 @@ class MongoDBAndMySqlAccess
                     35, 65, 235, 20000, 10000, 800, 1.18, 1.03, 98.14, 'slick',
                     //data from downhole MWD/LWD tool measurements
                     8000, 12000, 67.2, 110.5, 6, 20, 303.3, 26,
-                    //event data from MWD/LWD tool measurements and other sources
+                    //event data from MWD/LWD MWD/LWD tool measurements and other sources
                     0, 0, 0,
                     //time data
                     new Date()
@@ -209,13 +208,11 @@ class MongoDBAndMySqlAccess
         }
         
         //add constraints on some LWD data
-     
-        // 1. GR_api constraint => 0>=GR_api<=150 
+        // 1. GR_api constraint => 0>=GR_api<=150
         if((keyValuePairs[keys[15]]) < 0 || (keyValuePairs[keys[15]] > 150))
         {
           keyValuePairs[keys[15]] = NaN;
         }
-     
         // 2. DEEP_RESISTIVITY_ohm_m constraint => 0>=DEEP_RESISTIVITY_ohm_m<= 2000
         if((keyValuePairs[keys[16]]) < 0 || (keyValuePairs[keys[16]] > 2000))
         {
@@ -225,84 +222,64 @@ class MongoDBAndMySqlAccess
         return keyValuePairs;
     }
     
-    static connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
-                                createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
+    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
+                     createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
-        const mongoose = require('mongoose');
-        mongoose.Promise = require('bluebird');
+        const mongoClient = require('mongodb').MongoClient;
         const fs = require('fs');
-        //set mongoose to remove globally, the "deprecation warnings" related to the following options
-        mongoose.set('useNewUrlParser', true);
-        mongoose.set('useFindAndModify', false);
-        mongoose.set('useCreateIndex', true);
-        mongoose.set('useUnifiedTopology', true);
-        
+
         //const uri = 'mongodb://username:pasd@domain.com/dbName';
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
-        
         let connOptions = {};
         
         if(enableSSL === true)
         {
-            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
-                           readPreference: 'primaryPreferred', maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
+            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                           maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
                            sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
             };
         }
         else
         {
-            connOptions = {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
-                           readPreference: 'primaryPreferred', maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
+            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                           maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
             };
         }
         
-        //0. connect (authenticate) to database - using promise with mongoose ORM for connection
-        const mongooseORMConnnection  = mongoose.connect(uri, connOptions, function(connectionError)
+
+        mongoClient.connect(uri, connOptions, function(connectionError, client)
         {
+            // 0.connect (authenticate) to database with mongoDB nativeclient
             if(connectionError)
             {
                 console.log(connectionError);
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-        });
     
-        mongooseORMConnnection.then(function(callback)
-        {
-            console.log("Now connected to MongoDB Server on: ", mongoose.connection.host);
             console.log();
-            const dbConnection  = mongoose.connection;  // or callback.connections[0];
+            console.log("Now connected to MongoDB Server on: ", dbDomainURL);
+            console.log();
             
-            //reference the client's "db" directly so that CRUD operations and queries on the "db" are carried
-            //out with MongoDB native "client" APIs (see: https://mongodb.github.io/node-mongodb-native/)
-            const db = dbConnection.client.db(dbName);
+            const db = client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
             {
                 //1. confirm collection(s) exit(s) within database - using Async IIFE
-                (async function()
+                var listColl = db.listCollections().toArray();
+                
+                listColl.then(function(existingCollections)
                 {
-                    db.listCollections().toArray(function(confirmCollectionError, existingCollections)
+                    //2. check if "collectionName" exists in collection(s)
+                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                        
+                    if(existingCollections.length > 0)
                     {
-                        if(confirmCollectionError)
-                        {
-                            console.log("confirm Collection Error: ", confirmCollectionError);
-                            return;
-                        }
-                        
-                        //2. check if "collectionName" exists in collection(s)
-                        const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
-                        
-                        if(existingCollections.length > 0)
-                        {
-                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
-                            console.log(collectionNamesList);
-                            console.log();
-                        }
-                    });
-                    
-                })().then(function()
-                {
+                        console.log("It is confirmed that the COLLECTION(S) below exist(s) within ", dbName, " database");
+                        console.log(collectionNamesList);
+                        console.log();
+                    }
+                     
                     if(createCollection === true)
                     {
                         //3. create collection (TABLE equivalent in MySQL), if desired - using Async IIFE
@@ -400,12 +377,12 @@ class MongoDBAndMySqlAccess
                                                 console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
                                                 console.log("Dropped?: ", droppedCollectionConfirmation);
                                                 console.log();
-                                                dbConnection.close();
+                                                client.close();
                                             });
                                         }
                                         else if(dropCollection !== true)
                                         {
-                                            dbConnection.close();
+                                            client.close();
                                         }
                                         
                                     })().catch(function(error){throw error});
@@ -417,54 +394,18 @@ class MongoDBAndMySqlAccess
                         }).catch(function(error){throw error});
                     }
                     
-                }).catch(function(error){throw error});
+                }).catch(function(confirmCollectionError)
+                {
+                    if(confirmCollectionError)
+                    {
+                        console.log("confirm Collection Error: ", confirmCollectionError);
+                        return;
+                    }
+                });
             }
             
-        }).catch(function(error){throw error});
-    }
-    
-    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
-                     connectionBolean=true, createCollection=false, dropCollection=false, enableSSL=false,
-                     documentDisplayOption=undefined)
-    {
-        const mongoose = require('mongoose');
-            
-        if(mongoose.connection.readyState === 1 && connectionBolean === false)
-        {
-            //is connected & want to close/disconnect
-            mongoose.connection.close(function(err)
-            {
-                if(err)
-                {
-                    console.log(err);
-                    return;
-                }
-                console.log('NOW disconnected from MongoDB-server');
-            });
-        }
-                
-        if(mongoose.connection.readyState === 0 && connectionBolean === true)
-        {
-            //is closed/disconnected & want to connect
-            console.log();
-            console.log("Connecting......");
-            MongoDBAndMySqlAccess.connectToMongoDBInit(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
-                                                       sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
-        }
-                
-        process.on('SIGINT', function()
-        {
-            //is connected and app is terminated: then close
-            mongoose.connection.close(function ()
-            {
-                console.log('NOW disconnected from MongoDB-server through app termination');
-                console.log('  ');
-                process.exit(0);
-            });
-                    
-        }).setMaxListeners(0); //handles max event emmitter error
-             
-        return mongoose.connection;
+        });
+        
     }
     
     connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
@@ -478,7 +419,7 @@ class MongoDBAndMySqlAccess
         {
             mysqlOptions = {host: connectionOptions.host, port: connectionOptions.port, user: connectionOptions.user,
                             password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
-                            timezone: 'Z', supportBigNumbers: true, ssl: {ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
+                            timezone: 'Z', supportBigNumbers: true, ssl:{ca: sslCertOptions.ca, key: sslCertOptions.key, cert: sslCertOptions.cert}
                            }
         }
         else
@@ -682,63 +623,96 @@ class MongoDBAndMySqlAccess
         }).catch(function(error){throw error});
     }
     
-    uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action)
+    uploadDownloadFileFromMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
+                                  collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
-        // method to upload and download file from MongoDB database in GridFS format
-        const mongodb         = require('mongodb');
-        const fs              = require('fs');
-        const assert          = require('assert');
-        const db              = connectedDB.db;
-            
-        const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
-               
-        if(action === "upload")
+        const fs = require('fs');
+        const assert = require('assert');
+        const mongodb = require('mongodb')
+        const mongoClient = require('mongodb').MongoClient;
+        const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
+        let connOptions = {};
+        
+        if(enableSSL === true)
         {
-            const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
-                
-            upload.on('error', function(error)
-            {
-                assert.ifError(error);
-            });
-                
-            upload.on('finish', function()
-            {
-                console.log('Done uploading' + inputFilePath + '!');
-            });
+            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                           maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
+                           sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
+            };
         }
-                
-        if(action === "download")
+        else
         {
-            const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
-                
-            download.on('error', function(error)
-            {
-                assert.ifError(error);
-            });
-                
-            download.on('finish', function()
-            {
-                console.log('Done downloading ' + outputFileName + '!');
-            });
+            connOptions = {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                           maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
+            };
         }
-    }
-    
-    uploadDownloadFileInMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
-                                connectionBolean, collectionName, inputFilePath, outputFileName, action)
-    {
-        const mda = new MongoDBAndMySqlAccess();
-        const connectedDB = mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, connectionBolean);
-            
-        connectedDB.then(function()
+        
+        mongoClient.connect(uri, connOptions, function(connectionError, client)
         {
-            mda.uploadDownloadFileGridFS(collectionName, connectedDB, inputFilePath, outputFileName, action);
-        }).catch(function(error)
-        {
-            if(error)
+            if(connectionError)
             {
-                console.log(error, " : Uploading file error successfully intercepted and handled.");
+                console.log(connectionError);
+                console.log("Connection error: MongoDB-server is down or refusing connection.");
+                return;
+            }
+            
+            const db = client.db(dbName);
+            
+            const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
+                   
+            if(action === "upload")
+            {
+                const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
+                    
+                upload.on('error', function(error)
+                {
+                    assert.ifError(error);
+                   
+                });
+                    
+                upload.on('finish', function()
+                {
+                    console.log('Done uploading' + inputFilePath + '!');
+                    client.close();
+                    process.exit(0);
+                    
+                });
+            }
+                    
+            if(action === "download")
+            {
+                const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
+                    
+                download.on('error', function(error)
+                {
+                    assert.ifError(error);
+                });
+                    
+                download.on('finish', function()
+                {
+                    console.log('Done downloading ' + outputFileName + '!');
+                    client.close();
+                    process.exit(0);
+                });
             }
         });
+    }
+    
+    mongoDBConnectionOptions(sslCertOptions, enableSSL)
+    {
+        if(enableSSL === true)
+        {
+            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                    maxStalenessSeconds: 90, poolSize: 200, ssl: true, sslValidate: true,
+                    sslCA: sslCertOptions.ca, sslKey: sslCertOptions.key, sslCert: sslCertOptions.cert
+            };
+        }
+        else
+        {
+            return {useNewUrlParser: true, useUnifiedTopology: true, readPreference: 'primaryPreferred',
+                    maxStalenessSeconds: 90, poolSize: 200, ssl: false, sslValidate: false
+            };
+        }
     }
 }
 
@@ -757,7 +731,6 @@ class TestMongoDBAndMySqlAccess
           const dbName = "dbName";
           const collectionName = "Drilling_Events";
           const confirmDatabase = true;
-          const connectionBolean = true;
           const sslCertOptions = {
             ca: fs.readFileSync('/path_to_/ca.pem'),
             key: fs.readFileSync('//path_to_/key.pem'),
@@ -767,8 +740,8 @@ class TestMongoDBAndMySqlAccess
           const dropCollection = true;
           const enableSSL = false;
           const documentDisplayOption = "all"; //or "wellTrajectory"
-          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
-                               connectionBolean, createCollection, dropCollection, enableSSL, documentDisplayOption);
+          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
+                               sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
         
         if(test === true && dbType == 'MySql')
