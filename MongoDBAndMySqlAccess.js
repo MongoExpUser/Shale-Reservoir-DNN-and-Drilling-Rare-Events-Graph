@@ -265,7 +265,7 @@ class MongoDBAndMySqlAccess
             
             if(confirmDatabase === true && dbName !== null)
             {
-                //1. confirm collection(s) exit(s) within database - using Async IIFE
+                //1. confirm collection(s) exit(s) within database - using promise
                 var listColl = db.listCollections().toArray();
                 
                 listColl.then(function(existingCollections)
