@@ -266,9 +266,9 @@ class MongoDBAndMySqlAccess
         const fs = require('fs');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         const mda = new MongoDBAndMySqlAccess();
-        const connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
+        const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
-        mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
+        mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
         {
             // 0.connect (authenticate) to database with mongoDB nativeclient
             if(connectionError)
@@ -338,7 +338,7 @@ class MongoDBAndMySqlAccess
                             {
                                 const mda = MongoDBAndMySqlAccess;
                                 const keys = mda.drillingEventDocumentKeys();
-                                const values = mda.drillingEventDocumentValues()
+                                const values = mda.drillingEventDocumentValues();
                                 const documentObject = mda.drillingEventDocumentKeyValuePairs(keys, values);
 
                                 db.collection(collectionName).insertOne(documentObject, function(insertCollectError, insertedObject)
@@ -416,10 +416,14 @@ class MongoDBAndMySqlAccess
                                             client.close();
                                         }
                                     })().catch(function(error){throw error});
+                                    
                                 }).catch(function(error){throw error});
+                                
                             }).catch(function(error){throw error});
+                            
                         }).catch(function(error){throw error});
                     }
+                    
                 }).catch(function(error){throw error});
             }
         });
@@ -609,17 +613,14 @@ class MongoDBAndMySqlAccess
                                         
                                     }()).catch(function(error){throw error});
                                     
-                                    
                                 }).catch(function(error){throw error});
                                 
                             }).catch(function(error){throw error});
                             
                         }).catch(function(error){throw error});
-                        
                     }
                     
                 }).catch(function(error){throw error});
-            
             }
             
         }).catch(function(error){throw error});
@@ -633,9 +634,9 @@ class MongoDBAndMySqlAccess
         const mongodb = require('mongodb');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         const mda = new MongoDBAndMySqlAccess();
-        const connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
+        const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
-        mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
+        mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
         {
             if(connectionError)
             {
@@ -685,6 +686,7 @@ class MongoDBAndMySqlAccess
         });
     }
 }
+
 
 class TestMongoDBAndMySqlAccess
 {
