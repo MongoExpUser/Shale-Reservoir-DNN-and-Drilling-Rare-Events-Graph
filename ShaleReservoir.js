@@ -308,7 +308,7 @@ class ShaleReservoirProduction extends BaseAIML
         const mda = new MongoDBAndMySqlAccess();
         const cmm = new Communication();
         const srp = new ShaleReservoirProduction();
-        let connOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
+        let mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         //run model by timeStep
         for(let i = 0; i < timeStep; i++)
@@ -375,7 +375,7 @@ class ShaleReservoirProduction extends BaseAIML
                 
                 // ....2. connect to mongoDB server with MongoDB native driver,
                 // ...... download  cvs files  with GridFS and process the files
-                mongodb.MongoClient.connect(uri, connOptions, function(connectionError, client)
+                mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
                 {
                     if(connectionError)
                     {
