@@ -295,7 +295,7 @@ class MongoDBAndMySqlAccess
                     }
                         
                     //2...... check if "collectionName" exists in collection(s)
-                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections);
                         
                     if(existingCollections.length > 0)
                     {
