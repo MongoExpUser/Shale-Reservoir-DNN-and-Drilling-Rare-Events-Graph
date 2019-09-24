@@ -24,7 +24,7 @@ class MongoDBAndMySqlAccess
 {
     constructor()
     {
-      return null;
+      this.documentCountsUpdate = 0;
     }
     
     static getCollectionNames(collectionsList)
@@ -285,62 +285,83 @@ class MongoDBAndMySqlAccess
             
             if(confirmDatabase === true && dbName !== null)
             {
-                //1. confirm collection(s) exit(s) within database - using Async IIFE
-                (async function()
+                //1...... confirm collection(s) exit(s) within database
+                db.listCollections().toArray(function(confirmCollectionError, existingCollections)
                 {
-                    db.listCollections().toArray(function(confirmCollectionError, existingCollections)
+                    if(confirmCollectionError)
                     {
-                        if(confirmCollectionError)
-                        {
-                            console.log("confirm Collection Error: ", confirmCollectionError);
-                            return;
-                        }
+                        console.log("confirm Collection Error: ", confirmCollectionError);
+                        return;
+                    }
                         
-                        //2. check if "collectionName" exists in collection(s)
-                        const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                    //2...... check if "collectionName" exists in collection(s)
+                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
                         
-                        if(existingCollections.length > 0)
-                        {
-                            console.log("Total number of COLLECTION(S) within", dbName, "database:", existingCollections.length);
-                            console.log();
-                            console.log("It is confirmed that the COLLECTION(S) below exist(s) within", dbName, "database:");
-                            console.log(collectionNamesList);
-                            console.log();
-                        }
-                    });
-                    
-                })().then(function()
-                {
+                    if(existingCollections.length > 0)
+                    {
+                        console.log("Total number of COLLECTION(S) within", dbName, "database:", existingCollections.length);
+                        console.log();
+                        console.log("It is confirmed that the COLLECTION(S) below exist(s) within", dbName, "database:");
+                        console.log(collectionNamesList);
+                        console.log();
+                    }
+
+
                     if(createCollection === true)
                     {
-                        //3. create collection (TABLE equivalent in MySQL), if desired - using Async IIFE
-                        (async function()
+                        //3...... create collection (TABLE equivalent in MySQL), if desired
+                        //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
+                        db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
                         {
-                            //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
-                            db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
+                            if(createCollectionError && createCollectionError.name === "MongoError")
                             {
-                                if(createCollectionError && createCollectionError.name === "MongoError")
-                                {
-                                    console.log("Error: Existing COLLLECTION Error or other Error(s)");
-                                }
+                                console.log("Error: Existing COLLLECTION Error or other Error(s)");
+                            }
                                 
-                                if(createdCollection)
-                                {
-                                    console.log(collectionName, " COLLECTION successfully created!");
-                                    console.log();
-                                }
-                            });
-                            
-                        })().then(function()
-                        {
-                            //4. insert document and its key-value pairs (ROWS-COLUMN_VALUES equivalent in MySQL) into collection - using Async IIFE
-                            (async function()
+                            if(createdCollection)
                             {
-                                const mda = MongoDBAndMySqlAccess;
-                                const keys = mda.drillingEventDocumentKeys();
-                                const values = mda.drillingEventDocumentValues();
-                                const documentObject = mda.drillingEventDocumentKeyValuePairs(keys, values);
+                                console.log(collectionName, " COLLECTION successfully created!");
+                                console.log();
+                            }
 
+
+                            //4a...... get document count for auto increment of "_docId" value
+                            //use aggregate pipeline stage to obtain number of existing document in the collection
+                            const pipeline = [ { $group: { _id: null, numberOfDocuments: { $sum: 1 } } }, { $project: { _id: 0 } } ];
+    
+                            db.collection(collectionName).aggregate(pipeline).toArray(function(numberOfDocumentsError, documentPipeline)
+                            {
+                                if(numberOfDocumentsError)
+                                {
+                                    console.log("Document Counts Error: ", numberOfDocumentsError);
+                                    return;
+                                }
+                                      
+                                            
+                                //4b...... insert document and its key-value pairs (ROWS-COLUMN_VALUES equivalent in MySQL) into collection
+                                const keys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
+                                const values = MongoDBAndMySqlAccess.drillingEventDocumentValues();
+                                const documentObject = MongoDBAndMySqlAccess.drillingEventDocumentKeyValuePairs(keys, values);
+                                        
+                                //insert auto increased "_docId" key and value in documentObject before inserting "document" into the collection
+                                //auto increased "_docId" value mimics or is equivalent to "ROWID" in MySQL
+                                const key = "_docId";
+                                let value = undefined;
+                                
+                                if(documentPipeline[0] === undefined)
+                                {
+                                    //for collection with no document
+                                    value = 1;
+                                    documentObject[key] = value;
+                                }
+                                else
+                                {
+                                    //for collection with at least one document, auto increase by 1
+                                    value  =  documentPipeline[0].numberOfDocuments + 1;
+                                    documentObject[key] = value;
+                                }
+                                        
+                                
                                 db.collection(collectionName).insertOne(documentObject, function(insertCollectError, insertedObject)
                                 {
                                     if(insertCollectError)
@@ -348,19 +369,15 @@ class MongoDBAndMySqlAccess
                                         console.log("Insert Collection Error: ", insertCollectError);
                                         return;
                                     }
-                                        
+                                                    
                                     console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
-                                });
-                                
-                            })().then(function()
-                            {
-                                //5. show records - using Async IIFE
-                                // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
-                                //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
-                                // note b: empty {} documentNames signifies all document names in the collection
-                                (async function()
-                                {
+                                        
+                                        
+                                    //5...... show records
+                                    // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
+                                    //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
+                                    // note b: empty {} documentNames signifies all document names in the collection
                                     if(documentDisplayOption === "all" || documentDisplayOption === null || documentDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
@@ -371,12 +388,12 @@ class MongoDBAndMySqlAccess
                                     else if(documentDisplayOption === "wellTrajectory")
                                     {
                                         //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by dateTime in ascending order)
-                                        //note: specified keys (except _id and TIME_ymd_hms) are related to "well trajectory"
+                                        //note: specified keys (except _id, _docId, and TIME_ymd_hms) are related to "well trajectory"
                                         var sortByKeys = {TIME_ymd_hms: 1};
-                                        var specifiedKeys =  {_id: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
+                                        var specifiedKeys =  {_id: 1, _docId: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
                                         var documentNames = {};
                                     }
-                                    
+                                            
                                     db.collection(collectionName).find(documentNames, {projection: specifiedKeys}).sort(sortByKeys).toArray(function(showCollectionError, foundCollection)
                                     {
                                         if(showCollectionError)
@@ -384,17 +401,13 @@ class MongoDBAndMySqlAccess
                                             console.log("Show COLLECTION Error: ", showCollectionError);
                                             return;
                                         }
-                                    
+                                            
                                         console.log("All documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
-                                    });
                                     
-                                })().then(function()
-                                {
-                                    //6. drop/delete collection, if desired - using Async IIFE
-                                    (async function()
-                                    {
+                  
+                                        //6...... drop/delete collection, if desired - using Async IIFE
                                         if(dropCollection === true)
                                         {
                                             db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
@@ -408,23 +421,17 @@ class MongoDBAndMySqlAccess
                                                 console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
                                                 console.log("Dropped?: ", droppedCollectionConfirmation);
                                                 console.log();
-                                                client.close();
                                             });
                                         }
-                                        else if(dropCollection !== true)
-                                        {
-                                            client.close();
-                                        }
-                                    })().catch(function(error){throw error});
-                                    
-                                }).catch(function(error){throw error});
-                                
-                            }).catch(function(error){throw error});
-                            
-                        }).catch(function(error){throw error});
+                                        
+                                        //finally close client/disconnect from MongoDB server
+                                        client.close();
+                                    });
+                                });
+                            });
+                        });
                     }
-                    
-                }).catch(function(error){throw error});
+                });
             }
         });
     }
@@ -613,14 +620,17 @@ class MongoDBAndMySqlAccess
                                         
                                     }()).catch(function(error){throw error});
                                     
+                                    
                                 }).catch(function(error){throw error});
                                 
                             }).catch(function(error){throw error});
                             
                         }).catch(function(error){throw error});
+                        
                     }
                     
                 }).catch(function(error){throw error});
+            
             }
             
         }).catch(function(error){throw error});
@@ -686,7 +696,6 @@ class MongoDBAndMySqlAccess
         });
     }
 }
-
 
 class TestMongoDBAndMySqlAccess
 {
