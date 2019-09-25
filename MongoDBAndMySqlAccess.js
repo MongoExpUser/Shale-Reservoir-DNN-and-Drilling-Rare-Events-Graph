@@ -338,7 +338,7 @@ class MongoDBAndMySqlAccess
                                 }
                                       
                                             
-                                //4b...... insert document and its key-value pairs (ROWS-COLUMN_VALUES equivalent in MySQL) into collection
+                                //4b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
                                 const keys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
                                 const values = MongoDBAndMySqlAccess.drillingEventDocumentValues();
                                 const documentObject = MongoDBAndMySqlAccess.drillingEventDocumentKeyValuePairs(keys, values);
