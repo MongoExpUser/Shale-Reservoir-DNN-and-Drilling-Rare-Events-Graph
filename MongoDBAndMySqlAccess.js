@@ -20,11 +20,12 @@
  *
  */
 
+
 class MongoDBAndMySqlAccess
 {
     constructor()
     {
-      this.documentCountsUpdate = 0;
+      return null;
     }
     
     static getCollectionNames(collectionsList)
@@ -79,23 +80,23 @@ class MongoDBAndMySqlAccess
         //then concatenate all keys, data types, spaces and commas
         for(let index = 0; index < inputKeys.length; index++)
         {
-            if(index < 9)
+            if(index < 6)
             {
                 schema = schema + inputKeys[index] + doubleDataType;
             }
-            else if(index === 9)
+            else if(index === 6)
             {
                 schema = schema + inputKeys[index] + textDataType;
             }
-            else if(index > 9  && index < 17)
+            else if(index > 6  && index < 20)
             {
                 schema = schema + inputKeys[index] + doubleDataType;
             }
-            else if(index >= 17  && index < 21)
+            else if(index >= 20  && index < 23)
             {
                 schema = schema + inputKeys[index] + booleanDataType;
             }
-            else
+            else if(index === 23)
             {
                 schema = schema + inputKeys[index] + datatimeDataType;
             }
@@ -150,22 +151,25 @@ class MongoDBAndMySqlAccess
     static drillingEventDocumentKeys()
     {
         return [
-                //data from regular drilling operation
+                //data from regular drilling operation (drillstring-related)
                 "ROP_fph",
                 "RPM_rpm",
                 "SPP_psi",
                 "DWOB_lb",
                 "SWOB_lb",
                 "TQR_Ibft",
-                "MUD_WEIGHT_sg",
-                "MUD_VISC_cp",
-                "MUD_FLOW_RATE_gpm",
                 "BHA_TYPE_no_unit",
-                //data from downhole MWD/LWD tool measurements
+                //data from regular drilling operation (mud-related)
+                "MUD_WEIGHT_sg",
+                "MUD_PLASTIC_VISC_cp",
+                "MUD_YIELD_POINT_lb_per_100ft_sq",
+                "MUD_FLOW_RATE_gpm",
+                //data (measured or calculated) from downhole MWD/LWD tool measurements
                 "TVD_ft",
                 "MD_ft",
                 "INC_deg",
                 "AZIM_deg",
+                "Dogleg_deg_per_100ft",
                 "CALIPER_HOLE_SIZE_inches",
                 "GR_api",
                 "DEEP_RESISTIVITY_ohm_m",
@@ -176,21 +180,23 @@ class MongoDBAndMySqlAccess
                 "IS_STUCKPIPE_boolean_0_or_1",
                 //time data
                 "TIME_ymd_hms"
-                ]
+        ]
     }
     
     static drillingEventDocumentValues()
     {
         //values below map directly, sequentially, to keys in drillingEventDocumentKeys()
-        return [    //data from regular drilling operation
-                    35, 65, 235, 20000, 10000, 800, 1.18, 1.03, 98.14, 'slick',
-                    //data from downhole MWD/LWD tool measurements
-                    8000, 12000, 67.2, 110.5, 6, 20, 303.3, 26,
+        return [    //data from regular drilling operation (drillstring-related)
+                    35, 65, 235, 20000, 10000, 800, 'slick',
+                    //data from regular drilling operation (mud-related)
+                    1.18, 18.01, 16, 98.14,
+                    //data (measured or calculated) from downhole MWD/LWD tool measurements
+                    8000, 12000, 67.2, 110.5, 1.1, 6, 20, 303.3, 26,
                     //event data from MWD/LWD MWD/LWD tool measurements and other sources
                     0, 0, 0,
                     //time data
                     new Date()
-                ];
+        ];
     }
     
     static drillingEventDocumentKeyValuePairs(keys, values)
@@ -209,14 +215,14 @@ class MongoDBAndMySqlAccess
         
         //add constraints on some LWD data
         // 1. GR_api constraint => 0>=GR_api<=150
-        if((keyValuePairs[keys[15]]) < 0 || (keyValuePairs[keys[15]] > 150))
+        if((keyValuePairs[keys[17]]) < 0 || (keyValuePairs[keys[17]] > 150))
         {
-          keyValuePairs[keys[15]] = NaN;
+          keyValuePairs[keys[17]] = NaN;
         }
         // 2. DEEP_RESISTIVITY_ohm_m constraint => 0>=DEEP_RESISTIVITY_ohm_m<= 2000
-        if((keyValuePairs[keys[16]]) < 0 || (keyValuePairs[keys[16]] > 2000))
+        if((keyValuePairs[keys[18]]) < 0 || (keyValuePairs[keys[18]] > 2000))
         {
-          keyValuePairs[keys[16]] = NaN;
+          keyValuePairs[keys[18]] = NaN;
         }
         
         return keyValuePairs;
@@ -295,7 +301,7 @@ class MongoDBAndMySqlAccess
                     }
                         
                     //2...... check if "collectionName" exists in collection(s)
-                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections);
+                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
                         
                     if(existingCollections.length > 0)
                     {
@@ -381,7 +387,7 @@ class MongoDBAndMySqlAccess
                                     if(documentDisplayOption === "all" || documentDisplayOption === null || documentDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
-                                        var sortByKeys = {TIME_ymd_hms: 1};
+                                        var sortByKeys = {_docId: 1 /*, TIME_ymd_hms: 1*/};
                                         var specifiedKeys = {};
                                         var documentNames = {};
                                     }
@@ -389,8 +395,8 @@ class MongoDBAndMySqlAccess
                                     {
                                         //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by dateTime in ascending order)
                                         //note: specified keys (except _id, _docId, and TIME_ymd_hms) are related to "well trajectory"
-                                        var sortByKeys = {TIME_ymd_hms: 1};
-                                        var specifiedKeys =  {_id: 1, _docId: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, TIME_ymd_hms: 1};
+                                        var sortByKeys = {_docId: 1 /*, TIME_ymd_hms: 1*/};
+                                        var specifiedKeys =  {_id: 1, _docId: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
                                         var documentNames = {};
                                     }
                                             
@@ -532,7 +538,7 @@ class MongoDBAndMySqlAccess
                                 var values = MongoDBAndMySqlAccess.drillingEventTableValues();
 
                                 var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?,"
-                                                 + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                                 + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                                 
                                 nodeJSConnection.query(mySqlQuery, values, function (insertTableError, result)
                                 {
@@ -696,6 +702,8 @@ class MongoDBAndMySqlAccess
         });
     }
 }
+
+
 
 class TestMongoDBAndMySqlAccess
 {
