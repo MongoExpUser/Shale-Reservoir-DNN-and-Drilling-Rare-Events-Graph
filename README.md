@@ -42,4 +42,6 @@ MySQL Server v8.0.17 on Ubuntu 18.04.1
 
 MySQL Node.js Driver 2.17.1 (https://www.npmjs.com/package/mysql)
 
+MySQL Connector/Node.js (https://www.npmjs.com/package/@mysql/xdevapi)
+
 SQLite3 2.6.0 within Python v3.7 on Ubuntu 18.04.1
