@@ -394,7 +394,7 @@ class AccessMongoDBAndMySQL
                                         return;
                                     }
                                                     
-                                    console.log("Document with id (",documentObject._id,") and its field values are inserted into " + String(collectionName) + " COLLECTION successfully!");
+                                    console.log("Document with id (",documentObject._id,") and its key-value pairs, is inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                         
                                         
@@ -426,7 +426,7 @@ class AccessMongoDBAndMySQL
                                             return;
                                         }
                                             
-                                        console.log("Some or all documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
+                                        console.log("Some or all documents and their key-value pairs in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
                                     
@@ -712,13 +712,13 @@ class AccessMongoDBAndMySQL
                             }
                         });
                             
-
+                            
                         //5...... show records
-                        console.log("Some or all documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
                         db.getCollection(collectionName).find().execute(function(foundCollection)
                         {
+                            console.log("Document with id (", foundCollection._id, ") and its key-value pair in "
+                                        + String(collectionName) + " COLLECTION, is shown below!");
                             console.log(foundCollection);
-                            console.log();
                                     
                         }).catch(function(showCollectionError)
                         {
@@ -728,7 +728,28 @@ class AccessMongoDBAndMySQL
                                 return;
                             }
                         });
-                           
+                                
+                
+                        //6...... drop/delete collection, if desired
+                        if(dropCollection === true)
+                        {
+                            db.dropCollection(collectionName).then(function(droppedCollectionConfirmation)
+                            {
+                                console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
+                                console.log("Dropped?: ", droppedCollectionConfirmation);
+                                console.log();
+                                
+                            }).catch(function(dropCollectionError)
+                            {
+                                if(dropCollectionError)
+                                {
+                                    console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
+                                    
+                                    return;
+                                }
+                            });
+                        }
+                                        
                         //finally close client (i.e. disconnect) from MySQL server session
                         clientSession.close();
                         console.log("Connection closed.......");
@@ -815,7 +836,6 @@ class AccessMongoDBAndMySQL
         });
     }
 }
-
 class TestAccessMongoDBAndMySQL
 {
     constructor(test=true, dbType=undefined)
@@ -865,7 +885,7 @@ class TestAccessMongoDBAndMySQL
           const createTable = true;
           const dropTable = true;
           const enableSSL = false;
-          const tableDisplayOption = "all"; // or "wellTrajectoryOne" or "wellTrajectoryAll"
+          const tableDisplayOption = "all"; // or "wellTrajectoryOneRow" or "wellTrajectoryAllRows" 
           if(dbType == 'MySql')
           {
             mda.AccessMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
