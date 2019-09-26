@@ -267,7 +267,7 @@ class AccessMongoDBAndMySQL
     }
     
     AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
-                     createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
+                  createCollection=false, dropCollection=false, enableSSL=false, collectionDisplayOption=undefined)
     {
         //connect with "MongoDB Node.js Native Driver". See - https://www.npmjs.com/package/mongodb
         const mongodb = require('mongodb');
@@ -383,17 +383,17 @@ class AccessMongoDBAndMySQL
                                         
                                         
                                     //5...... show records
-                                    // note a: if "documentDisplayOption" is null or undefined or unspecified, all documents & their
+                                    // note a: if "collectionDisplayOption" is null or undefined or unspecified, all documents & their
                                     //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
                                     // note b: empty {} documentNames signifies all document names in the collection
-                                    if(documentDisplayOption === "all" || documentDisplayOption === null || documentDisplayOption === undefined)
+                                    if(collectionDisplayOption === "all" || collectionDisplayOption === null || collectionDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
                                         var sortByKeys = {_DocumentID: 1};
                                         var specifiedKeys = {};
                                         var documentNames = {};
                                     }
-                                    else if(documentDisplayOption === "wellTrajectory")
+                                    else if(collectionDisplayOption === "wellTrajectory")
                                     {
                                         //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by _DocumentID in ascending order)
                                         //note: specified keys (except _id, _DocumentID, and TIME_ymd_hms) are related to "well trajectory"
@@ -445,7 +445,7 @@ class AccessMongoDBAndMySQL
     }
     
     AccessMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
-                   createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
+                createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
         const mysql = require('mysql');
@@ -600,7 +600,7 @@ class AccessMongoDBAndMySQL
     }
     
     AccessMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
-                                createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
+                             createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //In progress ......
         //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
@@ -608,8 +608,16 @@ class AccessMongoDBAndMySQL
         const fs = require('fs');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
-        mysqlxOptions.port = '33060';  //change  port to mysqlx default port of '33060'
         const dbName = String(connectionOptions.database);
+        
+        //map mysql variables to no-mysql (document store) variables
+        const collectionName = tableName;
+        const createCollection = createTable;
+        const dropCollection = dropTable;
+        const collectionDisplayOption = tableDisplayOption;
+        
+        //change port to mysqlx default port of '33060' before passing "options" to connecting session
+        mysqlxOptions.port = '33060';
         
         //0. connect (authenticate) to database with mysql connector/ node.js (client) - i.e. mysqlx
         const session = mysqlx.getSession(mysqlxOptions);
@@ -618,13 +626,24 @@ class AccessMongoDBAndMySQL
         
         session.then(function(client)
         {
-            console.log("Now connected to MySqlx server on: ", connectionOptions.host);
             console.log();
+            console.log("Now connected to MySqlx server on:", connectionOptions.host);
+            console.log();
+            const db = client.getSchema(dbName);
+            
+            //finally close client (i.e. disconnect) from MySQL server session
             client.close();
+                
+        }).catch(function(connectionError)
+        {
+            if(connectionError)
+            {
+                console.log("Connection Error: ", connectionError);
+                return;
+            }
         });
-
-        //In progress ...... add others later
-    
+        
+        //In progress ...... add CRUD operations and other queries later
     }
     
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
@@ -687,6 +706,7 @@ class AccessMongoDBAndMySQL
         });
     }
 }
+
 
 class TestAccessMongoDBAndMySQL
 {
