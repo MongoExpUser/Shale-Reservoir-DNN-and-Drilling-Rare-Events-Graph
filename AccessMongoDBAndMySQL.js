@@ -7,7 +7,7 @@
  * @License Ends
  *
  *
- * ...Ecotert's MongoDBAndMySQLAccess.js (released as open-source under MIT License) implements:
+ * ...Ecotert's AccessMongoDBAndMySQL.js (released as open-source under MIT License) implements:
  
  * A) AccessMongoDBAndMySQL() class: to get access (connect, CRUD & simple queries) to MongoDB & MySQL databases and files upload/download
  *
@@ -16,7 +16,7 @@
   *   (3) MySQL's Connector/Node.js - https://www.npmjs.com/package/@mysql/xdevapi
  *    (4) Node.js native file stream module and MongoDB's GridFS
  *
- * B) TestAccessMongoDBAndMySQL() class: a test class for testing MongoDBAndMySQLAccess()
+ * B) TestAccessMongoDBAndMySQL() class: a test class for testing AccessMongoDBAndMySQL()
  *
  *
  */
@@ -66,7 +66,7 @@ class AccessMongoDBAndMySQL
         let closeBracket = ")";
         
         //define input keys
-        let inputKeys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
+        let inputKeys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
         
         //define data types, with correct spaces and commas
         const doubleDataType = " DOUBLE, ";
@@ -120,7 +120,7 @@ class AccessMongoDBAndMySQL
         let closeBracket = ")";
         
         //define input keys
-        let inputKeys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
+        let inputKeys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
         
         //then concatenate opening bracket, all keys, spaces, commas and close bracket
         keys = keys + openBracket;
@@ -145,7 +145,7 @@ class AccessMongoDBAndMySQL
     static drillingEventTableValues()
     {
         //values below map directly, sequentially, to keys in drillingEventTableKeys()
-        return MongoDBAndMySqlAccess.drillingEventDocumentValues();
+        return AccessMongoDBAndMySQL.drillingEventDocumentValues();
     }
     
     static drillingEventDocumentKeys()
@@ -273,7 +273,7 @@ class AccessMongoDBAndMySQL
         const mongodb = require('mongodb');
         const fs = require('fs');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new AccessMongoDBAndMySQL();
         const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
@@ -303,7 +303,7 @@ class AccessMongoDBAndMySQL
                     }
                         
                     //2...... check if "collectionName" exists in collection(s)
-                    const collectionNamesList = MongoDBAndMySqlAccess.getCollectionNames(existingCollections)
+                    const collectionNamesList = AccessMongoDBAndMySQL.getCollectionNames(existingCollections)
                         
                     if(existingCollections.length > 0)
                     {
@@ -347,9 +347,9 @@ class AccessMongoDBAndMySQL
                                       
                                             
                                 //4b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
-                                const keys = MongoDBAndMySqlAccess.drillingEventDocumentKeys();
-                                const values = MongoDBAndMySqlAccess.drillingEventDocumentValues();
-                                const documentObject = MongoDBAndMySqlAccess.drillingEventDocumentKeyValuePairs(keys, values);
+                                const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
+                                const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
+                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
                                         
                                 //insert auto increased "_docId" key and value in documentObject before inserting "document" into the collection
                                 //auto increased "_docId" value mimics or is equivalent to "ROWID" in MySQL
@@ -450,7 +450,7 @@ class AccessMongoDBAndMySQL
         //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
         const mysql = require('mysql');
         const fs = require('fs');
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new AccessMongoDBAndMySQL();
         const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
         const dbName = String(connectionOptions.database);
         
@@ -493,7 +493,7 @@ class AccessMongoDBAndMySQL
                     if(createTable === true)
                     {
                         //2. create a new table, if desired
-                        const mda = MongoDBAndMySqlAccess;
+                        const mda = AccessMongoDBAndMySQL;
                         const tableSchema =  mda.drillingEventTableSchema();
                         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) + tableSchema;
                             
@@ -512,9 +512,9 @@ class AccessMongoDBAndMySQL
                             }
               
                             //3. insert column values
-                            var keys = MongoDBAndMySqlAccess.drillingEventTableKeys();
+                            var keys = AccessMongoDBAndMySQL.drillingEventTableKeys();
                             //note: "values" is an Array/List containing values of data types: double, text/string, boolean & datetime/date
-                            var values = MongoDBAndMySqlAccess.drillingEventTableValues();
+                            var values = AccessMongoDBAndMySQL.drillingEventTableValues();
                             var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?, ?,"
                                              + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                                 
@@ -606,7 +606,7 @@ class AccessMongoDBAndMySQL
         //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
         const mysqlx = require('@mysql/xdevapi');
         const fs = require('fs');
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new AccessMongoDBAndMySQL();
         const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
         //change port from mysql default port of '3306' to mysqlx default port of '33060'
         mysqlxOptions.port = '33060';
@@ -635,7 +635,7 @@ class AccessMongoDBAndMySQL
         const assert = require('assert');
         const mongodb = require('mongodb');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new AccessMongoDBAndMySQL();
         const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
@@ -695,7 +695,7 @@ class TestAccessMongoDBAndMySQL
     constructor(test=true, dbType=undefined)
     {
         const fs = require('fs');
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new TestAccessMongoDBAndMySQL();
             
         if(test === true && dbType == 'MongoDB')
         {
