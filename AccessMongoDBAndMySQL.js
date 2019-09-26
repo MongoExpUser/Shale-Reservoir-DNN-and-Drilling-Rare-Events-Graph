@@ -31,7 +31,7 @@ class AccessMongoDBAndMySQL
       return null;
     }
     
-    static getCollectionNames(collectionsList)
+    static getMongoDBCollectionNames(collectionsList)
     {
         var namesList = [];
                             
@@ -48,6 +48,19 @@ class AccessMongoDBAndMySQL
         
         return namesList;
     }
+    
+    static getMySQLDocumentStoreCollectionNames(collectionsList)
+    {
+        const namesList = [];
+    
+        for(let index = 0; index < collectionsList.length; index++)
+        {
+            namesList.push(collectionsList[index].inspect().collection)
+        }
+                        
+        return namesList;
+    }
+        
     
     static collectionExist(collectionNamesList, collectionName)
     {
@@ -290,7 +303,7 @@ class AccessMongoDBAndMySQL
             }
     
             console.log();
-            console.log("Now connected to MongoDB Server on: ", dbDomainURL);
+            console.log("Now connected to MongoDB Server on:", dbDomainURL);
             console.log();
             const db = client.db(dbName);
             
@@ -306,7 +319,7 @@ class AccessMongoDBAndMySQL
                     }
                         
                     //2...... check if "collectionName" exists in collection(s)
-                    const collectionNamesList = AccessMongoDBAndMySQL.getCollectionNames(existingCollections)
+                    const collectionNamesList = AccessMongoDBAndMySQL.getMongoDBCollectionNames(existingCollections)
                         
                     if(existingCollections.length > 0)
                     {
@@ -336,7 +349,7 @@ class AccessMongoDBAndMySQL
                             }
 
 
-                            //4a...... get document count for auto increment of "_docId" value
+                            //4a...... get document count for auto increment of "_DocumentID" value
                             //use aggregate pipeline stage to obtain number of existing document in the collection
                             const pipeline = [ { $group: { _id: null, numberOfDocuments: { $sum: 1 } } }, { $project: { _id: 0 } } ];
     
@@ -373,11 +386,11 @@ class AccessMongoDBAndMySQL
                                 }
                                         
                                 
-                                db.collection(collectionName).insertOne(documentObject, function(insertCollectError, insertedObject)
+                                db.collection(collectionName).insertOne(documentObject, function(insertDocumentError, insertedObject)
                                 {
-                                    if(insertCollectError)
+                                    if(insertDocumentError)
                                     {
-                                        console.log("Insert Collection Error: ", insertCollectError);
+                                        console.log("Insert Document Error: ", insertDocumentError);
                                         return;
                                     }
                                                     
@@ -418,7 +431,7 @@ class AccessMongoDBAndMySQL
                                         console.log();
                                     
                   
-                                        //6...... drop/delete collection, if desired - using Async IIFE
+                                        //6...... drop/delete collection, if desired
                                         if(dropCollection === true)
                                         {
                                             db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
@@ -437,6 +450,8 @@ class AccessMongoDBAndMySQL
                                         
                                         //finally close client (i.e. disconnect) from MongoDB server
                                         client.close();
+                                        console.log("Connection closed.......");
+                                        console.log();
                                     });
                                 });
                             });
@@ -455,7 +470,7 @@ class AccessMongoDBAndMySQL
         const fs = require('fs');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
-        const dbName = String(connectionOptions.database);
+        const dbName = String(mysqlOptions.database);
         
         //0. connect (authenticate) to database with msql node.js driver (client)
         const client = mysql.createConnection(mysqlOptions);
@@ -470,7 +485,7 @@ class AccessMongoDBAndMySQL
                 return;
             }
                         
-            console.log("Now connected to MySql server on: ", connectionOptions.host);
+            console.log("Now connected to MySql server on:", mysqlOptions.host);
             console.log();
             
             if(confirmDatabase === true && dbName !== null)
@@ -573,7 +588,7 @@ class AccessMongoDBAndMySQL
                                     console.log(result);
                                     console.log();
                          
-                                    //5. drop/delete table, if desired - using Async IIFE
+                                    //5. drop/delete table, if desired
                                     if(dropTable === true)
                                     {
                                         var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
@@ -593,6 +608,8 @@ class AccessMongoDBAndMySQL
 
                                     //finally close client (i.e. disconnect) from MySQL server
                                     client.end();
+                                    console.log("Connection closed.......");
+                                    console.log();
                                 });
                             });
                         });
@@ -605,13 +622,12 @@ class AccessMongoDBAndMySQL
     AccessMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
                              createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
-        //In progress ......
         //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
         const mysqlx = require('@mysql/xdevapi');
         const fs = require('fs');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
-        const dbName = String(connectionOptions.database);
+        const dbName = String(mysqlxOptions.database);
         
         //map mysql variables to no-mysql (document store) variables
         const collectionName = tableName;
@@ -630,13 +646,105 @@ class AccessMongoDBAndMySQL
         session.then(function(clientSession)
         {
             console.log();
-            console.log("Now connected to MySqlx server on:", connectionOptions.host);
+            console.log("Now connected to MySqlx server on:", mysqlxOptions.host);
             console.log();
             const db = clientSession.getSchema(dbName);
             
-            //finally close client (i.e. disconnect) from MySQL server session
-            clientSession.close();
-                
+            if(confirmDatabase === true && dbName !== null)
+            {
+                //1...... confirm collection(s) exit(s) within database
+                db.getCollections().then(function(existingCollections)
+                {
+                    //2...... check if "collectionName" exists in collection(s)
+                    const collectionNamesList = AccessMongoDBAndMySQL.getMySQLDocumentStoreCollectionNames(existingCollections)
+                    
+                    if(collectionNamesList.length > 0)
+                    {
+                        console.log("Total number of COLLECTION(S) within", dbName, "database:", collectionNamesList.length);
+                        console.log();
+                        console.log("It is confirmed that the COLLECTION(S) below exist(s) within", dbName, "database:");
+                        console.log(collectionNamesList);
+                        console.log();
+                    }
+
+                    if(createCollection === true)
+                    {
+                        //3...... create collection, if desired -> this is equivalent to CREATE TABLE in regualr MySQL
+                        db.createCollection(collectionName).then(function(createdCollection)
+                        {
+                            if(createdCollection)
+                            {
+                                console.log(collectionName, " COLLECTION successfully created!");
+                                console.log();
+                            }
+                            
+                        }).catch(function(createCollectionError)
+                        {
+                            if(createCollectionError && createCollectionError.info.code === 1050)
+                            {
+                                console.log("Create Collection Error: Collection", JSON.stringify(collectionName), "already exists.");
+                            }
+                            else
+                            {
+                                console.log("Create Collection Error: ", createCollectionError);
+                            }
+                        });
+                        
+                        
+                        //4...... insert/add document and its key-value pairs into collection
+                        // .......this is equivalent to COLUMN & ROW-VALUES in regular MySQL
+                        const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
+                        const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
+                        const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
+    
+                        db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
+                        {
+                            console.log("Document with id (", addedDocument.getGeneratedIds(), ") and its field values " +
+                                        "are inserted into " + String(collectionName) + " COLLECTION successfully!");
+                            console.log();
+
+                        }).catch(function(addDocumentError)
+                        {
+                            if(addDocumentError)
+                            {
+                                console.log("Add Document Error: ", addDocumentError);
+                                return;
+                            }
+                        });
+                            
+
+                        //5...... show records
+                        console.log("Some or all documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
+                        db.getCollection(collectionName).find().execute(function(foundCollection)
+                        {
+                            console.log(foundCollection);
+                            console.log();
+                                    
+                        }).catch(function(showCollectionError)
+                        {
+                            if(showCollectionError)
+                            {
+                                console.log("Show COLLECTION Error: ", showCollectionError);
+                                return;
+                            }
+                        });
+                           
+                        //finally close client (i.e. disconnect) from MySQL server session
+                        clientSession.close();
+                        console.log("Connection closed.......");
+                        console.log();
+                    }
+                    
+                }).catch(function(confirmCollectionError)
+                {
+                    if(confirmCollectionError)
+                    {
+                        console.log("Confirm Collection Error: ", confirmCollectionError);
+                        return;
+                    }
+                });
+            }
+            
         }).catch(function(connectionError)
         {
             if(connectionError)
@@ -645,12 +753,10 @@ class AccessMongoDBAndMySQL
                 return;
             }
         });
-        
-        //In progress ... add CRUD operations and other queries later (similar to AccessMySQL() and AccessMongoDB() methods)
     }
     
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
-                                     collectionName, enableSSL, inputFilePath, outputFileName, action)
+                                  collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
         const fs = require('fs');
         const assert = require('assert');
@@ -709,7 +815,6 @@ class AccessMongoDBAndMySQL
         });
     }
 }
-
 
 class TestAccessMongoDBAndMySQL
 {
