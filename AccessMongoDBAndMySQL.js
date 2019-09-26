@@ -650,7 +650,7 @@ class AccessMongoDBAndMySQL
     }
     
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
-                                  collectionName, enableSSL, inputFilePath, outputFileName, action)
+                                     collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
         const fs = require('fs');
         const assert = require('assert');
@@ -734,9 +734,9 @@ class TestAccessMongoDBAndMySQL
           const createCollection = true;
           const dropCollection = true;
           const enableSSL = false;
-          const documentDisplayOption = "all"; //or "wellTrajectory"
+          const collectionDisplayOption = "all"; //or "wellTrajectory"
           mda.AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
-                               sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
+                            sslCertOptions, createCollection, dropCollection, enableSSL, collectionDisplayOption);
         }
         
         if(test === true && (dbType === 'MySql' || dbType === 'MySqlx'))
