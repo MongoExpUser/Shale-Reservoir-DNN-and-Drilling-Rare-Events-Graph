@@ -303,9 +303,9 @@ class ShaleReservoirProduction extends BaseAIML
         let yOutput = undefined;
         
         //load/require/import relevant modules
-        MongoDBAndMySqlAccess  = require('./MongoDBAndMySqlAccess.js').MongoDBAndMySqlAccess; 
+        AccessMongoDBAndMySQL  = require('./AccessMongoDBAndMySQL.js').AccessMongoDBAndMySQL; 
         Communication  = require('./Communication.js').Communication; 
-        const mda = new MongoDBAndMySqlAccess();
+        const mda = new AccessMongoDBAndMySQL();
         const cmm = new Communication();
         const srp = new ShaleReservoirProduction();
         let mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
