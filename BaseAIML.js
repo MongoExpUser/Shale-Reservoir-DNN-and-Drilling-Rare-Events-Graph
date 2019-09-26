@@ -49,7 +49,6 @@ class BaseAIML
         const util = require('util');
         const mongodb = require('mongodb');
         const assert = require('assert');
-        const tfvis = require('@tensorflow/tfjs-vis');
         let tf = require('@tensorflow/tfjs');                   //pure JavaScript version
         
         //replace pure JavaScript version with c/c++ back-end version, if node.js exist (is installed)
@@ -80,7 +79,7 @@ class BaseAIML
             }
         }
 
-        return {fs:fs, path:path, util:util, mongodb:mongodb, assert:assert, tf:tf, tfvis:tfvis, model:tf.sequential()};
+        return {fs:fs, path:path, util:util, mongodb:mongodb, assert:assert, tf:tf, model:tf.sequential()};
     }
     
     predictProductionAndPrintResults(_x, _y, _reModel, existingSavedModel=false)
