@@ -9,8 +9,11 @@
  *
  * ...Ecotert's AccessMongoDBAndMySQL.js (released as open-source under MIT License) implements:
  
- * A) AccessMongoDBAndMySQL() class: to get access (connect, CRUD operations & simple queries) to MongoDB & MySQL servers
- *    and upload/download  files using:
+ * A) AccessMongoDBAndMySQL() class to:
+ *    i)  connect to and carry out CRUD operations & simple queries on MongoDB & MySQL (both regular SQL & NoSQL/Document Store)
+ *    ii) upload/download  files
+ *
+ *    using:
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
  *    (2) MySQL Node.js driver - https://www.npmjs.com/package/mysql
