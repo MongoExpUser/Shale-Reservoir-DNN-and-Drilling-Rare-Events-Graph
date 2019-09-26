@@ -266,6 +266,7 @@ class MongoDBAndMySqlAccess
     connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                      createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
+        //connect with "MongoDB Node.js Native Driver". See - https://www.npmjs.com/package/mongodb
         const mongodb = require('mongodb');
         const fs = require('fs');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
@@ -443,6 +444,7 @@ class MongoDBAndMySqlAccess
     connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
                    createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
+        //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
         const fs = require('fs');
         const mysql = require('mysql');
         const mda = new MongoDBAndMySqlAccess();
