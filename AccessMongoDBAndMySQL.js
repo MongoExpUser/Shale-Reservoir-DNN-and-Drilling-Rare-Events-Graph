@@ -12,8 +12,9 @@
  * A) AccessMongoDBAndMySQL() class: to get access (connect, CRUD & simple queries) to MongoDB & MySQL databases and files upload/download
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
- *    (2) MySQL's JavaScript/Node.js driver - https://www.npmjs.com/package/mysql
- *    (3) Node.js native file stream module and MongoDB's GridFS
+ *    (2) MySQL's Node.js driver - https://www.npmjs.com/package/mysql
+  *   (3) MySQL's Connector/Node.js - https://www.npmjs.com/package/@mysql/xdevapi
+ *    (4) Node.js native file stream module and MongoDB's GridFS
  *
  * B) TestAccessMongoDBAndMySQL() class: a test class for testing MongoDBAndMySQLAccess()
  *
