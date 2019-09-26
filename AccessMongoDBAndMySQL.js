@@ -627,15 +627,15 @@ class AccessMongoDBAndMySQL
         console.log();
         console.log("Connecting......");
         
-        session.then(function(client)
+        session.then(function(clientSession)
         {
             console.log();
             console.log("Now connected to MySqlx server on:", connectionOptions.host);
             console.log();
-            const db = client.getSchema(dbName);
+            const db = clientSession.getSchema(dbName);
             
             //finally close client (i.e. disconnect) from MySQL server session
-            client.close();
+            clientSession.close();
                 
         }).catch(function(connectionError)
         {
@@ -646,7 +646,7 @@ class AccessMongoDBAndMySQL
             }
         });
         
-        //In progress ...... add CRUD operations and other queries later
+        //In progress ... add CRUD operations and other queries later (similar to AccessMySQL() and AccessMongoDB() methods)
     }
     
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
