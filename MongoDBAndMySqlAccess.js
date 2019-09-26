@@ -598,6 +598,18 @@ class MongoDBAndMySqlAccess
             }
         });
     }
+ 
+ 
+    connectToMySQLDOcumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
+                                createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
+    {
+        //In progress ......
+        //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
+        const fs = require('fs');
+        const mysqlx = require('@mysql/xdevapi');
+        const mda = new MongoDBAndMySqlAccess();
+        const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions)
+    }
        
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
                                   collectionName, enableSSL, inputFilePath, outputFileName, action)
