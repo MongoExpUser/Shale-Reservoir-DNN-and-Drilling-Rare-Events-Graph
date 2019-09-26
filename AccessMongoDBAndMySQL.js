@@ -751,3 +751,5 @@ class TestAccessMongoDBAndMySQL
         }
     }
 }
+
+module.exports = {AccessMongoDBAndMySQL, TestAccessMongoDBAndMySQL};
