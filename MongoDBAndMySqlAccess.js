@@ -20,6 +20,7 @@
  *
  */
 
+
 class MongoDBAndMySqlAccess
 {
     constructor()
@@ -227,6 +228,7 @@ class MongoDBAndMySqlAccess
         return keyValuePairs;
     }
     
+
     mongoDBConnectionOptions(sslCertOptions, enableSSL)
     {
         if(enableSSL === true)
@@ -275,7 +277,7 @@ class MongoDBAndMySqlAccess
         
         mongodb.MongoClient.connect(uri, mongodbOptions, function(connectionError, client)
         {
-            // 0.connect (authenticate) to database with mongoDB nativeclient
+            // 0.connect (authenticate) to database with mongoDB native driver/client
             if(connectionError)
             {
                 console.log(connectionError);
@@ -445,21 +447,18 @@ class MongoDBAndMySqlAccess
                    createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
-        const fs = require('fs');
         const mysql = require('mysql');
+        const fs = require('fs');
         const mda = new MongoDBAndMySqlAccess();
-        const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions)
-        
-        //get database name
+        const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
         const dbName = String(connectionOptions.database);
         
-        //create connection (authenticate) to database
-        const nodeJSConnection = mysql.createConnection(mysqlOptions);
+        //0. connect (authenticate) to database with msql node.js driver/client
+        const client = mysql.createConnection(mysqlOptions);
         console.log();
         console.log("Connecting......");
            
-        //0. connect to database
-        nodeJSConnection.connect(function(connectionError)
+        client.connect(function(connectionError)
         {
             if(connectionError)
             {
@@ -475,7 +474,7 @@ class MongoDBAndMySqlAccess
                 //1. confirm table(s) exit(s) within database
                 var mySqlQuery = "SHOW TABLES"
                     
-                nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
+                client.query(mySqlQuery, function (confirmTableError, result)
                 {
                     if(confirmTableError)
                     {
@@ -497,7 +496,7 @@ class MongoDBAndMySqlAccess
                         const tableSchema =  mda.drillingEventTableSchema();
                         var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) + tableSchema;
                             
-                        nodeJSConnection.query(mySqlQuery, function (createTableError, result)
+                        client.query(mySqlQuery, function (createTableError, result)
                         {
                             if(createTableError)
                             {
@@ -518,7 +517,7 @@ class MongoDBAndMySqlAccess
                             var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?, ?,"
                                              + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                                 
-                            nodeJSConnection.query(mySqlQuery, values, function (insertTableError, result)
+                            client.query(mySqlQuery, values, function (insertTableError, result)
                             {
                                 if(insertTableError)
                                 {
@@ -558,7 +557,7 @@ class MongoDBAndMySqlAccess
                                     var rowID = {}; //implies all rows
                                 }
 
-                                nodeJSConnection.query(mySqlQuery, [rowID], function (showTableError, result)
+                                client.query(mySqlQuery, [rowID], function (showTableError, result)
                                 {
                                     if(showTableError)
                                     {
@@ -575,7 +574,7 @@ class MongoDBAndMySqlAccess
                                     {
                                         var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
                                             
-                                        nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
+                                        client.query(mySqlQuery, function (dropTableError, result)
                                         {
                                             if(dropTableError)
                                             {
@@ -588,8 +587,8 @@ class MongoDBAndMySqlAccess
                                         });
                                     }
 
-                                    //finally close connection (i.e. disconnect) from MySQL server
-                                    nodeJSConnection.end();
+                                    //finally close client (i.e. disconnect) from MySQL server
+                                    client.end();
                                 });
                             });
                         });
@@ -598,19 +597,19 @@ class MongoDBAndMySqlAccess
             }
         });
     }
- 
- 
+    
     connectToMySQLDOcumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
                                 createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //In progress ......
         //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
-        const fs = require('fs');
         const mysqlx = require('@mysql/xdevapi');
+        const fs = require('fs');
         const mda = new MongoDBAndMySqlAccess();
-        const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions)
+        const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
+        const dbName = String(connectionOptions.database);
     }
-       
+    
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
                                   collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
@@ -672,6 +671,7 @@ class MongoDBAndMySqlAccess
     }
 }
 
+
 class TestMongoDBAndMySqlAccess
 {
     constructor(test=true, dbType=undefined)
@@ -700,7 +700,7 @@ class TestMongoDBAndMySqlAccess
                                sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
         
-        if(test === true && dbType == 'MySql')
+        if(test === true && (dbType == 'MySql' || dbType == 'MySqlx'))
         {
           const sslCertOptions = {
             ca: fs.readFileSync('/path_to_/ca.pem'),
