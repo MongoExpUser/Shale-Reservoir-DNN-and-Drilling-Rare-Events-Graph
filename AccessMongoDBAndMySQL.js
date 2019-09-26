@@ -266,7 +266,7 @@ class AccessMongoDBAndMySQL
         }
     }
     
-    connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
+    AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                      createCollection=false, dropCollection=false, enableSSL=false, documentDisplayOption=undefined)
     {
         //connect with "MongoDB Node.js Native Driver". See - https://www.npmjs.com/package/mongodb
@@ -351,9 +351,9 @@ class AccessMongoDBAndMySQL
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                                 const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
                                         
-                                //insert auto increased "_docId" key and value in documentObject before inserting "document" into the collection
-                                //auto increased "_docId" value mimics or is equivalent to "ROWID" in MySQL
-                                const key = "_docId";
+                                //insert auto increased "_DocumentID" key and value in documentObject before inserting "document" into the collection
+                                //auto increased "_DocumentID" value mimics or is equivalent to "ROWID" in MySQL
+                                const key = "_DocumentID";
                                 let value = undefined;
                                 
                                 if(documentPipeline[0] === undefined)
@@ -389,16 +389,16 @@ class AccessMongoDBAndMySQL
                                     if(documentDisplayOption === "all" || documentDisplayOption === null || documentDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
-                                        var sortByKeys = {_docId: 1 /*, TIME_ymd_hms: 1*/};
+                                        var sortByKeys = {_DocumentID: 1};
                                         var specifiedKeys = {};
                                         var documentNames = {};
                                     }
                                     else if(documentDisplayOption === "wellTrajectory")
                                     {
-                                        //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by dateTime in ascending order)
-                                        //note: specified keys (except _id, _docId, and TIME_ymd_hms) are related to "well trajectory"
-                                        var sortByKeys = {_docId: 1 /*, TIME_ymd_hms: 1*/};
-                                        var specifiedKeys =  {_id: 1, _docId: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
+                                        //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by _DocumentID in ascending order)
+                                        //note: specified keys (except _id, _DocumentID, and TIME_ymd_hms) are related to "well trajectory"
+                                        var sortByKeys = {_DocumentID: 1};
+                                        var specifiedKeys =  {_id: 1, _DocumentID: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
                                         var documentNames = {};
                                     }
                                             
@@ -444,7 +444,7 @@ class AccessMongoDBAndMySQL
         });
     }
     
-    connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
+    AccessMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
                    createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
@@ -599,7 +599,7 @@ class AccessMongoDBAndMySQL
         });
     }
     
-    connectToMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
+    AccessMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase=false,
                                 createTable=false, dropTable=false, enableSSL=false, tableDisplayOption=undefined)
     {
         //In progress ......
@@ -608,8 +608,7 @@ class AccessMongoDBAndMySQL
         const fs = require('fs');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
-        //change port from mysql default port of '3306' to mysqlx default port of '33060'
-        mysqlxOptions.port = '33060';
+        mysqlxOptions.port = '33060';  //change  port to mysqlx default port of '33060'
         const dbName = String(connectionOptions.database);
         
         //0. connect (authenticate) to database with mysql connector/ node.js (client) - i.e. mysqlx
@@ -689,7 +688,6 @@ class AccessMongoDBAndMySQL
     }
 }
 
-
 class TestAccessMongoDBAndMySQL
 {
     constructor(test=true, dbType=undefined)
@@ -697,7 +695,7 @@ class TestAccessMongoDBAndMySQL
         const fs = require('fs');
         const mda = new TestAccessMongoDBAndMySQL();
             
-        if(test === true && dbType == 'MongoDB')
+        if(test === true && dbType === 'MongoDB')
         {
           const dbUserName = "dbUserName";
           const dbUserPassword = "dbUserPassword";
@@ -714,11 +712,11 @@ class TestAccessMongoDBAndMySQL
           const dropCollection = true;
           const enableSSL = false;
           const documentDisplayOption = "all"; //or "wellTrajectory"
-          mda.connectToMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
+          mda.AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase,
                                sslCertOptions, createCollection, dropCollection, enableSSL, documentDisplayOption);
         }
         
-        if(test === true && (dbType == 'MySql' || dbType == 'MySqlx'))
+        if(test === true && (dbType === 'MySql' || dbType === 'MySqlx'))
         {
           const sslCertOptions = {
             ca: fs.readFileSync('/path_to_/ca.pem'),
@@ -742,11 +740,11 @@ class TestAccessMongoDBAndMySQL
           const tableDisplayOption = "all"; // or "wellTrajectoryOne" or "wellTrajectoryAll"
           if(dbType == 'MySql')
           {
-            mda.connectToMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
+            mda.AccessMySQL(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
           }
           else if(dbType == 'MySqlx')
           {
-              mda.connectToMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
+              mda.AccessMySQLDocumentStore(sslCertOptions, connectionOptions, tableName, confirmDatabase, createTable, dropTable, enableSSL, tableDisplayOption);
           }
         }
     }
