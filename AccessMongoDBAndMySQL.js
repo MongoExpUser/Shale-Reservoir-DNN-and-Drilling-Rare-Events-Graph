@@ -410,7 +410,7 @@ class AccessMongoDBAndMySQL
                                             return;
                                         }
                                             
-                                        console.log("All documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
+                                        console.log("Some or all documents and their field values in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
                                     
