@@ -20,7 +20,6 @@
  *
  */
 
-
 class MongoDBAndMySqlAccess
 {
     constructor()
@@ -228,7 +227,6 @@ class MongoDBAndMySqlAccess
         return keyValuePairs;
     }
     
-
     mongoDBConnectionOptions(sslCertOptions, enableSSL)
     {
         if(enableSSL === true)
@@ -430,7 +428,7 @@ class MongoDBAndMySqlAccess
                                             });
                                         }
                                         
-                                        //finally close client/disconnect from MongoDB server
+                                        //finally close client (i.e. disconnect) from MongoDB server
                                         client.close();
                                     });
                                 });
@@ -458,190 +456,147 @@ class MongoDBAndMySqlAccess
         console.log();
         console.log("Connecting......");
            
-        //0. connect to database - using Async IIFE
-        (async function()
+        //0. connect to database
+        nodeJSConnection.connect(function(connectionError)
         {
-            nodeJSConnection.connect(function(connectionError)
+            if(connectionError)
             {
-                if(connectionError)
-                {
-                    console.log("Connection Error: ", connectionError);
-                    return;
-                }
+                console.log("Connection Error: ", connectionError);
+                return;
+            }
                         
-                console.log("Now connected to MySql server on: ", connectionOptions.host);
-                console.log();
+            console.log("Now connected to MySql server on: ", connectionOptions.host);
+            console.log();
             
-            });
-            
-        })().then(function()
-        {
             if(confirmDatabase === true && dbName !== null)
             {
-                //1. confirm table(s) exit(s) within database - using Async IIFE
-                (async function()
-                {
-                    var mySqlQuery = "SHOW TABLES"
+                //1. confirm table(s) exit(s) within database
+                var mySqlQuery = "SHOW TABLES"
                     
-                    nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
+                nodeJSConnection.query(mySqlQuery, function (confirmTableError, result)
+                {
+                    if(confirmTableError)
                     {
-                        if(confirmTableError)
-                        {
-                            console.log("Confirm TABLE Error: ", confirmTableError);
-                            return;
-                        }
+                        console.log("Confirm TABLE Error: ", confirmTableError);
+                        return;
+                    }
                           
-                        if(result)
-                        {
-                            console.log("It is confirmed that the TABLE(S) below exist(s) within ", dbName, " database");
-                            console.log(result);
-                            console.log();
-                        }
-                    });
-                    
-                })().then(function()
-                {
+                    if(result)
+                    {
+                        console.log("It is confirmed that the TABLE(S) below exist(s) within ", dbName, " database");
+                        console.log(result);
+                        console.log();
+                    }
+         
                     if(createTable === true)
                     {
-                        //2. create a new table, if desired - using Async IIFE
-                        (async function()
+                        //2. create a new table, if desired
+                        const mda = MongoDBAndMySqlAccess;
+                        const tableSchema =  mda.drillingEventTableSchema();
+                        var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) + tableSchema;
+                            
+                        nodeJSConnection.query(mySqlQuery, function (createTableError, result)
                         {
-                            const mda = MongoDBAndMySqlAccess;
-                            
-                            const tableSchema =  mda.drillingEventTableSchema();
-                            
-                            var mySqlQuery = "CREATE TABLE IF NOT EXISTS " + String(tableName) + tableSchema;
-                            
-                            nodeJSConnection.query(mySqlQuery, function (createTableError, result)
+                            if(createTableError)
                             {
-                                if(createTableError)
+                                console.log("Create TABLE Error: ", createTableError);
+                                return;
+                            }
+                                
+                            if(result)
+                            {
+                                console.log(String(tableName) + " TABLE successfully created!");
+                                console.log();
+                            }
+              
+                            //3. insert column values
+                            var keys = MongoDBAndMySqlAccess.drillingEventTableKeys();
+                            //note: "values" is an Array/List containing values of data types: double, text/string, boolean & datetime/date
+                            var values = MongoDBAndMySqlAccess.drillingEventTableValues();
+                            var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?, ?,"
+                                             + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                
+                            nodeJSConnection.query(mySqlQuery, values, function (insertTableError, result)
+                            {
+                                if(insertTableError)
                                 {
-                                    console.log("Create TABLE Error: ", createTableError);
+                                    console.log("Insert TABLE Error: ", insertTableError);
                                     return;
                                 }
-                                
-                                if(result)
+                                    
+                                console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
+                                console.log();
+                     
+          
+                                //4. show rows and column values in the TABLE
+                                if(tableDisplayOption === "all" || tableDisplayOption === null || tableDisplayOption === undefined)
                                 {
-                                    console.log(String(tableName) + " TABLE successfully created!");
-                                    console.log();
+                                    //a. all rows and columns
+                                    var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
+                                    var rowID = {}; //implies all rows
                                 }
-                            });
-                            
-                        })().then(function()
-                        {
-                            //3. insert column values - using Async IIFE
-                            (async function()
-                            {
-                                var keys = MongoDBAndMySqlAccess.drillingEventTableKeys();
-                                
-                                //note: "values" is an Array/List of values (double, text/string, boolean & datetime/date data types)
-                                var values = MongoDBAndMySqlAccess.drillingEventTableValues();
-
-                                var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?,"
-                                                 + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                                
-                                nodeJSConnection.query(mySqlQuery, values, function (insertTableError, result)
+                                else if(tableDisplayOption === "wellTrajectoryAllRows")
                                 {
-                                    if(insertTableError)
+                                    //b. all rows and and columns values related to "well trajectory" and "TIME"
+                                    var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
+                                    var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName);
+                                    var rowID = {}; //implies all rows
+                                }
+                                else if(tableDisplayOption === "wellTrajectoryOneRow")
+                                {
+                                    //c. one row and and columns values related to "well trajectory" and "TIME"
+                                    var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
+                                    var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName) + " WHERE ROWID=?";
+                                    var rowID = 1;
+                                }
+                                else
+                                {
+                                    //default: same as all
+                                    var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
+                                    var rowID = {}; //implies all rows
+                                }
+
+                                nodeJSConnection.query(mySqlQuery, [rowID], function (showTableError, result)
+                                {
+                                    if(showTableError)
                                     {
-                                        console.log("Insert TABLE Error: ", insertTableError);
+                                        console.log("Show TABLE Error: ", showTableError);
                                         return;
                                     }
                                     
-                                    console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
+                                    console.log("Some or all rows and column values in " + String(tableName) + " TABLE are shown below!");
+                                    console.log(result);
                                     console.log();
-                                });
-                            
-                            })().then(function()
-                            {
-                                //4. show rows and column values in the TABLE - using Async IIFE
-                                (async function()
-                                {
-                                    if(tableDisplayOption === "all" || tableDisplayOption === null || tableDisplayOption === undefined)
+                         
+                                    //5. drop/delete table, if desired - using Async IIFE
+                                    if(dropTable === true)
                                     {
-                                        //a. all rows and columns
-                                        var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
-                                        var rowID = {}; //implies all rows
-                                    }
-                                    else if(tableDisplayOption === "wellTrajectoryAllRows")
-                                    {
-                                        //b. all rows and and columns values related to "well trajectory" and "TIME"
-                                        var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
-                                        var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName);
-                                        var rowID = {}; //implies all rows
-                                    }
-                                    else if(tableDisplayOption === "wellTrajectoryOneRow")
-                                    {
-                                        //c. one row and and columns values related to "well trajectory" and "TIME"
-                                        var someColumns = "MD_ft, TVD_ft, INC_deg, AZIM_deg, TIME_ymd_hms";
-                                        var mySqlQuery = "SELECT " + someColumns + " FROM " + String(dbName) + "." + String(tableName) + " WHERE ROWID=?";
-                                        var rowID = 1;
-                                    }
-                                    else
-                                    {
-                                        //default: same as all
-                                        var mySqlQuery = "SELECT * FROM " + String(dbName) + "." + String(tableName);
-                                        var rowID = {}; //implies all rows
+                                        var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
+                                            
+                                        nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
+                                        {
+                                            if(dropTableError)
+                                            {
+                                                console.log("Drop/Delete TABLE Error: ", dropTableError);
+                                                return;
+                                            }
+                                            
+                                            console.log(String(tableName) + " TABLE is successfully dropped/deleted!")
+                                            console.log();
+                                        });
                                     }
 
-                                    nodeJSConnection.query(mySqlQuery, [rowID], function (showTableError, result)
-                                    {
-                                        if(showTableError)
-                                        {
-                                            console.log("Show TABLE Error: ", showTableError);
-                                            return;
-                                        }
-                                    
-                                        console.log("Some or all rows and column values in " + String(tableName) + " TABLE are shown below!");
-                                        console.log(result);
-                                        console.log();
-                                    });
-                                
-                                })().then(function()
-                                {
-                                    //5. drop/delete table, if desired - using Async IIFE
-                                    (async function()
-                                    {
-                                        if(dropTable === true)
-                                        {
-                                            var mySqlQuery = "DROP TABLE IF EXISTS " + String(tableName);
-                                            
-                                            nodeJSConnection.query(mySqlQuery, function (dropTableError, result)
-                                            {
-                                                if(dropTableError)
-                                                {
-                                                    console.log("Drop/Delete TABLE Error: ", dropTableError);
-                                                    return;
-                                                }
-                                            
-                                                console.log(String(tableName) + " TABLE is successfully dropped/deleted!")
-                                                console.log();
-                                                nodeJSConnection.end();
-                                            });
-                                        }
-                                        else if(dropTable !== true)
-                                        {
-                                            nodeJSConnection.end();
-                                        }
-                                        
-                                    }()).catch(function(error){throw error});
-                                    
-                                    
-                                }).catch(function(error){throw error});
-                                
-                            }).catch(function(error){throw error});
-                            
-                        }).catch(function(error){throw error});
-                        
+                                    //finally close connection (i.e. disconnect) from MySQL server
+                                    nodeJSConnection.end();
+                                });
+                            });
+                        });
                     }
-                    
-                }).catch(function(error){throw error});
-            
+                });
             }
-            
-        }).catch(function(error){throw error});
+        });
     }
-    
+       
     mongoDBGridFSUploadDownloadFiles(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions,
                                   collectionName, enableSSL, inputFilePath, outputFileName, action)
     {
@@ -702,8 +657,6 @@ class MongoDBAndMySqlAccess
         });
     }
 }
-
-
 
 class TestMongoDBAndMySqlAccess
 {
