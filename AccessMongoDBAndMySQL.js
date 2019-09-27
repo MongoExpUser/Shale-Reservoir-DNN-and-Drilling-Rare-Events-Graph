@@ -24,6 +24,7 @@
  *
  */
 
+
 class AccessMongoDBAndMySQL
 {
     constructor()
@@ -60,7 +61,6 @@ class AccessMongoDBAndMySQL
                         
         return namesList;
     }
-        
     
     static collectionExist(collectionNamesList, collectionName)
     {
@@ -190,7 +190,7 @@ class AccessMongoDBAndMySQL
                 "GR_api",
                 "DEEP_RESISTIVITY_ohm_m",
                 "SHOCK_g",
-                //event data from MWD/LWD MWD/LWD tool measurements and other sources
+                //event data from MWD/LWD tool measurements and other sources
                 "IS_VIBRATION_boolean_0_or_1",
                 "IS_KICK_boolean_0_or_1",
                 "IS_STUCKPIPE_boolean_0_or_1",
@@ -208,7 +208,7 @@ class AccessMongoDBAndMySQL
                     1.18, 18.01, 16, 98.14,
                     //data (measured or calculated) from downhole MWD/LWD tool measurements
                     8000, 12000, 67.2, 110.5, 1.1, 6, 20, 303.3, 26,
-                    //event data from MWD/LWD MWD/LWD tool measurements and other sources
+                    //event data from MWD/LWD tool measurements and other sources
                     0, 0, 0,
                     //time data
                     new Date()
@@ -243,7 +243,6 @@ class AccessMongoDBAndMySQL
         
         return keyValuePairs;
     }
-    
 
     mongoDBConnectionOptions(sslCertOptions, enableSSL)
     {
@@ -278,7 +277,6 @@ class AccessMongoDBAndMySQL
                     password: connectionOptions.password, database: connectionOptions.database, debug: connectionOptions.debug,
                     timezone: 'Z', supportBigNumbers: true, ssl: enableSSL, pooling: { enabled: true, maxSize: 200 }
             };
-            
         }
     }
     
@@ -330,7 +328,6 @@ class AccessMongoDBAndMySQL
                         console.log();
                     }
 
-
                     if(createCollection === true)
                     {
                         //3...... create collection (TABLE equivalent in MySQL), if desired
@@ -348,7 +345,6 @@ class AccessMongoDBAndMySQL
                                 console.log();
                             }
 
-
                             //4a...... get document count for auto increment of "_DocumentID" value
                             //use aggregate pipeline stage to obtain number of existing document in the collection
                             const pipeline = [ { $group: { _id: null, numberOfDocuments: { $sum: 1 } } }, { $project: { _id: 0 } } ];
@@ -361,7 +357,6 @@ class AccessMongoDBAndMySQL
                                     return;
                                 }
                                       
-                                            
                                 //4b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
@@ -397,7 +392,6 @@ class AccessMongoDBAndMySQL
                                     console.log("Document with id (",documentObject._id,") and its key-value pairs, is inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                         
-                                        
                                     //5...... show records
                                     // note a: if "collectionDisplayOption" is null or undefined or unspecified, all documents & their
                                     //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
@@ -430,7 +424,6 @@ class AccessMongoDBAndMySQL
                                         console.log(foundCollection);
                                         console.log();
                                     
-                  
                                         //6...... drop/delete collection, if desired
                                         if(dropCollection === true)
                                         {
@@ -535,7 +528,7 @@ class AccessMongoDBAndMySQL
                             var values = AccessMongoDBAndMySQL.drillingEventTableValues();
                             var mySqlQuery = "INSERT INTO " + String(tableName) + keys + " VALUES (?, ?, ?, ?,"
                                              + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                                
+                            
                             client.query(mySqlQuery, values, function (insertTableError, result)
                             {
                                 if(insertTableError)
@@ -547,7 +540,6 @@ class AccessMongoDBAndMySQL
                                 console.log("Column values are inserted into " + String(tableName) + " TABLE successfully!");
                                 console.log();
                      
-          
                                 //4. show rows and column values in the TABLE
                                 if(tableDisplayOption === "all" || tableDisplayOption === null || tableDisplayOption === undefined)
                                 {
@@ -690,7 +682,6 @@ class AccessMongoDBAndMySQL
                             }
                         });
                         
-                        
                         //4...... insert/add document and its key-value pairs into collection
                         // .......this is equivalent to COLUMN & ROW-VALUES in regular MySQL
                         const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
@@ -712,7 +703,6 @@ class AccessMongoDBAndMySQL
                             }
                         });
                             
-                            
                         //5...... show records
                         db.getCollection(collectionName).find().execute(function(foundCollection)
                         {
@@ -729,7 +719,6 @@ class AccessMongoDBAndMySQL
                             }
                         });
                                 
-                
                         //6...... drop/delete collection, if desired
                         if(dropCollection === true)
                         {
@@ -795,13 +784,13 @@ class AccessMongoDBAndMySQL
                 return;
             }
             
+            const bufferSize = 1024;
             const db = client.db(dbName);
-            
-            const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: 1024});
+            const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: });
                    
             if(action === "upload")
             {
-                const upload = fs.createReadStream(inputFilePath, {'bufferSize': 1024}).pipe(bucket.openUploadStream(outputFileName));
+                const upload = fs.createReadStream(inputFilePath, {'bufferSize': bufferSize}).pipe(bucket.openUploadStream(outputFileName));
                     
                 upload.on('error', function(error)
                 {
@@ -819,7 +808,7 @@ class AccessMongoDBAndMySQL
                     
             if(action === "download")
             {
-                const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': 1024});
+                const download = bucket.openDownloadStreamByName(inputFilePath).pipe(fs.createWriteStream(outputFileName), {'bufferSize': bufferSize});
                     
                 download.on('error', function(error)
                 {
@@ -836,6 +825,8 @@ class AccessMongoDBAndMySQL
         });
     }
 }
+
+
 class TestAccessMongoDBAndMySQL
 {
     constructor(test=true, dbType=undefined)
