@@ -24,7 +24,6 @@
  *
  */
 
-
 class AccessMongoDBAndMySQL
 {
     constructor()
@@ -316,7 +315,6 @@ class AccessMongoDBAndMySQL
                         return;
                     }
                         
-                    //2...... check if "collectionName" exists in collection(s)
                     const collectionNamesList = AccessMongoDBAndMySQL.getMongoDBCollectionNames(existingCollections)
                         
                     if(existingCollections.length > 0)
@@ -330,7 +328,7 @@ class AccessMongoDBAndMySQL
 
                     if(createCollection === true)
                     {
-                        //3...... create collection (TABLE equivalent in MySQL), if desired
+                        //2...... create collection (TABLE equivalent in MySQL), if desired
                         //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
                         db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
                         {
@@ -345,7 +343,7 @@ class AccessMongoDBAndMySQL
                                 console.log();
                             }
 
-                            //4a...... get document count for auto increment of "_DocumentID" value
+                            //3a...... get document count for auto increment of "_DocumentID" value
                             //use aggregate pipeline stage to obtain number of existing document in the collection
                             const pipeline = [ { $group: { _id: null, numberOfDocuments: { $sum: 1 } } }, { $project: { _id: 0 } } ];
     
@@ -357,7 +355,7 @@ class AccessMongoDBAndMySQL
                                     return;
                                 }
                                       
-                                //4b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
+                                //3b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                                 const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
@@ -392,7 +390,7 @@ class AccessMongoDBAndMySQL
                                     console.log("Document with id (",documentObject._id,") and its key-value pairs, is inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                         
-                                    //5...... show records
+                                    //4...... show documents and key-value pairs in the COLLECTION
                                     // note a: if "collectionDisplayOption" is null or undefined or unspecified, all documents & their
                                     //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
                                     // note b: empty {} documentNames signifies all document names in the collection
@@ -424,7 +422,7 @@ class AccessMongoDBAndMySQL
                                         console.log(foundCollection);
                                         console.log();
                                     
-                                        //6...... drop/delete collection, if desired
+                                        //5...... drop/delete collection, if desired
                                         if(dropCollection === true)
                                         {
                                             db.collection(collectionName).drop(function(dropCollectionError, droppedCollectionConfirmation)
@@ -647,7 +645,6 @@ class AccessMongoDBAndMySQL
                 //1...... confirm collection(s) exit(s) within database
                 db.getCollections().then(function(existingCollections)
                 {
-                    //2...... check if "collectionName" exists in collection(s)
                     const collectionNamesList = AccessMongoDBAndMySQL.getMySQLDocumentStoreCollectionNames(existingCollections)
                     
                     if(collectionNamesList.length > 0)
@@ -656,92 +653,6 @@ class AccessMongoDBAndMySQL
                         console.log();
                         console.log("It is confirmed that the COLLECTION(S) below exist(s) within", dbName, "database:");
                         console.log(collectionNamesList);
-                        console.log();
-                    }
-
-                    if(createCollection === true)
-                    {
-                        //3...... create collection, if desired -> this is equivalent to CREATE TABLE in regualr MySQL
-                        db.createCollection(collectionName).then(function(createdCollection)
-                        {
-                            if(createdCollection)
-                            {
-                                console.log(collectionName, " COLLECTION successfully created!");
-                                console.log();
-                            }
-                            
-                        }).catch(function(createCollectionError)
-                        {
-                            if(createCollectionError && createCollectionError.info.code === 1050)
-                            {
-                                console.log("Create Collection Error: Collection", JSON.stringify(collectionName), "already exists.");
-                            }
-                            else
-                            {
-                                console.log("Create Collection Error: ", createCollectionError);
-                            }
-                        });
-                        
-                        //4...... insert/add document and its key-value pairs into collection
-                        // .......this is equivalent to COLUMN & ROW-VALUES in regular MySQL
-                        const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
-                        const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                        const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
-    
-                        db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
-                        {
-                            console.log("Document with id (", addedDocument.getGeneratedIds(), ") and its field values " +
-                                        "are inserted into " + String(collectionName) + " COLLECTION successfully!");
-                            console.log();
-
-                        }).catch(function(addDocumentError)
-                        {
-                            if(addDocumentError)
-                            {
-                                console.log("Add Document Error: ", addDocumentError);
-                                return;
-                            }
-                        });
-                            
-                        //5...... show records
-                        db.getCollection(collectionName).find().execute(function(foundCollection)
-                        {
-                            console.log("Document with id (", foundCollection._id, ") and its key-value pair in "
-                                        + String(collectionName) + " COLLECTION, is shown below!");
-                            console.log(foundCollection);
-                                    
-                        }).catch(function(showCollectionError)
-                        {
-                            if(showCollectionError)
-                            {
-                                console.log("Show COLLECTION Error: ", showCollectionError);
-                                return;
-                            }
-                        });
-                                
-                        //6...... drop/delete collection, if desired
-                        if(dropCollection === true)
-                        {
-                            db.dropCollection(collectionName).then(function(droppedCollectionConfirmation)
-                            {
-                                console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
-                                console.log("Dropped?: ", droppedCollectionConfirmation);
-                                console.log();
-                                
-                            }).catch(function(dropCollectionError)
-                            {
-                                if(dropCollectionError)
-                                {
-                                    console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
-                                    
-                                    return;
-                                }
-                            });
-                        }
-                                        
-                        //finally close client (i.e. disconnect) from MySQL server session
-                        clientSession.close();
-                        console.log("Connection closed.......");
                         console.log();
                     }
                     
@@ -753,6 +664,94 @@ class AccessMongoDBAndMySQL
                         return;
                     }
                 });
+                
+                if(createCollection === true)
+                {
+                    //2...... create collection, if desired -> this is equivalent to CREATE TABLE in regualr MySQL
+                    db.createCollection(collectionName).then(function(createdCollection)
+                    {
+                        if(createdCollection)
+                        {
+                                console.log(collectionName, " COLLECTION successfully created!");
+                                console.log();
+                        }
+                            
+                    }).catch(function(createCollectionError)
+                    {
+                        if(createCollectionError && createCollectionError.info.code === 1050)
+                        {
+                            console.log("Create Collection Error: Collection", JSON.stringify(collectionName), "already exists.");
+                        }
+                        else
+                        {
+                            console.log("Create Collection Error: ", createCollectionError);
+                        }
+                    });
+                        
+                    //3...... insert/add document and its key-value pairs into collection
+                    // .......this is equivalent to COLUMN & ROW-VALUES in regular MySQL
+                    const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
+                    const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
+                    const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
+    
+                    db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
+                    {
+                        console.log("Document with id (", addedDocument.getGeneratedIds(), ") and its field values " + "are inserted into " + String(collectionName) + " COLLECTION successfully!");
+                        console.log();
+
+                    }).catch(function(addDocumentError)
+                    {
+                        if(addDocumentError)
+                        {
+                            console.log("Add Document Error: ", addDocumentError);
+                            return;
+                        }
+                    });
+                            
+                    //4...... show documents and key-value pairs in the COLLECTION
+                    db.getCollection(collectionName).find().execute(function(foundCollection)
+                    {
+                        console.log("Document with id (", foundCollection._id, ") and its key-value pair in " + String(collectionName) + " COLLECTION, is shown below!");
+                        console.log(foundCollection);
+                                    
+                    }).catch(function(showCollectionError)
+                    {
+                        if(showCollectionError)
+                        {
+                            console.log("Show COLLECTION Error: ", showCollectionError);
+                            return;
+                        }
+                    });
+                                
+                    //5...... drop/delete collection, if desired
+                    if(dropCollection === true)
+                    {
+                        db.dropCollection(collectionName).then(function(droppedCollectionConfirmation)
+                        {
+                            console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
+                            console.log("Dropped?: ", droppedCollectionConfirmation);
+                            console.log();
+                            
+                            //finally close client (i.e. disconnect) from MySQL server session
+                            clientSession.close();
+                            console.log("Connection closed.......");
+                            console.log();
+                                
+                        }).catch(function(dropCollectionError)
+                        {
+                            if(dropCollectionError)
+                            {
+                                console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
+                                return;
+                            }
+                        });
+                    }
+                    
+                    //finally close client (i.e. disconnect) from MySQL server session
+                    clientSession.close();
+                    console.log("Connection closed.......");
+                    console.log();
+                }
             }
             
         }).catch(function(connectionError)
