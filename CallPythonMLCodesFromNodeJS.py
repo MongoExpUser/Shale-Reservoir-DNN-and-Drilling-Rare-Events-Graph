@@ -21,7 +21,6 @@
 #
 #  4) Creation of sqlite db for modeling drilling rare events (vibration, kick and stuck pipe) detection and prevention.
 #
-#
 #  The motivation, for calling of machine learning codes written in Python from Node.js,
 #  is to prevent re-inventing/re-creating of existing codes in Python.
 #  This way, existing machine learning codes written in Python can easily be used within
@@ -30,7 +29,6 @@
 #
 # ****************************************************************************************************************************
 # ****************************************************************************************************************************
-
 
 try:
     """ import commonly used modules and check for import error """
@@ -406,8 +404,8 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print("Some Records in the Drilling_and_Formation_Parameters TABLE")
       print("===========================================================")
       executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api,
-                                              SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
-                                           """)
+                                                    SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
+                                                    """)
       connection.commit()
       header = [row[0] for row in py_connection.description]
       print(header)
