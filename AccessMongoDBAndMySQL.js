@@ -786,7 +786,7 @@ class AccessMongoDBAndMySQL
             
             const bufferSize = 1024;
             const db = client.db(dbName);
-            const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: });
+            const bucket  = new mongodb.GridFSBucket(db, {bucketName: collectionName, chunkSizeBytes: bufferSize});
                    
             if(action === "upload")
             {
