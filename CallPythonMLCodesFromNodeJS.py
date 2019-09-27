@@ -406,8 +406,8 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print("Some Records in the Drilling_and_Formation_Parameters TABLE")
       print("===========================================================")
       executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_PLASTIC_VISC_cp, MUD_FLOW_RATE_gpm, GR_api,
-                                              SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
-                                           """)
+                                                    SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
+                                                    """)
       connection.commit()
       header = [row[0] for row in py_connection.description]
       print(header)
