@@ -353,9 +353,10 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 3. create Drilling_and_Formation_Parameters TABLE, if it does not exist and save (commit) the changes
       py_connection.execute("""CREATE TABLE IF NOT EXISTS Drilling_and_Formation_Parameters (ROP_fph real, RPM_rpm real, SPP_psi real, DWOB_lb real, SWOB_lb real,
-                               TQR_Ibft real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, MUD_WEIGHT_sg real, MUD_VISC_cp real, MUD_FLOW_RATE_gpm real,
-                               GR_api real, DEEP_RESISTIVITY_ohm_m real, CALIPER_HOLE_SIZE_inches real, SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer,
-                               IS_STUCKPIPE_boolean_0_or_1 integer, BHA_TYPE_no_unit text, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000),
+                               TQR_Ibft real, BHA_TYPE_no_unit text, MUD_WEIGHT_sg real, MUD_PLASTIC_VISC_cp real, MUD_YIELD_POINT_lb_per_100ft_sq real,
+                               MUD_FLOW_RATE_gpm real, TVD_ft real, MD_ft real, INC_deg real, AZIM_deg real, Dogleg_deg_per_100ft real, CALIPER_HOLE_SIZE_inches real,
+                               GR_api real, DEEP_RESISTIVITY_ohm_m real,  SHOCK_g real, IS_VIBRATION_boolean_0_or_1 integer, IS_KICK_boolean_0_or_1 integer,
+                               IS_STUCKPIPE_boolean_0_or_1 integer, TIME_ymd_hms text, CHECK (0>=GR_api<= 150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000),
                                CHECK (IS_VIBRATION_boolean_0_or_1=1 OR IS_VIBRATION_boolean_0_or_1=0), CHECK (IS_KICK_boolean_0_or_1=1 OR IS_KICK_boolean_0_or_1=0),
                                CHECK (IS_STUCKPIPE_boolean_0_or_1=1 OR IS_STUCKPIPE_boolean_0_or_1=0))
                             """)
@@ -363,10 +364,11 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       
       # 4. insert a row of data for all columns
       try:
-        py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft, TVD_ft, MD_ft, INC_deg, AZIM_deg,
-                                 MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api, DEEP_RESISTIVITY_ohm_m, CALIPER_HOLE_SIZE_inches, SHOCK_g, IS_VIBRATION_boolean_0_or_1,
-                                 IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, BHA_TYPE_no_unit, TIME_ymd_hms)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                                 ?, ?)""", (35, 65, 235, 20000, 10000, 800, 8000, 12000, 67.2, 110.5, 1.18, 1.03, 98.14, 20, 303.3, 6, 26, 0, 0, 0, 'slick', str(datetime.utcnow()))
+        py_connection.execute("""INSERT INTO Drilling_and_Formation_Parameters (ROP_fph, RPM_rpm, SPP_psi, DWOB_lb, SWOB_lb, TQR_Ibft,BHA_TYPE_no_unit, MUD_WEIGHT_sg, MUD_PLASTIC_VISC_cp,
+                                 MUD_YIELD_POINT_lb_per_100ft_sq,  MUD_FLOW_RATE_gpm, TVD_ft, MD_ft, INC_deg, AZIM_deg, Dogleg_deg_per_100ft, CALIPER_HOLE_SIZE_inches,
+                                 GR_api, DEEP_RESISTIVITY_ohm_m, SHOCK_g, IS_VIBRATION_boolean_0_or_1, IS_KICK_boolean_0_or_1, IS_STUCKPIPE_boolean_0_or_1, TIME_ymd_hms)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (35, 65, 235, 20000, 10000, 800, 'slick', 1.18, 18.01, 16, 98.14,
+                                 8000, 12000, 67.2, 110.5, 1.1, 6, 20, 303.3, 26, 0, 0, 0, str(datetime.utcnow()))
                               )
         connection.commit()
       except(sqlite3.IntegrityError) as err:
@@ -403,9 +405,9 @@ class CallPythonMLCodesFromNodeJS(TestCase):
       print()
       print("Some Records in the Drilling_and_Formation_Parameters TABLE")
       print("===========================================================")
-      executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_VISC_cp, MUD_FLOW_RATE_gpm, GR_api,
-                                                    SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
-                                                    """)
+      executed_sqlite_query = py_connection.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_PLASTIC_VISC_cp, MUD_FLOW_RATE_gpm, GR_api,
+                                              SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM Drilling_and_Formation_Parameters
+                                           """)
       connection.commit()
       header = [row[0] for row in py_connection.description]
       print(header)
