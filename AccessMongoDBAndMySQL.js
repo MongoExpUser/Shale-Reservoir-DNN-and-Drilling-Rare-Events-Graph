@@ -279,6 +279,11 @@ class AccessMongoDBAndMySQL
         }
     }
     
+    isMongoDBConnected(client)
+    {
+        return client.topology.isConnected();
+    }
+    
     AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                   createCollection=false, dropCollection=false, enableSSL=false, collectionDisplayOption=undefined)
     {
@@ -298,7 +303,7 @@ class AccessMongoDBAndMySQL
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-    
+            
             console.log();
             console.log("Now connected to MongoDB Server on:", dbDomainURL);
             console.log();
@@ -355,7 +360,8 @@ class AccessMongoDBAndMySQL
                                     return;
                                 }
                                       
-                                //3b...... insert document and its key-value pairs  (i.e COLUMN & ROW-VALUES equivalent in MySQL) into collection
+                                //3b...... insert/add document and its fields (key-value pairs) into collection
+                                //  .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                                 const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
@@ -390,9 +396,9 @@ class AccessMongoDBAndMySQL
                                     console.log("Document with id (",documentObject._id,") and its key-value pairs, is inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
                                         
-                                    //4...... show documents and key-value pairs in the COLLECTION
+                                    //4...... show documents and its fields (i.e. key-value pairs) in the collection
                                     // note a: if "collectionDisplayOption" is null or undefined or unspecified, all documents & their
-                                    //         key-value pairs in the COLLECTION will be displayed based on MongoDB default ordering
+                                    //         fields (key-value pairs) in the COLLECTION will be displayed based on MongoDB default ordering
                                     // note b: empty {} documentNames signifies all document names in the collection
                                     if(collectionDisplayOption === "all" || collectionDisplayOption === null || collectionDisplayOption === undefined)
                                     {
@@ -403,7 +409,7 @@ class AccessMongoDBAndMySQL
                                     }
                                     else if(collectionDisplayOption === "wellTrajectory")
                                     {
-                                        //option b: show all documents & key-value pairs, based on specified key, in the COLLECTION (sorted by _DocumentID in ascending order)
+                                        //option b: show all documents & fields (key-value pairs), based on specified key, in the COLLECTION (sorted by _DocumentID in ascending order)
                                         //note: specified keys (except _id, _DocumentID, and TIME_ymd_hms) are related to "well trajectory"
                                         var sortByKeys = {_DocumentID: 1};
                                         var specifiedKeys =  {_id: 1, _DocumentID: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
@@ -418,7 +424,7 @@ class AccessMongoDBAndMySQL
                                             return;
                                         }
                                             
-                                        console.log("Some or all documents and their key-value pairs in " + String(collectionName) + " COLLECTION are shown below!");
+                                        console.log("Some or all documents and their fields (key-value pairs) in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
                                     
@@ -443,6 +449,7 @@ class AccessMongoDBAndMySQL
                                         client.close();
                                         console.log("Connection closed.......");
                                         console.log();
+
                                     });
                                 });
                             });
@@ -520,7 +527,7 @@ class AccessMongoDBAndMySQL
                                 console.log();
                             }
               
-                            //3. insert column values
+                            //3. insert column values into rows
                             var keys = AccessMongoDBAndMySQL.drillingEventTableKeys();
                             //note: "values" is an Array/List containing values of data types: double, text/string, boolean & datetime/date
                             var values = AccessMongoDBAndMySQL.drillingEventTableValues();
@@ -667,7 +674,7 @@ class AccessMongoDBAndMySQL
                 
                 if(createCollection === true)
                 {
-                    //2...... create collection, if desired -> this is equivalent to CREATE TABLE in regualr MySQL
+                    //2...... create collection (TABLE equivalent in MySQL), if desired
                     db.createCollection(collectionName).then(function(createdCollection)
                     {
                         if(createdCollection)
@@ -688,8 +695,8 @@ class AccessMongoDBAndMySQL
                         }
                     });
                         
-                    //3...... insert/add document and its key-value pairs into collection
-                    // .......this is equivalent to COLUMN & ROW-VALUES in regular MySQL
+                    //3...... insert/add document and its fields (key-value pairs) into collection
+                    // .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
                     const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                     const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                     const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
@@ -708,7 +715,7 @@ class AccessMongoDBAndMySQL
                         }
                     });
                             
-                    //4...... show documents and key-value pairs in the COLLECTION
+                    //4...... show documents and its fields (i.e. key-value pairs) in the collection
                     db.getCollection(collectionName).find().execute(function(foundCollection)
                     {
                         console.log("Document with id (", foundCollection._id, ") and its key-value pair in " + String(collectionName) + " COLLECTION, is shown below!");
