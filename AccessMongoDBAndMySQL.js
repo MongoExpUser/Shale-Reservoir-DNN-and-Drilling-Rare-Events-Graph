@@ -527,7 +527,7 @@ class AccessMongoDBAndMySQL
                                 console.log();
                             }
               
-                            //3. insert column values into rows
+                            //3. insert column values into TABLE row
                             var keys = AccessMongoDBAndMySQL.drillingEventTableKeys();
                             //note: "values" is an Array/List containing values of data types: double, text/string, boolean & datetime/date
                             var values = AccessMongoDBAndMySQL.drillingEventTableValues();
