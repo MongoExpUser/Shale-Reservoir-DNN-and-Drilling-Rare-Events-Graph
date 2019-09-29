@@ -24,6 +24,7 @@
  *
  */
 
+
 class AccessMongoDBAndMySQL
 {
     constructor()
@@ -279,11 +280,6 @@ class AccessMongoDBAndMySQL
         }
     }
     
-    isMongoDBConnected(client)
-    {
-        return client.topology.isConnected();
-    }
-    
     AccessMongoDB(dbUserName, dbUserPassword, dbDomainURL, dbName, collectionName, confirmDatabase, sslCertOptions,
                   createCollection=false, dropCollection=false, enableSSL=false, collectionDisplayOption=undefined)
     {
@@ -303,10 +299,11 @@ class AccessMongoDBAndMySQL
                 console.log("Connection error: MongoDB-server is down or refusing connection.");
                 return;
             }
-            
+
             console.log();
             console.log("Now connected to MongoDB Server on:", dbDomainURL);
             console.log();
+            //var client = mongoDBConnection.client;
             const db = client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
@@ -335,6 +332,7 @@ class AccessMongoDBAndMySQL
                     {
                         //2...... create collection (TABLE equivalent in MySQL), if desired
                         //note: "strict: true" ensures unique collectionName: this is like "CREATE TABLE IF NOT EXISTS tableName" in MySQL
+                        //2a. create document
                         db.createCollection(collectionName, {strict: true}, function(createCollectionError, createdCollection)
                         {
                             if(createCollectionError && createCollectionError.name === "MongoError")
@@ -348,7 +346,7 @@ class AccessMongoDBAndMySQL
                                 console.log();
                             }
 
-                            //3a...... get document count for auto increment of "_DocumentID" value
+                            //2b. count document(s)
                             //use aggregate pipeline stage to obtain number of existing document in the collection
                             const pipeline = [ { $group: { _id: null, numberOfDocuments: { $sum: 1 } } }, { $project: { _id: 0 } } ];
     
@@ -359,32 +357,30 @@ class AccessMongoDBAndMySQL
                                     console.log("Document Counts Error: ", numberOfDocumentsError);
                                     return;
                                 }
-                                      
-                                //3b...... insert/add document and its fields (key-value pairs) into collection
-                                //  .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
-                                const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
-                                const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
-                                        
-                                //insert auto increased "_DocumentID" key and value in documentObject before inserting "document" into the collection
-                                //auto increased "_DocumentID" value mimics or is equivalent to "ROWID" in MySQL
-                                const key = "_DocumentID";
-                                let value = undefined;
+                                
+                                var documentsCount = undefined;
                                 
                                 if(documentPipeline[0] === undefined)
                                 {
-                                    //for collection with no document
-                                    value = 1;
-                                    documentObject[key] = value;
+                                    documentsCount = 0;
                                 }
                                 else
                                 {
-                                    //for collection with at least one document, auto increase by 1
-                                    value  =  documentPipeline[0].numberOfDocuments + 1;
-                                    documentObject[key] = value;
+                                    documentsCount  =  documentPipeline[0].numberOfDocuments;
                                 }
-                                        
                                 
+                                console.log("Total number of documents in the ", collectionName, "Collection is: ", documentsCount);
+                                
+                                
+                                //3...... insert/add document and its fields (key-value pairs) into collection
+                                // .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
+                                
+                                // 3a. defined documents and its fields (key-value pairs)
+                                const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
+                                const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
+                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
+                                
+                                //3b. insert
                                 db.collection(collectionName).insertOne(documentObject, function(insertDocumentError, insertedObject)
                                 {
                                     if(insertDocumentError)
@@ -392,10 +388,10 @@ class AccessMongoDBAndMySQL
                                         console.log("Insert Document Error: ", insertDocumentError);
                                         return;
                                     }
-                                                    
-                                    console.log("Document with id (",documentObject._id,") and its key-value pairs, is inserted into " + String(collectionName) + " COLLECTION successfully!");
+                                                        
+                                    console.log("Document with id (", documentObject._id, ") and its fields (key-value pairs), is inserted into " + String(collectionName) + " COLLECTION successfully!");
                                     console.log();
-                                        
+                                    
                                     //4...... show documents and its fields (i.e. key-value pairs) in the collection
                                     // note a: if "collectionDisplayOption" is null or undefined or unspecified, all documents & their
                                     //         fields (key-value pairs) in the COLLECTION will be displayed based on MongoDB default ordering
@@ -403,31 +399,31 @@ class AccessMongoDBAndMySQL
                                     if(collectionDisplayOption === "all" || collectionDisplayOption === null || collectionDisplayOption === undefined)
                                     {
                                         //option a: show all documents & their key-value pairs in the COLLECTION (sorted by dateTime in ascending order)
-                                        var sortByKeys = {_DocumentID: 1};
+                                        var sortByKeys = {_id: 1};
                                         var specifiedKeys = {};
                                         var documentNames = {};
                                     }
                                     else if(collectionDisplayOption === "wellTrajectory")
                                     {
-                                        //option b: show all documents & fields (key-value pairs), based on specified key, in the COLLECTION (sorted by _DocumentID in ascending order)
-                                        //note: specified keys (except _id, _DocumentID, and TIME_ymd_hms) are related to "well trajectory"
-                                        var sortByKeys = {_DocumentID: 1};
-                                        var specifiedKeys =  {_id: 1, _DocumentID: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
+                                        //option b: show all documents & fields (key-value pairs), based on specified key, in the COLLECTION (sorted by _id in ascending order)
+                                        //note: specified keys (except _id and TIME_ymd_hms) are related to "well trajectory"
+                                        var sortByKeys = {_id: 1};
+                                        var specifiedKeys =  {_id: 1, MD_ft: 1, TVD_ft: 1, INC_deg: 1, AZIM_deg: 1, Dogleg_deg_per_100ft: 1, TIME_ymd_hms: 1};
                                         var documentNames = {};
                                     }
-                                            
+                                                
                                     db.collection(collectionName).find(documentNames, {projection: specifiedKeys}).sort(sortByKeys).toArray(function(showCollectionError, foundCollection)
                                     {
                                         if(showCollectionError)
                                         {
-                                            console.log("Show COLLECTION Error: ", showCollectionError);
-                                            return;
+                                                console.log("Show Collection Error: ", showCollectionError);
+                                                return;
                                         }
-                                            
+                                                
                                         console.log("Some or all documents and their fields (key-value pairs) in " + String(collectionName) + " COLLECTION are shown below!");
                                         console.log(foundCollection);
                                         console.log();
-                                    
+                                        
                                         //5...... drop/delete collection, if desired
                                         if(dropCollection === true)
                                         {
@@ -435,21 +431,20 @@ class AccessMongoDBAndMySQL
                                             {
                                                 if(dropCollectionError)
                                                 {
-                                                    console.log("Drop/Delete COLLECTION Error: ", dropCollectionError);
+                                                    console.log("Drop/Delete Collection Error: ", dropCollectionError);
                                                     return;
                                                 }
-                                                            
-                                                console.log(String(collectionName) + " COLLECTION is successfully dropped/deleted!");
+                                                                
+                                                console.log(String(collectionName) + " Collection is successfully dropped/deleted!");
                                                 console.log("Dropped?: ", droppedCollectionConfirmation);
                                                 console.log();
                                             });
                                         }
-                                        
+                                            
                                         //finally close client (i.e. disconnect) from MongoDB server
                                         client.close();
                                         console.log("Connection closed.......");
                                         console.log();
-
                                     });
                                 });
                             });
@@ -829,6 +824,68 @@ class AccessMongoDBAndMySQL
                 });
             }
         });
+    }
+
+    isMongoDBConnected(mongoDBConnection)
+    {
+        return mongoDBConnection.client.isConnected();
+    }
+
+    reusableMongoDBConnection(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL)
+    {
+        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" -
+        //this ensures better reusable of MongoDBConnection
+        const mongoose = require('mongoose');
+        mongoose.Promise = require('bluebird');
+        //set mongoose to remove globally, the "deprecation warnings" related to the following options
+        mongoose.set('useNewUrlParser', true);
+        mongoose.set('useFindAndModify', false);
+        mongoose.set('useCreateIndex', true);
+        mongoose.set('useUnifiedTopology', true);
+        const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
+        const mda = new AccessMongoDBAndMySQL();
+        const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
+        
+        // connect (authenticate) to database - using promise with mongoose ORM
+        mongoose.connect(uri, mongodbOptions, function(connectionError, connection)
+        {
+            if(connectionError)
+            {
+                console.log(connectionError);
+                console.log("Connection error: MongoDB-server is down or refusing connection.");
+                return;
+            }
+            
+            //console.log("Is Client Connected? : ", connection.client.isConnected());
+
+        }).then(function(mongoCallback)
+        {
+            console.log();
+            console.log("Now connected to MongoDB Server on: ", mongoose.connection.host); //or
+            //console.log("Now connected to MongoDB Server on: ", mongoCallback.connections[0].host);
+
+        }).catch(function(otherError)
+        {
+            if(otherError)
+            {
+                console.log("Other error:", otherError);
+                return;
+            }
+        });
+        
+        process.on('SIGINT', function()
+        {
+            //is connected and app is terminated: then close
+            mongoose.connection.close(function ()
+            {
+                console.log('NOW disconnected from MongoDB-server through app termination');
+                console.log('  ');
+                process.exit(0);
+            });
+                    
+        }).setMaxListeners(0); //handles max event emmitter error
+        
+        return mongoose.connection;
     }
 }
 
