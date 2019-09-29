@@ -303,7 +303,6 @@ class AccessMongoDBAndMySQL
             console.log();
             console.log("Now connected to MongoDB Server on:", dbDomainURL);
             console.log();
-            //var client = mongoDBConnection.client;
             const db = client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
