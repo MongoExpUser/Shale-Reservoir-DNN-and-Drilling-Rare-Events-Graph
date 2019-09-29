@@ -834,8 +834,8 @@ class AccessMongoDBAndMySQL
 
     reusableMongoDBConnection(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL, connectionBolean)
     {
-        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" - this ensures a reusability of 
-        //MongoDBConnection, instead of connecting everytime a CRUD operation request is sent to the server 
+        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" - this ensures a reusability of
+        //MongoDBConnection, instead of connecting everytime a CRUD operation request is sent to the server
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
         //set mongoose to remove globally, the "deprecation warnings" related to the following options
@@ -869,11 +869,9 @@ class AccessMongoDBAndMySQL
                 if(connectionError)
                 {
                     console.log(connectionError);
-                    console.log("Connection error: MongoDB-server is down or refusing connection.");
+                    console.log("Connection error: MongoDB server is down or refusing connection.");
                     return;
                 }
-                
-                //console.log("Is Client Connected? : ", connection.client.isConnected());
     
             }).then(function(mongoCallback)
             {
@@ -896,7 +894,7 @@ class AccessMongoDBAndMySQL
             //is connected and app is terminated: then close
             mongoose.connection.close(function ()
             {
-                console.log('NOW disconnected from MongoDB-server through app termination');
+                console.log('NOW disconnected from MongoDB server through app termination');
                 console.log('  ');
                 process.exit(0);
             });
