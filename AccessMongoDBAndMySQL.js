@@ -16,9 +16,10 @@
  *    using:
  *
  *    (1) MongoDB native driver - https://www.npmjs.com/package/mongodb
- *    (2) MySQL Node.js driver - https://www.npmjs.com/package/mysql
-  *   (3) MySQL Connector/Node.js - https://www.npmjs.com/package/@mysql/xdevapi
- *    (4) Node.js native file stream module and MongoDB GridFS
+ *    (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
+ *    (3) MySQL Node.js driver - https://www.npmjs.com/package/mysql
+ *    (4) MySQL Connector/Node.js - https://www.npmjs.com/package/@mysql/xdevapi
+ *    (5) Node.js native file stream module and MongoDB GridFS
  *
  * B) TestAccessMongoDBAndMySQL() class: to test AccessMongoDBAndMySQL() class
  *
