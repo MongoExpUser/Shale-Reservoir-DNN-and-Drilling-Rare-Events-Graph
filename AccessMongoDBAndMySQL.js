@@ -338,6 +338,7 @@ class AccessMongoDBAndMySQL
                             if(createCollectionError && createCollectionError.name === "MongoError")
                             {
                                 console.log("Error: Existing COLLLECTION Error or other Error(s)");
+                                console.log()
                             }
                                 
                             if(createdCollection)
@@ -370,7 +371,7 @@ class AccessMongoDBAndMySQL
                                 }
                                 
                                 console.log("Total number of documents in the ", collectionName, "Collection is: ", documentsCount);
-                                
+                                console.log()
                                 
                                 //3...... insert/add document and its fields (key-value pairs) into collection
                                 // .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
@@ -831,10 +832,10 @@ class AccessMongoDBAndMySQL
         return mongoDBConnection.client.isConnected();
     }
 
-    reusableMongoDBConnection(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL)
+    reusableMongoDBConnection(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL, connectionBolean)
     {
-        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" -
-        //this ensures better reusable of MongoDBConnection
+        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" - this ensures a reusability of 
+        //MongoDBConnection, instead of connecting everytime a CRUD operation request is sent to the server 
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
         //set mongoose to remove globally, the "deprecation warnings" related to the following options
@@ -846,32 +847,49 @@ class AccessMongoDBAndMySQL
         const mda = new AccessMongoDBAndMySQL();
         const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
-        // connect (authenticate) to database - using promise with mongoose ORM
-        mongoose.connect(uri, mongodbOptions, function(connectionError, connection)
+        if(mongoose.connection.readyState === 1 && connectionBolean === false)
         {
-            if(connectionError)
+            //is connected & want to close/disconnect
+            mongoose.connection.close(function(err)
             {
-                console.log(connectionError);
-                console.log("Connection error: MongoDB-server is down or refusing connection.");
-                return;
-            }
-            
-            //console.log("Is Client Connected? : ", connection.client.isConnected());
-
-        }).then(function(mongoCallback)
+                if(err)
+                {
+                    console.log(err);
+                    return;
+                }
+                console.log('NOW disconnected from MongoDB-server');
+            });
+        }
+        
+        if(mongoose.connection.readyState === 0 && connectionBolean === true)
         {
-            console.log();
-            console.log("Now connected to MongoDB Server on: ", mongoose.connection.host); //or
-            //console.log("Now connected to MongoDB Server on: ", mongoCallback.connections[0].host);
-
-        }).catch(function(otherError)
-        {
-            if(otherError)
+            // connect (authenticate) to database - using promise with mongoose ORM
+            mongoose.connect(uri, mongodbOptions, function(connectionError, connection)
             {
-                console.log("Other error:", otherError);
-                return;
-            }
-        });
+                if(connectionError)
+                {
+                    console.log(connectionError);
+                    console.log("Connection error: MongoDB-server is down or refusing connection.");
+                    return;
+                }
+                
+                //console.log("Is Client Connected? : ", connection.client.isConnected());
+    
+            }).then(function(mongoCallback)
+            {
+                console.log();
+                console.log("Now connected to MongoDB Server on: ", mongoose.connection.host); //or
+                //console.log("Now connected to MongoDB Server on: ", mongoCallback.connections[0].host);
+    
+            }).catch(function(otherError)
+            {
+                if(otherError)
+                {
+                    console.log("Other error:", otherError);
+                    return;
+                }
+            });
+        }
         
         process.on('SIGINT', function()
         {
