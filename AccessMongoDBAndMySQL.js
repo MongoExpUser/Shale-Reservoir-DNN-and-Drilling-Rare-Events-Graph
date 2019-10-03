@@ -304,6 +304,7 @@ class AccessMongoDBAndMySQL
             console.log();
             console.log("Now connected to MongoDB Server on:", dbDomainURL);
             console.log();
+        
             const db = client.db(dbName);
             
             if(confirmDatabase === true && dbName !== null)
@@ -441,6 +442,24 @@ class AccessMongoDBAndMySQL
                                                 console.log();
                                             });
                                         }
+                                        //6. create index on specified field(s) key, if collectionin is not dropped & documentsCount === 1
+                                        else if(dropCollection !== true && documentsCount === 1)
+                                        {
+                                            
+                                            const indexedFields = {"TVD_ft": 1, "Dogleg_deg_per_100ft": 1};
+                                            
+                                            db.collection(collectionName).createIndex(indexedFields, function(indexedFieldError, indexedConfirmation)
+                                            {
+                                                if(indexedFieldError)
+                                                {
+                                                    console.log("Indexed Field Error: ", indexedFieldError);
+                                                    return;
+                                                }
+                                                
+                                                console.log("Confirm indexed fields: ", indexedConfirmation);
+                                            });
+                                        }
+                                        
                                             
                                         //finally close client (i.e. disconnect) from MongoDB server
                                         client.close();
