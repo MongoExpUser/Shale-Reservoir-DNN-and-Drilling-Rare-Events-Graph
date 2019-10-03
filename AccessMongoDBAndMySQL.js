@@ -442,10 +442,9 @@ class AccessMongoDBAndMySQL
                                                 console.log();
                                             });
                                         }
-                                        //6. create index on specified field(s) key, if collectionin is not dropped & documentsCount === 1
+                                        //6. create index on specified field(s) key, if collection is not dropped & documentsCount === 1
                                         else if(dropCollection !== true && documentsCount === 1)
                                         {
-                                            
                                             const indexedFields = {"TVD_ft": 1, "Dogleg_deg_per_100ft": 1};
                                             
                                             db.collection(collectionName).createIndex(indexedFields, function(indexedFieldError, indexedConfirmation)
@@ -459,8 +458,7 @@ class AccessMongoDBAndMySQL
                                                 console.log("Confirm indexed fields: ", indexedConfirmation);
                                             });
                                         }
-                                        
-                                            
+                                         
                                         //finally close client (i.e. disconnect) from MongoDB server
                                         client.close();
                                         console.log("Connection closed.......");
