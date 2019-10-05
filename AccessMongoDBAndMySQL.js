@@ -218,7 +218,7 @@ class AccessMongoDBAndMySQL
     
     static drillingEventDocumentKeyValuePairs(keys, values)
     {
-        const keyValuePairs = {};
+        const keyValuePairsMap = new Map();
         const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
                                    (values !== undefined) && (keys.length === values.length);
         
@@ -226,23 +226,63 @@ class AccessMongoDBAndMySQL
         {
             for(let index = 0; index < keys.length; index++)
             {
-                keyValuePairs[keys[index]] = values[index];
+                keyValuePairsMap.set(keys[index], values[index]);
             }
         }
         
         //add constraints on some LWD data
         // 1. GR_api constraint => 0>=GR_api<=150
-        if((keyValuePairs[keys[17]]) < 0 || (keyValuePairs[keys[17]] > 150))
+        if(keyValuePairsMap.get(values[17]) < 0 || keyValuePairsMap.get(values[17]) > 150)
         {
-          keyValuePairs[keys[17]] = NaN;
+          keyValuePairsMap.set(values[17], NaN);
         }
         // 2. DEEP_RESISTIVITY_ohm_m constraint => 0>=DEEP_RESISTIVITY_ohm_m<= 2000
-        if((keyValuePairs[keys[18]]) < 0 || (keyValuePairs[keys[18]] > 2000))
+        if(keyValuePairsMap.get(values[18]) < 0 || keyValuePairsMap.get(values[18]) > 2000)
         {
-          keyValuePairs[keys[18]] = NaN;
+          keyValuePairsMap.set(values[18], NaN);
         }
         
-        return keyValuePairs;
+        return keyValuePairsMap;
+    }
+    
+    static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
+    {
+        const uuidV4 = require('uuid/v4');
+        const EcotertCrypto = require('./EconomicCrypto.js').EconomicCrypto;
+        const hashAlgorithmPasd = 'bcrypt';
+        const hashAlgorithmBlockchain = 'whirlpool';
+        const pasd = new EcotertCrypto().isHashConsensus([password], hashAlgorithmPasd);
+        const initDate = new Date();
+        const verificationCode = uuidV4();
+        const initConfirmation = false;
+        const initBlockChain = new EcotertCrypto().isHashConsensus([uuidV4()], hashAlgorithmBlockchain);
+        const blockchain = [initBlockChain[0], initBlockChain[1], initBlockChain[2]];
+        const maxLoginAttempts = 10;
+        const lockTime = 1*60*60*1000; // 1 hour
+        const newUserMap = new Map();  // user document
+           
+        newUserMap.set("username", userName);
+        newUserMap.set("email", email);
+        newUserMap.set("pasd", pasd);
+        newUserMap.set("lastFivePasswordList", [pasd, pasd, pasd, pasd, pasd]);
+        newUserMap.set("subscription", productOrServiceSubscription);
+        newUserMap.set("createdOn", initDate);
+        newUserMap.set("modifiedOn", initDate);
+        newUserMap.set("lastLogin", initDate);
+        newUserMap.set("lastLogOut", initDate);
+        newUserMap.set("assetname", assetName);
+        newUserMap.set("verificationCode", verificationCode);
+        newUserMap.set("isAccountverified", initConfirmation);
+        newUserMap.set("isAccountInUse", initConfirmation);
+        newUserMap.set("blockchain", blockchain);
+        newUserMap.set("balanceDays", 0);
+        newUserMap.set("initDays", [0, 0, 0, 0, 0]);
+        newUserMap.set("balanceDollars", 0);
+        newUserMap.set("loginAttempts", 0);
+        newUserMap.set("maxLoginAttempts", maxLoginAttempts);
+        newUserMap.set("lockUntil", lockTime);
+    
+        return newUserMap;
     }
 
     mongoDBConnectionOptions(sslCertOptions, enableSSL)
