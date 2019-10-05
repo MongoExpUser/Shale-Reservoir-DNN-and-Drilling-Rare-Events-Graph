@@ -36,7 +36,10 @@
 
 class  EconomicCrypto
 {
-    constructor(){ }
+    constructor()
+    { 
+      return null;
+    }
     
     static commonModules()
     {
@@ -243,3 +246,4 @@ class  EconomicCrypto
 }
 
 module.exports = {EconomicCrypto};
+
