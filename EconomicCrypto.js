@@ -26,7 +26,7 @@
  * To check available crypo algorithms (for crypto.createHmac()):
  *
  * Option 1 - Within Node.js application file:
- *   var crypto = require('crypto');
+ *   const crypto = require('crypto');
  *   console.log(crypto.getHashes());
  *
  * Option 2 - On Ubuntu/Linux. From shell, run:
