@@ -232,14 +232,14 @@ class AccessMongoDBAndMySQL
         
         //add constraints on some LWD data
         // 1. GR_api constraint => 0>=GR_api<=150
-        if(keyValuePairsMap.get(values[17]) < 0 || keyValuePairsMap.get(values[17]) > 150)
+        if(keyValuePairsMap.get(keys[17]) < 0 || keyValuePairsMap.get(keys[17]) > 150)
         {
-          keyValuePairsMap.set(values[17], NaN);
+          keyValuePairsMap.set(keys[17], NaN);
         }
         // 2. DEEP_RESISTIVITY_ohm_m constraint => 0>=DEEP_RESISTIVITY_ohm_m<= 2000
-        if(keyValuePairsMap.get(values[18]) < 0 || keyValuePairsMap.get(values[18]) > 2000)
+        if(keyValuePairsMap.get(keys[18]) < 0 || keyValuePairsMap.get(keys[18]) > 2000)
         {
-          keyValuePairsMap.set(values[18], NaN);
+          keyValuePairsMap.set(keys[18], NaN);
         }
         
         return keyValuePairsMap;
