@@ -21,7 +21,8 @@
  * c) BCrypt Algorithm       : Bcrypt          -----> based on "bcryptjs" module (https://github.com/dcodeIO/bcrypt.js)
  * d) SCrypt Algorithm       : Scrypt          -----> based on  node.js' crypto.scrypt()
  *
- * Node.js' crypo algorithm (for crypto.createHmac()) is dependent on the available algorithms supported by the version of OpenSSL on the platform.
+ * Node.js' crypo algorithm (for crypto.createHmac()) is dependent on the available algorithms supported by the version 
+ * of OpenSSL bundled  with the current Node.js version
  *
  * To check available crypo algorithms (for crypto.createHmac()):
  *
