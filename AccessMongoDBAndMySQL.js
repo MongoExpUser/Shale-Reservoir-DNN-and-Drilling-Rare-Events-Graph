@@ -248,14 +248,14 @@ class AccessMongoDBAndMySQL
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
         const uuidV4 = require('uuid/v4');
-        const EcotertCrypto = require('./EconomicCrypto.js').EconomicCrypto;
+        const EconomicCrypto = require('./EconomicCrypto.js').EconomicCrypto;
         const hashAlgorithmPasd = 'bcrypt';
         const hashAlgorithmBlockchain = 'whirlpool';
-        const pasd = new EcotertCrypto().isHashConsensus([password], hashAlgorithmPasd);
+        const pasd = new EconomicCrypto().isHashConsensus([password], hashAlgorithmPasd);
         const initDate = new Date();
         const verificationCode = uuidV4();
         const initConfirmation = false;
-        const initBlockChain = new EcotertCrypto().isHashConsensus([uuidV4()], hashAlgorithmBlockchain);
+        const initBlockChain = new EconomicCrypto().isHashConsensus([uuidV4()], hashAlgorithmBlockchain);
         const blockchain = [initBlockChain[0], initBlockChain[1], initBlockChain[2]];
         const maxLoginAttempts = 10;
         const lockTime = 1*60*60*1000; // 1 hour
