@@ -267,18 +267,14 @@ class AccessMongoDBAndMySQL
         newUserMap.set("email", email);
         newUserMap.set("pasd", {"current": pasd, "lastFive": [pasd, pasd, pasd, pasd, pasd]});
         newUserMap.set("subscription", productOrServiceSubscription);
-        newUserMap.set("timeManagement", {"createdOn": initDate, "modifiedOn": initDate, "lastLogin": initDate, "lastLogOut": initDate});
         newUserMap.set("assetname", assetName);
-        newUserMap.set("verificationCode", verificationCode);
-        newUserMap.set("isAccountverified", initConfirmation);
-        newUserMap.set("isAccountInUse", initConfirmation);
-        newUserMap.set("blockchain", blockchain);
-        newUserMap.set("balanceDays", 0);
-        newUserMap.set("initDays", [0, 0, 0, 0, 0]);
-        newUserMap.set("balanceDollars", 0);
+        newUserMap.set("timeManagement", {"createdOn": initDate, "modifiedOn": initDate, "lastLogin": initDate, "lastLogOut": initDate});
+        newUserMap.set("accountStatus", {"verificationCode": verificationCode, "isAccountverified": initConfirmation, "isAccountInUse": initConfirmation});
+        newUserMap.set("accountBalance", {"balanceDays": 0, "balanceDollars": 0, "initDays": 0});;
         newUserMap.set("loginAttempts", 0);
         newUserMap.set("maxLoginAttempts", maxLoginAttempts);
         newUserMap.set("lockUntil", lockTime);
+        newUserMap.set("blockchain", blockchain);
        
         return newUserMap;
     }
