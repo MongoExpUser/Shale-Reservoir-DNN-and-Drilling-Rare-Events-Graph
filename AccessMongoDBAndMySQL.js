@@ -265,13 +265,9 @@ class AccessMongoDBAndMySQL
            
         newUserMap.set("username", userName);
         newUserMap.set("email", email);
-        newUserMap.set("pasd", pasd);
-        newUserMap.set("lastFivePasswordList", [pasd, pasd, pasd, pasd, pasd]);
+        newUserMap.set("pasd", {"current": pasd, "lastFive": [pasd, pasd, pasd, pasd, pasd]});
         newUserMap.set("subscription", productOrServiceSubscription);
-        newUserMap.set("createdOn", initDate);
-        newUserMap.set("modifiedOn", initDate);
-        newUserMap.set("lastLogin", initDate);
-        newUserMap.set("lastLogOut", initDate);
+        newUserMap.set("timeManagement", {"createdOn": initDate, "modifiedOn": initDate, "lastLogin": initDate, "lastLogOut": initDate});
         newUserMap.set("assetname", assetName);
         newUserMap.set("verificationCode", verificationCode);
         newUserMap.set("isAccountverified", initConfirmation);
@@ -283,7 +279,7 @@ class AccessMongoDBAndMySQL
         newUserMap.set("loginAttempts", 0);
         newUserMap.set("maxLoginAttempts", maxLoginAttempts);
         newUserMap.set("lockUntil", lockTime);
-    
+       
         return newUserMap;
     }
 
