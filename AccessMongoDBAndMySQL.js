@@ -244,6 +244,76 @@ class AccessMongoDBAndMySQL
         
         return keyValuePairsMap;
     }
+  
+    static drillingEventDocumentKeyValuePairsBinned(keys, values)
+    {
+        //returns key-value pairs classified/binned into suitable categories
+        
+        const keyValuePairsMap = new Map();
+        const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
+                                   (values !== undefined) && (keys.length === values.length);
+        
+        let keyValue = {};
+        
+        if(validKeyValuePairs === true)
+        {
+            for(let index = 0; index < keys.length; index++)
+            {
+                if(index < 7)
+                {
+                    keyValue[keys[index]] = values[index];
+                    
+                    if(index === 6)
+                    {
+                        keyValuePairsMap.set("drillStringData", keyValue);
+                        keyValue = {}; //reset to empty for next loop logic
+                    }
+                }
+                else if(index >= 7  && index < 11)
+                {
+                    keyValue[keys[index]] = values[index];
+                    
+                    if(index === 10)
+                    {
+                        keyValuePairsMap.set("drillingMudData", keyValue);
+                        keyValue = {};
+                    }
+                }
+                else if(index >= 11  && index < 20)
+                {
+                    keyValue[keys[index]] = values[index];
+                    
+                    if(index === 19)
+                    {
+                        keyValuePairsMap.set("mwdLwdData", keyValue);
+                        keyValue = {};
+                    }
+                }
+                else if(index >= 20  && index < 23)
+                {
+                    keyValue[keys[index]] = values[index];
+                    
+                    if(index === 22)
+                    {
+                        keyValuePairsMap.set("eventData", keyValue);
+                        keyValue = {};
+                    }
+                }
+                else if(index === 23)
+                {
+                    keyValue[keys[index]] = values[index];
+                    
+                    if(index === 23)
+                    {
+                        keyValuePairsMap.set("time", keyValue);
+                        keyValue = {};
+                    }
+                }
+            }
+        }
+      
+        return keyValuePairsMap;
+    }
     
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
@@ -412,7 +482,7 @@ class AccessMongoDBAndMySQL
                                 // 3a. defined documents and its fields (key-value pairs)
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
+                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
                                 
                                 //3b. insert
                                 db.collection(collectionName).insertOne(documentObject, function(insertDocumentError, insertedObject)
@@ -744,7 +814,7 @@ class AccessMongoDBAndMySQL
                     // .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
                     const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                     const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                    const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairs(keys, values);
+                    const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
     
                     db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
                     {
