@@ -76,6 +76,18 @@ class AccessMongoDBAndMySQL
         return false;
     }
     
+    static convertMapValueToObject(mapValue)
+    {
+        const finalObject = {};
+        
+        mapValue.forEach(function(value, key)
+        {
+            finalObject[key] = value;
+        });
+        
+        return finalObject;
+    }
+    
     static drillingEventTableSchema()
     {
         //define schema variable and bracket, with correct spaces & commas
@@ -244,7 +256,7 @@ class AccessMongoDBAndMySQL
         
         return keyValuePairsMap;
     }
-  
+    
     static drillingEventDocumentKeyValuePairsBinned(keys, values)
     {
         //returns key-value pairs classified/binned into suitable categories
@@ -252,7 +264,8 @@ class AccessMongoDBAndMySQL
         const keyValuePairsMap = new Map();
         const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
                                    (values !== undefined) && (keys.length === values.length);
-       
+        
+        
         if(validKeyValuePairs === true)
         {
             let keyValue = {};
@@ -288,6 +301,7 @@ class AccessMongoDBAndMySQL
                         keyValuePairsMap.set("mwdLwdData", keyValue);
                         keyValue = {};
                     }
+
                 }
                 else if(index >= 20  && index < 23)
                 {
@@ -298,6 +312,7 @@ class AccessMongoDBAndMySQL
                         keyValuePairsMap.set("eventData", keyValue);
                         keyValue = {};
                     }
+                    
                 }
                 else if(index === 23)
                 {
@@ -311,13 +326,13 @@ class AccessMongoDBAndMySQL
                 }
             }
         }
-      
+    
         return keyValuePairsMap;
     }
     
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
-        const EconomicCrypto = require('./EconomicCrypto.js').EconomicCrypto;
+        const EconomicCrypto = require('./EconomicCrypto_ES6.js').EconomicCrypto;
         const uuidV4 = require('uuid/v4');
         const economicCrypto = new EconomicCrypto();
         const hashAlgorithmPasd = 'bcrypt';
@@ -343,7 +358,12 @@ class AccessMongoDBAndMySQL
         newUserMap.set("accountBalance", {"balanceDays": 0, "balanceDollars": 0, "initDays": 0});;
         newUserMap.set("loginStatus", {"loginAttempts": 0, "maxLoginAttempts": maxLoginAttempts, "lockUntil": lockTime});
         newUserMap.set("blockchain", blockchain);
-       
+        
+        //test pasword array values
+        //console.log("1st-pasd", (newUserMap.get("lastFivePasswordList"))[0]);
+        //console.log("2nd-pasd", (newUserMap.get("lastFivePasswordList"))[1]);
+        //console.log("3rd-pasd", (newUserMap.get("lastFivePasswordList"))[2]);
+    
         return newUserMap;
     }
 
