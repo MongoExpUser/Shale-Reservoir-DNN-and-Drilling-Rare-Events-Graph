@@ -332,7 +332,7 @@ class AccessMongoDBAndMySQL
     
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
-        const EconomicCrypto = require('./EconomicCrypto_ES6.js').EconomicCrypto;
+        const EconomicCrypto = require('./EconomicCrypto.js').EconomicCrypto;
         const uuidV4 = require('uuid/v4');
         const economicCrypto = new EconomicCrypto();
         const hashAlgorithmPasd = 'bcrypt';
