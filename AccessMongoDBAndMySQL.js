@@ -547,8 +547,8 @@ class AccessMongoDBAndMySQL
                                         //6. create index on specified field(s) key, if collection is not dropped & documentsCount === 1
                                         else if(dropCollection !== true && documentsCount === 1)
                                         {
-                                            const indexedFields = {"TVD_ft": 1, "Dogleg_deg_per_100ft": 1};
-                                            
+                                            const indexedFields =  {"mwdLwdData.TVD_ft": 1, "mwdLwdData.Dogleg_deg_per_100ft": 1};
+
                                             db.collection(collectionName).createIndex(indexedFields, function(indexedFieldError, indexedConfirmation)
                                             {
                                                 if(indexedFieldError)
