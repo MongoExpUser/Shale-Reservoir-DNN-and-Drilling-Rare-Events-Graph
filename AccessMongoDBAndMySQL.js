@@ -76,16 +76,16 @@ class AccessMongoDBAndMySQL
         return false;
     }
     
-    static convertMapValueToObject(mapValue)
+    static convertMapToObject(inputMap)
     {
-        const finalObject = {};
+        const outputObject = {};
         
-        mapValue.forEach(function(value, key)
+        inputMap.forEach(function(value, key)
         {
-            finalObject[key] = value;
+            outputObject[key] = value;
         });
         
-        return finalObject;
+        return outputObject;
     }
     
     static drillingEventTableSchema()
@@ -498,7 +498,7 @@ class AccessMongoDBAndMySQL
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                                 const documentObjectMap = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
-                                const documentObject = AccessMongoDBAndMySQL.convertMapValueToObject(documentObjectMap);
+                                const documentObject = AccessMongoDBAndMySQL.convertMapToObject(documentObjectMap);
                               
                                 //3b. insert
                                 db.collection(collectionName).insertOne(documentObject, function(insertDocumentError, insertedObject)
@@ -831,7 +831,7 @@ class AccessMongoDBAndMySQL
                     const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                     const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
                     const documentObjectMap = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
-                    const documentObject = AccessMongoDBAndMySQL.convertMapValueToObject(documentObjectMap);
+                    const documentObject = AccessMongoDBAndMySQL.convertMapToObject(documentObjectMap);
           
                     db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
                     {
