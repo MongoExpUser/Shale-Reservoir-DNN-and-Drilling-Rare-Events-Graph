@@ -332,7 +332,7 @@ class AccessMongoDBAndMySQL
     
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
-        const EconomicCrypto = require('./EconomicCrypto.js').EconomicCrypto;
+        const EconomicCrypto = require('./EconomicCrypto_ES6.js').EconomicCrypto;
         const uuidV4 = require('uuid/v4');
         const economicCrypto = new EconomicCrypto();
         const hashAlgorithmPasd = 'bcrypt';
@@ -345,7 +345,7 @@ class AccessMongoDBAndMySQL
         const blockchain = [initBlockChain[0], initBlockChain[1], initBlockChain[2]];
         const maxLoginAttempts = 10;
         const lockTime = 1*60*60*1000; // 1 hour
-        
+          
         const newUserMap = new Map();  // user document
            
         newUserMap.set("username", userName);
@@ -358,7 +358,16 @@ class AccessMongoDBAndMySQL
         newUserMap.set("accountBalance", {"balanceDays": 0, "balanceDollars": 0, "initDays": 0});;
         newUserMap.set("loginStatus", {"loginAttempts": 0, "maxLoginAttempts": maxLoginAttempts, "lockUntil": lockTime});
         newUserMap.set("blockchain", blockchain);
-        
+        //initialise files storage on the Document Stores (Distribued Ledgers) as Buffer -> note: limit on each file size is 16MB
+        //arbitrary initialise Buffer values will be over-written once actual files are uploaded to the Distribued Ledgers
+        newUserMap.set("distributedLedgersFiles", { "location": Buffer.from("lo"),
+                                                    "reservoirVolumetrics": Buffer.from("resv"),
+                                                    "petrophysical": Buffer.from("pp"),
+                                                    "geoscience": Buffer.from("geo"),
+                                                    "drilling": Buffer.from("drlg"),
+                                                    "production": Buffer.from("prod")
+        });
+    
         return newUserMap;
     }
 
