@@ -67,7 +67,7 @@ class  EconomicCrypto
         finally
         {
             // print hash (i.e. digest) algorithms in OpenSSL version bundled  with the current Node.js version
-            if(showAlgorithm == true)
+            if(showAlgorithm === true)
             {
               var hashesAlgorithms = crypto.getHashes();
               console.log(hashesAlgorithms);
