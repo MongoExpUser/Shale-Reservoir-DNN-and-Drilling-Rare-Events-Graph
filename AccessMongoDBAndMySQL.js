@@ -332,7 +332,7 @@ class AccessMongoDBAndMySQL
     
     static createUserDocument(userName, email, password, productOrServiceSubscription, assetName)
     {
-        const EconomicCrypto = require('./EconomicCrypto_ES6.js').EconomicCrypto;
+        const EconomicCrypto = require('./EconomicCrypto.js').EconomicCrypto;
         const uuidV4 = require('uuid/v4');
         const economicCrypto = new EconomicCrypto();
         const hashAlgorithmPasd = 'bcrypt';
@@ -359,11 +359,6 @@ class AccessMongoDBAndMySQL
         newUserMap.set("loginStatus", {"loginAttempts": 0, "maxLoginAttempts": maxLoginAttempts, "lockUntil": lockTime});
         newUserMap.set("blockchain", blockchain);
         
-        //test pasword array values
-        //console.log("1st-pasd", (newUserMap.get("lastFivePasswordList"))[0]);
-        //console.log("2nd-pasd", (newUserMap.get("lastFivePasswordList"))[1]);
-        //console.log("3rd-pasd", (newUserMap.get("lastFivePasswordList"))[2]);
-    
         return newUserMap;
     }
 
@@ -502,8 +497,9 @@ class AccessMongoDBAndMySQL
                                 // 3a. defined documents and its fields (key-value pairs)
                                 const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                                 const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                                const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
-                                
+                                const documentObjectMap = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
+                                const documentObject = AccessMongoDBAndMySQL.convertMapValueToObject(documentObjectMap);
+                              
                                 //3b. insert
                                 db.collection(collectionName).insertOne(documentObject, function(insertDocumentError, insertedObject)
                                 {
@@ -834,8 +830,9 @@ class AccessMongoDBAndMySQL
                     // .......this is equivalent to ROW & COLUMN-VALUES in regular MySQL
                     const keys = AccessMongoDBAndMySQL.drillingEventDocumentKeys();
                     const values = AccessMongoDBAndMySQL.drillingEventDocumentValues();
-                    const documentObject = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
-    
+                    const documentObjectMap = AccessMongoDBAndMySQL.drillingEventDocumentKeyValuePairsBinned(keys, values);
+                    const documentObject = AccessMongoDBAndMySQL.convertMapValueToObject(documentObjectMap);
+          
                     db.getCollection(collectionName).add(documentObject).execute().then(function(addedDocument)
                     {
                         console.log("Document with id (", addedDocument.getGeneratedIds(), ") and its field values " + "are inserted into " + String(collectionName) + " COLLECTION successfully!");
