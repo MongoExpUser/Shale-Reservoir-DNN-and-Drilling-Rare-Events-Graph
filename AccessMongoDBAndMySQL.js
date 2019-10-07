@@ -252,11 +252,11 @@ class AccessMongoDBAndMySQL
         const keyValuePairsMap = new Map();
         const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
                                    (values !== undefined) && (keys.length === values.length);
-        
-        let keyValue = {};
-        
+       
         if(validKeyValuePairs === true)
         {
+            let keyValue = {};
+            
             for(let index = 0; index < keys.length; index++)
             {
                 if(index < 7)
