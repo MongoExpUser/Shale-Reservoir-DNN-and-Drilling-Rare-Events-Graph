@@ -19,7 +19,7 @@
  *    (2) Mongoose ORM - https://www.npmjs.com/package/mongoose
  *    (3) MySQL Node.js driver - https://www.npmjs.com/package/mysql
  *    (4) MySQL Connector/Node.js - https://www.npmjs.com/package/@mysql/xdevapi
- *    (5) Node.js native file stream module and MongoDB GridFS
+ *    (5) Node.js file system & stream modules and MongoDB GridFS
  *
  * B) TestAccessMongoDBAndMySQL() class: to test AccessMongoDBAndMySQL() class
  *
