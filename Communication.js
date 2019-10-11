@@ -11,9 +11,8 @@
  * Relevant communications/data transmission methods - e.g.:
  *
  * (1) read/write files on disk
- * (2) connect to MongoDB
- * (3) read read/write files
- * (4) etc.
+ * (2) check file paths and existense
+ * (3) get tensor statistics
  *
  */
  
