@@ -38,7 +38,7 @@ C11
 
 C++17
 
-MongoDB Server v4.0.12 on Ubuntu 18.04.1
+MongoDB Server v4.0.13 on Ubuntu 18.04.1
 
 MongoDB Node.js Native Driver v3.3.2 (https://www.npmjs.com/package/mongodb)
 
