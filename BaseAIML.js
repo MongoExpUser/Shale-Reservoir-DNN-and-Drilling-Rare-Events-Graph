@@ -82,11 +82,11 @@ class BaseAIML
         return {fs:fs, path:path, util:util, mongodb:mongodb, assert:assert, tf:tf, model:tf.sequential()};
     }
     
-    predictProductionAndPrintResults(_x, _y, _reModel, existingSavedModel=false)
+    predictProductionAndPrintResults(_x, _y, _compiledModel, existingSavedModel=false)
     {
         //begin prediction: use the model to do inference on data points
         var beginPredictingTime = new Date();
-        var predictY = _reModel.predict(_x);
+        var predictY = _compiledModel.predict(_x);
                     
         //print "train" input and output tensors summary
         if(existingSavedModel === false || existingSavedModel === null || existingSavedModel === undefined)
@@ -140,7 +140,7 @@ class BaseAIML
         //print summary & prediction time
         new BaseAIML().runTimeDNN(beginPredictingTime, "Predicting Time");
         console.log("Final Model Summary");
-        _reModel.summary();
+        _compiledModel.summary();
         console.log();
     }
     
