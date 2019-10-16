@@ -55,7 +55,7 @@ class ShaleReservoir extends BaseAIML
     
     modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
                 hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
-                model, tf, DNNProblemOption)
+                model, tf, DNNProblemOption, inputLayerCNNOptions=undefined, hiddenLayerCNNOptions=undefined)
     {
         //note: "tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
         
@@ -535,8 +535,6 @@ class ShaleReservoir extends BaseAIML
                 break;
         }
     }
-    
 }
-
 
 module.exports = {ShaleReservoir};
