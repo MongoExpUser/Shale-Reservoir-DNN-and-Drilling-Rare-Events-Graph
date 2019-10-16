@@ -11,6 +11,9 @@
  *
  * Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
  *
+ * Shale Reservoir Classification with Tensorflow-Based Deep Neural Network (DNN).
+ *
+ *
  * It is a Tensorflow-Based DNN Model for hydraulically-fractured-driven production performance prediction of shale reservoirs.
  *
  * It inherits/extends the BaseAIML for its implementation.
@@ -42,11 +45,74 @@
 
 const BaseAIML = require('./BaseAIML.js').BaseAIML;
 
-class ShaleReservoirProduction extends BaseAIML
+class ShaleReservoir extends BaseAIML
 {
     constructor(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY)
     {
         super(modelingOption, fileOption, gpuOption, inputFromCSVFileX, inputFromCSVFileY, mongDBCollectionName, mongDBSpecifiedDataX, mongDBSpecifiedDataY);
+    }
+    
+    
+    modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                model, tf, DNNProblemOption)
+    {
+        //note: "tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
+        
+        if(DNNProblemOption === "DNNRegression" || DNNProblemOption === "DNNClassification")
+        {
+        
+            //step 1: create layers.....
+            const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
+            let hiddenLayers = [];
+            for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
+            {
+                hiddenLayers.push({units: unitsPerHiddenLayer, activation: hiddenLayersActivation})
+            }
+            const outputLayer = {units: unitsPerOutputLayer, activation: outputLayerActivation};
+                        
+            //step 2: add layers and dropouts......
+            model.add(tf.layers.dense(inputLayer));
+            model.add(tf.layers.dropout(dropoutRate));
+            for(let eachLayer in hiddenLayers)
+            {
+                model.add(tf.layers.dense(hiddenLayers[eachLayer]));
+                model.add(tf.layers.dropout(dropoutRate));
+            }
+            model.add(tf.layers.dense(outputLayer));
+                
+            //step 3: specify compilation options....
+            let compileOptions = undefined;
+            
+            if(DNNProblemOption === "DNNRegression")
+            {
+                //i. feedforward DNN regression
+                //note: unitsPerOutputLayer = 1 and loss = "meanSquaredError" or any other valid value
+                //note: assumed input tensors are correctly defined, else error will be thrown
+                compileOptions = {optimizer: optimizer, loss: loss};
+            }
+            else if(DNNProblemOption === "DNNClassification")
+            {
+                //ii. feedforward DNN Classification
+                //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+                //note: assumed input tensors are correctly defined, else error will be thrown
+                compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
+                console.log("test-okay");
+            }
+                 
+            //step 4: compile model
+            model.compile(compileOptions);
+            
+            //step 5: return model.....
+            return model;
+        }
+        else
+        {
+            //do nothing:
+            console.log("Run is terminated because no 'DNN Problem Option' is selected.");
+            console.log("Select one DNNOption: 'DNNRegression' or 'DNNClassification.");
+            return;
+        }
     }
 
     shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
@@ -58,14 +124,14 @@ class ShaleReservoirProduction extends BaseAIML
         //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 349 and 353
         
         //import module(s) and create model
-        const srp = new ShaleReservoirProduction();
-        const commonModules = srp.commonModules(this.gpuOption);
+        const shr = new ShaleReservoir();
+        const commonModules = shr.commonModules(this.gpuOption);
         const tf = commonModules.tf;
         const util = commonModules.util;
         const model = commonModules.model;
         
         if(this.modelingOption === "dnn")
-        {            
+        {
             //configure input tensor
             var x = null;
             var y = null;
@@ -124,107 +190,105 @@ class ShaleReservoirProduction extends BaseAIML
                 }
             }
             
-            
-            if(existingSavedModel === true)
+            if(existingSavedModel !== true)
             {
-                //predict with saved model
-                const srp = new ShaleReservoirProduction();
-                srp.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
-            }
-            else
-            {
-                //(a) create, (b) train and (c) predict new model
+                //create, train, predict and save new model
             
-                //-->a. create model (main engine) with IIFE
-                //"tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
-                const reModel = (function createDNNRegressionModelEngine()
+                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "DNNRegression" option
+                const DNNProblemOption = "DNNRegression";
+                const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                                                     hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                                                     model, tf, DNNProblemOption);                    
+                if(compiledModel)
                 {
-                    //create layers.....
-                    const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
-                    let hiddenLayers = [];
-                    for(let i = 0; i < numberOfHiddenLayers; i ++)
+                    //if model is successfully compiled: then train, predict and save model
+                    
+                    //b. begin training: train the model using the data and time the training
+                    const beginTrainingTime = new Date();
+                    console.log(" ")
+                    console.log("...............Training Begins.......................................");
+                    
+                    compiledModel.fit(x, y,
                     {
-                        hiddenLayers.push({units: unitsPerHiddenLayer, activation: hiddenLayersActivation})
-                    }
-                    const outputLayer = {units: unitsPerOutputLayer, activation: outputLayerActivation};
-                    
-                    //add layers and dropouts......
-                    model.add(tf.layers.dense(inputLayer));
-                    model.add(tf.layers.dropout(dropoutRate));
-                    for(let eachLayer in hiddenLayers)
-                    {
-                        model.add(tf.layers.dense(hiddenLayers[eachLayer]));
-                        model.add(tf.layers.dropout(dropoutRate));
-                    }
-                    model.add(tf.layers.dense(outputLayer));
-                    
-                    //specify compilation options....
-                    const compileOptions = {optimizer: optimizer, loss: loss};
-                    
-                    //compile model
-                    model.compile(compileOptions);
-                    
-                    //return model.....
-                    return model;
-                })();
-            
-                                   
-                //-->b. begin training: train the model using the data and time the training
-                const beginTrainingTime = new Date();
-                console.log(" ")
-                console.log("...............Training Begins.......................................");
-                
-                reModel.fit(x, y,
-                {
-                    batchSize: batchSize,
-                    epochs: epochs,
-                    validationSplit: validationSplit,
-                    verbose: verbose,
-                    
-                    //customized logging verbosity
-                    callbacks:
-                    {
-                        onEpochEnd: async function (epoch, logs)
+                        batchSize: batchSize,
+                        epochs: epochs,
+                        validationSplit: validationSplit,
+                        verbose: verbose,
+                        
+                        //customized logging verbosity
+                        callbacks:
                         {
-                            const loss = Number(logs.loss).toFixed(6);
-                            const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
-                            console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
+                            onEpochEnd: async function (epoch, logs)
+                            {
+                                const loss = Number(logs.loss).toFixed(6);
+                                const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
+                                console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
+                            }
                         }
-                    }
-                    
-                }).then(function(informationHistory)
+                        
+                    }).then(function(informationHistory)
+                    {
+                        //print loss summary, if desired
+                        if(lossSummary === true)
+                        {
+                            console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
+                        }
+                        
+                        //print training time & signify ending
+                        shr.runTimeDNN(beginTrainingTime, "Training Time");
+                        console.log("........Training Ends................................................");
+                        console.log();
+                        
+                        //c. predict and print results
+                        shr.predictProductionAndPrintResults(x, y, compiledModel, existingSavedModel=false);
+                        
+                        //d. save model's topology & weights in the specified sub-folder (i.e. pathToSaveTrainedModel)
+                        //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
+                        //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
+                        compiledModel.save(pathToSaveTrainedModel);
+                        
+                    }).catch(function(error)
+                    {
+                        if(error)
+                        {
+                            console.log(error, " : TensorFlow error successfully intercepted.");
+                        }
+                    });
+                }
+                else
                 {
-                    //print loss summary, if desired
-                    if(lossSummary === true)
-                    {
-                        console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
-                    }
-                    
-                    //print training time & signify ending
-                    const srp = new ShaleReservoirProduction();
-                    srp.runTimeDNN(beginTrainingTime, "Training Time");
-                    console.log("........Training Ends................................................");
-                    console.log();
-                    
-                    //-->c. predict and print results
-                    srp.predictProductionAndPrintResults(x, y, reModel, existingSavedModel=false);
-                    
-                    //save model's topology and weights in the specified sub-folder of the current folder
-                    //this model can be called later without any need for training again
-                    if(srp.fileOption === "csv-disk" || srp.fileOption === "csv-MongoDB")
-                    {
-                        reModel.save(pathToSaveTrainedModel);    //saved model
-                    }
-                    
-                }).catch(function(error)
-                {
-                    if(error)
-                    {
-                        console.log(error, " : TensorFlow error successfully intercepted.");
-                    }
-                });
+                    //if model is not successfully compiled
+                    console.log("Model is not successfully compiled or valid: check for errors in the input values..")
+                    return;
+                }
+            }
+            else if(existingSavedModel === true)
+            {
+                //predict with exiting saved model: no need for creating and training new model
+                shr.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
         }
+    }
+    
+    
+    shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
+                                 unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
+                                 loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel)
+    {
+        //add others later ...in progress
+        //import module(s) and create model
+        const shr = new ShaleReservoir();
+        const commonModules = shr.commonModules(this.gpuOption);
+        const tf = commonModules.tf;
+        const util = commonModules.util;
+        const model = commonModules.model;
+        
+        //add others later ...in progress
+        //in progress warning message
+        console.log("=========================================================================================>");
+        console.log("Shale Reservoir Classification is not available yet.");
+        console.log("Implementation of DNN-based shale reservoir classification is in progress: check later.");
+        console.log("=========================================================================================>");
     }
     
     testShaleReservoirProductionPerformance()
@@ -271,7 +335,7 @@ class ShaleReservoirProduction extends BaseAIML
         
         if(existingSavedModel === true)
         {
-            pathToExistingSavedTrainedModel = "file://myShaleProductionModel-0/model.json";
+            pathToExistingSavedTrainedModel = pathToSaveTrainedModel + "/model.json";
         }
         
         const timeStep = 4;           //1, 2, .....n
@@ -307,7 +371,7 @@ class ShaleReservoirProduction extends BaseAIML
         Communication  = require('./Communication.js').Communication; 
         const mda = new AccessMongoDBAndMySQL();
         const cmm = new Communication();
-        const srp = new ShaleReservoirProduction();
+        const shr = new ShaleReservoir();
         let mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
         
         //run model by timeStep
@@ -334,8 +398,8 @@ class ShaleReservoirProduction extends BaseAIML
                 (async function runModel()
                 {
                     //convert JavaScript's Arrays into TensorFlow's tensors
-                    const tensorOutputX = srp.getTensor(xOutput);
-                    const tensorOutputY = srp.getTensor(yOutput);
+                    const tensorOutputX = shr.getTensor(xOutput);
+                    const tensorOutputY = shr.getTensor(yOutput);
                     inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
                     inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
                             
@@ -346,15 +410,15 @@ class ShaleReservoirProduction extends BaseAIML
                     console.log("inputDim: ", inputDim);
             
                     //invoke productionPerformance() method on ShaleReservoirProduction() class
-                    const srpTwo = new ShaleReservoirProduction(modelingOption, fileOption, gpuOption,
-                                                inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                mongoDBCollectionName, mongoDBDataFileXList[i],
-                                                mongoDBDataFileYList[i]);
-                    srpTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
-                                                dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
-                                                inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
-                                                numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
-                                                pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
+                    const shrTwo = new ShaleReservoir(modelingOption, fileOption, gpuOption,
+                                                      inputFromCSVFileXList[i], inputFromCSVFileYList[i],
+                                                      mongoDBCollectionName, mongoDBDataFileXList[i],
+                                                      mongoDBDataFileYList[i]);
+                    shrTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                                                               dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
+                                                               inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
+                                                               numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
+                                                               pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                 }());
                 
             }
@@ -419,8 +483,8 @@ class ShaleReservoirProduction extends BaseAIML
                             (async function runModel()
                             {
                                 //convert JavaScript's Arrays into TensorFlow's tensors
-                                const tensorOutputX = srp.getTensor(xOutput);
-                                const tensorOutputY = srp.getTensor(yOutput);
+                                const tensorOutputX = shr.getTensor(xOutput);
+                                const tensorOutputY = shr.getTensor(yOutput);
                                 inputFromCSVFileXList.push(tensorOutputX.csvFileArrayOutputToTensor);
                                 inputFromCSVFileYList.push(tensorOutputY.csvFileArrayOutputToTensor);
                                         
@@ -430,16 +494,16 @@ class ShaleReservoirProduction extends BaseAIML
                                 console.log("inputSize: ", inputSize);
                                 console.log("inputDim: ", inputDim);
                         
-                                //invoke productionPerformance() method on ShaleReservoirProduction() class
-                                const srpTwo = new ShaleReservoirProduction(modelingOption, fileOption, gpuOption,
-                                                            inputFromCSVFileXList[i], inputFromCSVFileYList[i],
-                                                            mongoDBCollectionName, mongoDBDataFileXList[i],
-                                                            mongoDBDataFileYList[i]);
-                                srpTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
-                                                            dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
-                                                            inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
-                                                            numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
-                                                            pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
+                                //invoke productionPerformance() method on ShaleReservoir() class
+                                const shrTwo = new ShaleReservoir(modelingOption, fileOption, gpuOption,
+                                                                  inputFromCSVFileXList[i], inputFromCSVFileYList[i],
+                                                                  mongoDBCollectionName, mongoDBDataFileXList[i],
+                                                                  mongoDBDataFileYList[i]);
+                                shrTwo.shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                                                                           dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
+                                                                           inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
+                                                                           numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
+                                                                           pathToSaveTrainedModel, pathToExistingSavedTrainedModel);
                             }());
                             
                             //....4. finally close client
@@ -451,6 +515,12 @@ class ShaleReservoirProduction extends BaseAIML
             }
         }
     }
+    
+    testShaleReservoirClassification()
+    {
+        //add later...in progress
+    }
+    
 }
 
 
