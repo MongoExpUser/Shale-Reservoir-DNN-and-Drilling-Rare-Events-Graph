@@ -59,7 +59,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: "tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
         
-        if(DNNProblemOption === "DNNRegression" || DNNProblemOption === "DNNClassification")
+        if(DNNProblemOption === "FFNNRegression" || DNNProblemOption === "FFNNClassification")
         {
             //step 1: create layers.....
             const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
@@ -83,16 +83,16 @@ class ShaleReservoir extends BaseAIML
             //step 3: specify compilation options....
             let compileOptions = undefined;
             
-            if(DNNProblemOption === "DNNRegression")
+            if(DNNProblemOption === "FFNNRegression")
             {
                 //i. feedforward DNN regression
                 //note: unitsPerOutputLayer = 1 and loss = "meanSquaredError" or any other valid value
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss};
             }
-            else if(DNNProblemOption === "DNNClassification")
+            else if(DNNProblemOption === "FFNNClassification")
             {
-                //ii. feedforward DNN Classification
+                //ii. feedforward DNN classification
                 //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
@@ -104,11 +104,18 @@ class ShaleReservoir extends BaseAIML
             //step 5: return model.....
             return model;
         }
+        else if(DNNProblemOption === "CNNClassification")
+        {
+            //iii.convolutional DNN (CNN) classification
+            
+            //add later ... in progress: add steps 1, 2, 3, 4 & 5 above
+            //i.e. add topology, compile and return
+        }
         else
         {
             //do nothing:
             console.log("Run is terminated because no 'DNN Problem Option' is selected.");
-            console.log("Select one DNNOption: 'DNNRegression' or 'DNNClassification.");
+            console.log("Select one DNNOption: 'FFNNRegression' or 'FFNNClassification or 'CNNClassification'.");
             return;
         }
     }
@@ -192,8 +199,8 @@ class ShaleReservoir extends BaseAIML
             {
                 //create, train, predict and save new model
             
-                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "DNNRegression" option
-                const DNNProblemOption = "DNNRegression";
+                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FFNNRegression" option
+                const DNNProblemOption = "FFNNRegression";
                 const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
                                                      hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
                                                      model, tf, DNNProblemOption);                    
@@ -517,6 +524,16 @@ class ShaleReservoir extends BaseAIML
     testShaleReservoirClassification()
     {
         //add later...in progress
+        switch(DNNProblemOption)
+        {
+            case("FFNNClassification"):
+                // add codes later... in progress
+                break;
+                            
+            case("CNNClassification"):
+                // add codes later... in progress
+                break;
+        }
     }
     
 }
