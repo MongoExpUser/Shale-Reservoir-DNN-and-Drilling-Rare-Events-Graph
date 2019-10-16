@@ -97,7 +97,6 @@ class ShaleReservoir extends BaseAIML
                 //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
-                console.log("test-okay");
             }
                  
             //step 4: compile model
@@ -121,7 +120,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 349 and 353
+        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 412 and 416
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
