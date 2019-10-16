@@ -61,7 +61,6 @@ class ShaleReservoir extends BaseAIML
         
         if(DNNProblemOption === "DNNRegression" || DNNProblemOption === "DNNClassification")
         {
-        
             //step 1: create layers.....
             const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
             let hiddenLayers = [];
@@ -120,7 +119,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 412 and 416
+        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 411 and 415
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
