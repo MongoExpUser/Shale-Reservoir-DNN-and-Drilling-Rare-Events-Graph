@@ -126,7 +126,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 411 and 415
+        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 418 and 422
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
