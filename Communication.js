@@ -8,12 +8,14 @@
  *
  * ...Ecotert's Communication.js (released as open-source under MIT License) implements:
  *
- * Relevant communications/data transmission methods - e.g.:
+ * Relevant communications/data transmission/formatting methods - e.g.:
  *
- * (1) read/write files on disk
- * (2) check file paths and existense
- * (3) get tensor statistics
- *
+ * (1) date format
+ * (2) check file paths and existence
+ * (3) read CSV files
+ * (4) get tensor statistics
+ * (5) read/write files on disk
+ * 
  */
  
 class Communication
