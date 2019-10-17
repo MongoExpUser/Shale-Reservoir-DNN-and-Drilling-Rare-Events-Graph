@@ -55,7 +55,7 @@ class ShaleReservoir extends BaseAIML
     
     modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
                 hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
-                model, tf, DNNProblemOption, inputLayerCNNOptions=undefined, hiddenLayerCNNOptions=undefined)
+                model, tf, DNNProblemOption, inputLayerCNNOptions=undefined, hiddenLayersCNNOptions=undefined)
     {
         //note: "tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
         
@@ -70,7 +70,7 @@ class ShaleReservoir extends BaseAIML
             }
             const outputLayer = {units: unitsPerOutputLayer, activation: outputLayerActivation};
                         
-            //step 2: add layers and dropouts......
+            //step 2: add dense layers and dropouts layers......
             model.add(tf.layers.dense(inputLayer));
             model.add(tf.layers.dropout(dropoutRate));
             for(let eachLayer in hiddenLayers)
@@ -107,9 +107,63 @@ class ShaleReservoir extends BaseAIML
         else if(DNNProblemOption === "CNNClassification")
         {
             //iii.convolutional DNN (CNN) classification
+
+            //step 1: create layers.....
+            const inputLayer = {//inputShape: [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChanenel],
+                                inputShape: [28, 28, 1],
+                                kernelSize: inputLayerCNNOptions.kernelSize,
+                                strides: inputLayerCNNOptions.strides,
+                                filters: inputLayerCNNOptions.filters,
+                                activation: inputLayerActivation,
+                                kernelInitializer: inputLayerCNNOptions.kernelInitializer
+                                //dataFormat: 'channelsLast'
+            };
+            let hiddenLayers = [];
+            for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
+            {
+                let layer =   {kernelSize: inputLayerCNNOptions.kernelSize,
+                               strides: inputLayerCNNOptions.strides,
+                               filters: inputLayerCNNOptions.filters,
+                               activation: inputLayerActivation,
+                               kernelInitializer: inputLayerCNNOptions.kernelInitializer
+                               //dataFormat: 'channelsLast'
+                };
+                                
+                hiddenLayers.push(layer);
+            }
+            //note: use thesame kernelInitializer as for hidden layers
+            const outputLayer = {units: unitsPerOutputLayer,
+                                 activation: 'softmax',
+                                 kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
+            };
             
-            //add later ... in progress: add steps 1, 2, 3, 4 & 5 above
-            //i.e. add topology, compile and return
+            //step 2: add conv2d layers, "maxPooling layers" for downsampling, and dropout layers and then flaten before output layer ......
+            model.add(tf.layers.conv2d(inputLayer));
+            model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+            model.add(tf.layers.dropout(dropoutRate));
+            for(let eachLayer in hiddenLayers)
+            {
+                model.add(tf.layers.conv2d(hiddenLayers[eachLayer]));
+                model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+                model.add(tf.layers.dropout(dropoutRate));
+            }
+            //flatten output from the 2D filters into a 1D vector before feeding into classification output layer
+            model.add(tf.layers.flatten());
+            model.add(tf.layers.dense(outputLayer));
+            
+            //step 3: specify compilation options....
+            //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+            //note: assumed input tensors are correctly defined, else error will be thrown
+            compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
+                
+            //step 4: compile model
+            model.compile(compileOptions);
+            
+            //console.log(model);
+            model.summary();
+            
+            //step 5: return model.....
+            return model;
         }
         else
         {
