@@ -107,17 +107,20 @@ class Communication
              
         return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
     }
-    
-    getStatisticsOfTensor(csvFileArrayOutput)
+ 
+    getStatisticsOfTensor(csvFileArrayOutput, printcsvFileArrayOutput)
     {
         console.log("converted/formatted output");
-        console.log(csvFileArrayOutput);
+        if(printcsvFileArrayOutput === true)
+        {
+            console.log(csvFileArrayOutput);
+        }
         console.log("inputDim: ", csvFileArrayOutput.length);
         console.log("inputSize: ", csvFileArrayOutput[0].length);
         const tf = require('@tensorflow/tfjs');
         require('@tensorflow/tfjs-node');
         const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
-        csvFileArrayOutputToTensor.print(true);
+        console.log(csvFileArrayOutputToTensor);
         return csvFileArrayOutputToTensor;
     }
     
