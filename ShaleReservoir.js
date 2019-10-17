@@ -86,14 +86,14 @@ class ShaleReservoir extends BaseAIML
             
             if(DNNProblemOption === "FFNNRegression")
             {
-                //i. feedforward DNN regression
+                //i. feedforward DNN/MLP regression
                 //note: unitsPerOutputLayer = 1 and loss = "meanSquaredError" or any other valid value
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss};
             }
             else if(DNNProblemOption === "FFNNClassification")
             {
-                //ii. feedforward DNN classification
+                //ii. feedforward DNN/MLP classification
                 //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
@@ -107,10 +107,10 @@ class ShaleReservoir extends BaseAIML
         }
         else if(DNNProblemOption === "CNNClassification")
         {
-            //iii.convolutional DNN (CNN) classification
+            //iii.convolutional DNN/MLP (CNN) classification
             
             //step 1: create layers.....
-            const inputShape = [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChannel];
+            const inputShape = [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChannels];
             const inputLayer = {inputShape: inputShape,
                                 kernelSize: inputLayerCNNOptions.kernelSize,
                                 strides: inputLayerCNNOptions.strides,
@@ -121,14 +121,10 @@ class ShaleReservoir extends BaseAIML
             let hiddenLayers = [];
             for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
             {
-                let layer =   {kernelSize: hiddenLayersCNNOptions.kernelSize,
-                               strides: hiddenLayersCNNOptions.strides,
-                               filters: hiddenLayersCNNOptions.filters,
-                               activation: hiddenLayersActivation,
-                               kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
-                };
-                                
-                hiddenLayers.push(layer);
+                hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize, strides: hiddenLayersCNNOptions.strides,
+                                   filters: hiddenLayersCNNOptions.filters, activation: hiddenLayersActivation,
+                                   kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
+                });
             }
             //note: use thesame kernelInitializer as for hidden layers
             const outputLayer = {units: unitsPerOutputLayer,
@@ -158,12 +154,11 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
-            //console.log(model);
+            //check model if model is okay, by printing summary
             model.summary();
             
             //step 5: return model.....
             return model;
-            
         }
         else
         {
