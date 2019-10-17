@@ -94,7 +94,7 @@ class ShaleReservoir extends BaseAIML
             else if(DNNProblemOption === "FFNNClassification")
             {
                 //ii. feedforward DNN/MLP classification
-                //note: unitsPerOutputLayer specified above should > 1
+                //note: unitsPerOutputLayer specified above should be > 1
                 //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
                 //note: optimizer should be 'softmax' or any valid value suitable for classification
                 //note: assumed input tensors are correctly defined, else error will be thrown
@@ -149,7 +149,7 @@ class ShaleReservoir extends BaseAIML
             model.add(tf.layers.dense(outputLayer));
             
             //step 3: specify compilation options....
-            //note: unitsPerOutputLayer specified above should > 1
+            //note: unitsPerOutputLayer specified above should be > 1
             //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
             //note: optimizer should be 'softmax' or any valid value suitable for classification
             //note: assumed input tensors are correctly defined, else error will be thrown
@@ -179,7 +179,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 418 and 422
+        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 471 and 475
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
