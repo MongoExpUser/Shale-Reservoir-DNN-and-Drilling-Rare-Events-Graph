@@ -61,6 +61,7 @@ class ShaleReservoir extends BaseAIML
         
         if(DNNProblemOption === "FFNNRegression" || DNNProblemOption === "FFNNClassification")
         {
+            inputShape
             //step 1: create layers.....
             const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
             let hiddenLayers = [];
@@ -107,26 +108,24 @@ class ShaleReservoir extends BaseAIML
         else if(DNNProblemOption === "CNNClassification")
         {
             //iii.convolutional DNN (CNN) classification
-
+            
             //step 1: create layers.....
-            const inputLayer = {//inputShape: [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChanenel],
-                                inputShape: [28, 28, 1],
+            const inputShape = [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChannel];
+            const inputLayer = {inputShape: inputShape,
                                 kernelSize: inputLayerCNNOptions.kernelSize,
                                 strides: inputLayerCNNOptions.strides,
                                 filters: inputLayerCNNOptions.filters,
                                 activation: inputLayerActivation,
                                 kernelInitializer: inputLayerCNNOptions.kernelInitializer
-                                //dataFormat: 'channelsLast'
             };
             let hiddenLayers = [];
             for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
             {
-                let layer =   {kernelSize: inputLayerCNNOptions.kernelSize,
-                               strides: inputLayerCNNOptions.strides,
-                               filters: inputLayerCNNOptions.filters,
-                               activation: inputLayerActivation,
-                               kernelInitializer: inputLayerCNNOptions.kernelInitializer
-                               //dataFormat: 'channelsLast'
+                let layer =   {kernelSize: hiddenLayersCNNOptions.kernelSize,
+                               strides: hiddenLayersCNNOptions.strides,
+                               filters: hiddenLayersCNNOptions.filters,
+                               activation: hiddenLayersActivation,
+                               kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
                 };
                                 
                 hiddenLayers.push(layer);
@@ -164,6 +163,7 @@ class ShaleReservoir extends BaseAIML
             
             //step 5: return model.....
             return model;
+            
         }
         else
         {
