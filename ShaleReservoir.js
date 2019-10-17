@@ -94,9 +94,11 @@ class ShaleReservoir extends BaseAIML
             else if(DNNProblemOption === "FFNNClassification")
             {
                 //ii. feedforward DNN/MLP classification
-                //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+                //note: unitsPerOutputLayer specified above should > 1
+                //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+                //note: optimizer should be 'softmax' or any valid value suitable for classification
                 //note: assumed input tensors are correctly defined, else error will be thrown
-                compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
+                compileOptions = {optimizer: optimizer, loss: loss, metrics: ['accuracy']};
             }
                  
             //step 4: compile model
@@ -128,7 +130,7 @@ class ShaleReservoir extends BaseAIML
             }
             //note: use thesame kernelInitializer as for hidden layers
             const outputLayer = {units: unitsPerOutputLayer,
-                                 activation: 'softmax',
+                                 activation: outputLayerActivation,
                                  kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
             };
             
@@ -147,7 +149,9 @@ class ShaleReservoir extends BaseAIML
             model.add(tf.layers.dense(outputLayer));
             
             //step 3: specify compilation options....
-            //note: unitsPerOutputLayer > 1 and loss = "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+            //note: unitsPerOutputLayer specified above should > 1
+            //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+            //note: optimizer should be 'softmax' or any valid value suitable for classification
             //note: assumed input tensors are correctly defined, else error will be thrown
             compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
                 
@@ -168,7 +172,7 @@ class ShaleReservoir extends BaseAIML
             return;
         }
     }
-
+    
     shaleReservoirProductionPerformance(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
                                         unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
                                         loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel)
