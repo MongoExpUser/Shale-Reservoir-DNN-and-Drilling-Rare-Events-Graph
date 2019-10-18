@@ -110,7 +110,7 @@ class Communication
         return castCSVToArrayToNumeric(castCSVToArray(loadFile(pathTofile)), true);
     }
  
-    getStatisticsOfTensor(csvFileArrayOutput, printcsvFileArrayOutput)
+    getStatisticsOfTensor(csvFileArrayOutput, printcsvFileArrayOutput=false)
     {
         console.log("converted/formatted output");
         if(printcsvFileArrayOutput === true)
