@@ -697,12 +697,12 @@ class ShaleReservoir extends BaseAIML
         
         //model contruction parameters
         let inputSize = 3;           //no. of input parameters (no. of col - Inputs = log_values_or_data_or_rockimages_or_others etc.)
-        let outputSize = 4;          //no. of output parameters (no. of col - Output = categories_or_labels_or_classes_or_bins )
+        let outputSize = 4;          //no. of output parameters (Output = categories_or_labels_or_classes_or_bins )
         let inputDim = 4;            //no. of datapoint (no. of row for inputSize and outputSize = should be thesame)
         const dropoutRate = 0.02;
         const unitsPerInputLayer = 1;
         const unitsPerHiddenLayer = 10;
-        const unitsPerOutputLayer = 4;
+        const unitsPerOutputLayer = outputSize;
         const inputLayerActivation = "relu";
         const hiddenLayersActivation = "relu";
         const outputLayerActivation = "softmax";
