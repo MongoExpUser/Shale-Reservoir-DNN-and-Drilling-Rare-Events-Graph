@@ -122,6 +122,7 @@ class Communication
         const tf = require('@tensorflow/tfjs');
         require('@tensorflow/tfjs-node');
         const csvFileArrayOutputToTensor = tf.tensor2d(csvFileArrayOutput);
+        csvFileArrayOutputToTensor.print(true);
         console.log(csvFileArrayOutputToTensor);
         return csvFileArrayOutputToTensor;
     }
