@@ -61,7 +61,6 @@ class ShaleReservoir extends BaseAIML
         
         if(DNNProblemOption === "FFNNRegression" || DNNProblemOption === "FFNNClassification")
         {
-            inputShape
             //step 1: create layers.....
             const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
             let hiddenLayers = [];
