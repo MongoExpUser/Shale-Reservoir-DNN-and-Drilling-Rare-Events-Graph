@@ -58,7 +58,6 @@ class ShaleReservoir extends BaseAIML
                 model, tf, DNNProblemOption, inputLayerCNNOptions=undefined, hiddenLayersCNNOptions=undefined)
     {
         //note: "tf.layers" in JavaScript/Node.js version is equivalent to "tf.keras.layers" in Python version
-        
         if(DNNProblemOption === "FFNNRegression" || DNNProblemOption === "FFNNClassification")
         {
             //step 1: create layers.....
@@ -149,7 +148,7 @@ class ShaleReservoir extends BaseAIML
             
             //step 3: specify compilation options....
             //note: unitsPerOutputLayer specified above should be > 1
-            //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+            //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or "binaryCrossentropy" or any other valid value
             //note: optimizer should be 'softmax' or any valid value suitable for classification
             //note: assumed input tensors are correctly defined, else error will be thrown
             compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
@@ -178,7 +177,6 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : e.g. see testShaleReservoirProductionPerformance() method below - lines 471 and 475
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -255,7 +253,7 @@ class ShaleReservoir extends BaseAIML
                 const DNNProblemOption = "FFNNRegression";
                 const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
                                                      hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
-                                                     model, tf, DNNProblemOption);                    
+                                                     model, tf, DNNProblemOption);
                 if(compiledModel)
                 {
                     //if model is successfully compiled: then train, predict and save model
@@ -265,6 +263,7 @@ class ShaleReservoir extends BaseAIML
                     console.log(" ")
                     console.log("...............Training Begins.......................................");
                     
+                    //x = features, y = target continuous output
                     compiledModel.fit(x, y,
                     {
                         batchSize: batchSize,
@@ -282,7 +281,6 @@ class ShaleReservoir extends BaseAIML
                                 console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                             }
                         }
-                        
                     }).then(function(informationHistory)
                     {
                         //print loss summary, if desired
@@ -327,12 +325,13 @@ class ShaleReservoir extends BaseAIML
         }
     }
     
-    
     shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
                                  unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
-                                 loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel)
+                                 loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption)
     {
-        //add others later ...in progress
+        //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
+        //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
+        
         //import module(s) and create model
         const shr = new ShaleReservoir();
         const commonModules = shr.commonModules(this.gpuOption);
@@ -340,12 +339,113 @@ class ShaleReservoir extends BaseAIML
         const util = commonModules.util;
         const model = commonModules.model;
         
-        //add others later ...in progress
-        //in progress warning message
-        console.log("=========================================================================================>");
-        console.log("Shale Reservoir Classification is not available yet.");
-        console.log("Implementation of DNN-based shale reservoir classification is in progress: check later.");
-        console.log("=========================================================================================>");
+        if(this.modelingOption === "dnn")
+        {
+            //configure input tensor
+            let x = null;
+            let y = null;
+            
+            //define tensor
+            x = this.inputFromCSVFileX;
+            y = this.inputFromCSVFileY;
+            
+            if(x && y)
+            {
+                //once defined, set tensor names (for identifiation purpose)
+                x.name = "Inputs = log_values_or_data_or_rockimages_or_others";     //several inputs (=input size)
+                y.name = "Output = categories_or_labels_or_classes_or_bins";        //multi-class output
+            }
+            else
+            {
+                return;
+            }
+            
+            if(DNNProblemOption === "FFNNClassification")
+            {
+                if(existingSavedModel  !== true)
+                {
+                    //create, train, predict and save new model
+                    //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FNNClassification" option
+                    //training data temporarily here:
+                    const DNNProblemOption = "FFNNClassification";
+                    const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                                                              hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                                                              model, tf, DNNProblemOption);
+                    if(compiledModel)
+                    {
+                        //if model is successfully compiled: then train, predict and save model
+                                    
+                        //b. begin training: train the model using the data and time the training
+                        const beginTrainingTime = new Date();
+                        console.log(" ")
+                        console.log("...............Training Begins.......................................");
+                                    
+                        //x = features, y = label/category/class/bin/discrete-value
+                        compiledModel.fit(x, y,
+                        {
+                            epochs: epochs,
+                            batchSize: batchSize,
+                            validationSplit: validationSplit,
+                            verbose: verbose,
+                                        
+                            //customized logging verbosity
+                            callbacks:
+                            {
+                                onEpochEnd: async function (epoch, logs)
+                                {
+                                    const loss = Number(logs.loss).toFixed(6);
+                                    const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
+                                    console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
+                                }
+                            }        
+                        }).then(function(informationHistory)
+                        {
+                            //print loss and accuracy summary, if desired
+                            if(lossSummary === true)
+                            {
+                                console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
+                                console.log('Array of acc summary at each epoch:', informationHistory.history.acc);
+                            }
+                                        
+                            //print training time & signify ending
+                            shr.runTimeDNN(beginTrainingTime, "Training Time");
+                            console.log("........Training Ends................................................");
+                            console.log();
+                                        
+                            //c. predict and print results
+                            shr.predictProductionAndPrintResults(x, y, compiledModel, existingSavedModel=false);
+                                        
+                            //d. save model's topology & weights in the specified sub-folder (i.e. pathToSaveTrainedModel)
+                            //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
+                            //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
+                            compiledModel.save(pathToSaveTrainedModel);
+                                        
+                        }).catch(function(error)
+                        {
+                            if(error)
+                            {
+                                console.log(error, " : TensorFlow error successfully intercepted.");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //if model is not successfully compiled
+                        console.log("Model is not successfully compiled or valid: check for errors in the input values..")
+                        return;
+                    }
+                }
+                else if(existingSavedModel === true)
+                {
+                        //predict with exiting saved model: no need for creating and training new model
+                        shr.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                }
+            }
+            else if(DNNProblemOption === "CNNClassification")
+            {
+                // in progress: add later
+            }
+        }
     }
     
     testShaleReservoirProductionPerformance()
