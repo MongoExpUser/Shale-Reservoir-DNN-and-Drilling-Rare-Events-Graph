@@ -93,7 +93,7 @@ class ShaleReservoir extends BaseAIML
             {
                 //ii. feedforward DNN/MLP classification
                 //note: unitsPerOutputLayer specified above should be > 1
-                //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or any other valid value
+                //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or "binaryCrossentropy" or any other valid value
                 //note: optimizer should be 'softmax' or any valid value suitable for classification
                 //note: assumed input tensors are correctly defined, else error will be thrown
                 compileOptions = {optimizer: optimizer, loss: loss, metrics: ['accuracy']};
@@ -443,7 +443,7 @@ class ShaleReservoir extends BaseAIML
             }
             else if(DNNProblemOption === "CNNClassification")
             {
-                // in progress: add later
+                // add training, prediction and saving codes later...-> in progress
             }
         }
     }
