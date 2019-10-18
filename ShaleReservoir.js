@@ -673,17 +673,84 @@ class ShaleReservoir extends BaseAIML
         }
     }
     
-    testShaleReservoirClassification()
+    testShaleReservoirClassification(DNNProblemOption="FFNNClassification")
     {
-        //add later...in progress
+        //algorithm and gpu/cpu option
+        const modelingOption = "dnn";
+        const gpuOption = false;
+        
+        //create and import modules
+        const shr = new ShaleReservoir();
+        const commonModules = shr.commonModules(this.gpuOption);
+        const tf = commonModules.tf;
+        const fs = commonModules.fs;
+        const path = commonModules.path;
+        const mongodb = commonModules.mongodb;
+        const assert = commonModules.assert;
+        const model = commonModules.model;
+        
+        //training parameters
+        const batchSize = 32;
+        const epochs = 300;
+        const validationSplit = 0.1;  // for large dataset, set to about 10% (0.1) aside
+        const verbose = 1;            // 1 for full logging verbosity, and 0 for none
+        
+        //model contruction parameters
+        let inputSize = 3;           //no. of input parameters (no. of col - Inputs = log_values_or_data_or_rockimages_or_others etc.)
+        let outputSize = 4;          //no. of output parameters (no. of col - Output = categories_or_labels_or_classes_or_bins )
+        let inputDim = 4;            //no. of datapoint (no. of row for inputSize and outputSize = should be thesame)
+        const dropoutRate = 0.02;
+        const unitsPerInputLayer = 1;
+        const unitsPerHiddenLayer = 10;
+        const unitsPerOutputLayer = 4;
+        const inputLayerActivation = "relu";
+        const hiddenLayersActivation = "relu";
+        const outputLayerActivation = "softmax";
+        const numberOfHiddenLayers = 5;
+        const optimizer = "adam";
+        const loss = "categoricalCrossentropy"; //or "sparseCategoricalCrossentropy"; or "binaryCrossentropy";
+        const lossSummary = false;
+        const existingSavedModel = false; //true;
+        const pathToSaveTrainedModel = "file://myShaleProductionModel-0";
+        let pathToExistingSavedTrainedModel = null;
+        
+        if(existingSavedModel === true)
+        {
+            pathToExistingSavedTrainedModel = pathToSaveTrainedModel + "/model.json";
+        }
+        
+        //data loading options (a) array of input "csv files on disk" or (b) "randomly generated" Tensor values
+        //option (a)
+        const fileLocation  = path.format({ root: './'});
+        const fileNameX = "_z_CLogX.csv"; // or "_eagle_ford_datasets_X.csv" or "duvernay_datasets_X.csv" or "bakken_datasets_X.csv"
+        const fileNameY = "_z_CLogY.csv"; // or "_eagle_ford_datasets_Y.csv" or "duvernay_datasets_Y.csv" or "bakken_datasets_Y.csv"
+        //option (b)
+        let x = tf.tensor2d([[0, 0, 3], [0, 1, 4], [1,0,4], [1,1,2]]); //or
+        //let x = tf.truncatedNormal ([inputDim, inputSize], 1, 0.1, "float32", 0.4);
+        let y = tf.tensor2d([[0,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]]);
+        
+        //option (b) is used below
+        const inputFromCSVFileX = x;
+        const inputFromCSVFileY = y;
+        
+        //instantiate main Shale Reservoir Class with relevant arguments
+        const shrTwo = new ShaleReservoir(modelingOption, undefined, gpuOption, inputFromCSVFileX, inputFromCSVFileY, undefined, undefined, undefined);
+
+        DNNProblemOption = "FFNNClassification" // or "CNNClassification", "FFNNClassification" is the default argument value
+
         switch(DNNProblemOption)
         {
             case("FFNNClassification"):
-                // add codes later... in progress
+                const src = shrTwo.shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                                                                dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
+                                                                inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
+                                                                numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
+                                                                pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption);
                 break;
                             
             case("CNNClassification"):
-                // add codes later... in progress
+                //add test for "CNNClassification" later...in progress
+                
                 break;
         }
     }
