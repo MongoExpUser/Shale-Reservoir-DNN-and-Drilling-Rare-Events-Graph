@@ -1,6 +1,6 @@
 # Shale-Reservoir-DNN and Drilling-Rare-Event-Graph
 
-1) Shale Reservoir Production Performance with Tensorflow-Based Deep Neural Network (DNN).
+1) Shale Reservoir (Production Performance & Images/Rocks/Formations/Facies Classification) with Tensorflow-Based Deep Neural Network (DNN).
 
 2) Drilling Rare Events (Vibration, Kick and Stuck pipe) Detection and Prevention with Graph-Based Method.
 
