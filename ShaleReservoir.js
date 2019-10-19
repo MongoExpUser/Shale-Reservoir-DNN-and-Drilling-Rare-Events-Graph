@@ -330,7 +330,7 @@ class ShaleReservoir extends BaseAIML
                                  unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
                                  loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption)
     {
-        //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
+        //note: the abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
         //    : see under testShaleReservoirClassification() method below (lines 739 and 746)
         
