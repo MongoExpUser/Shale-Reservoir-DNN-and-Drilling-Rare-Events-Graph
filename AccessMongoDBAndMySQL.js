@@ -35,7 +35,7 @@ class AccessMongoDBAndMySQL
     
     static getMongoDBCollectionNames(collectionsList)
     {
-        var namesList = [];
+        const namesList = [];
                             
         for(let index in collectionsList)
         {
@@ -359,7 +359,7 @@ class AccessMongoDBAndMySQL
         newUserMap.set("loginStatus", {"loginAttempts": 0, "maxLoginAttempts": maxLoginAttempts, "lockUntil": lockTime});
         newUserMap.set("blockchain", blockchain);
         //initialise files storage on the Document Stores (Distribued Ledgers) as Buffer -> note: limit on each file size is 16MB
-        //arbitrary initialise Buffer values will be over-written once actual files are uploaded to the Distribued Ledgers
+        //arbitrary initialise Buffer values will be over-written once actual files are uploaded to the Distributed Ledgers
         newUserMap.set("distributedLedgersFiles", { "location": Buffer.from("lo"),
                                                     "reservoirVolumetrics": Buffer.from("resv"),
                                                     "petrophysical": Buffer.from("pp"),
@@ -979,7 +979,7 @@ class AccessMongoDBAndMySQL
 
     reusableMongoDBConnection(dbUserName, dbUserPassword, dbDomainURL, dbName, sslCertOptions, enableSSL, connectionBolean)
     {
-        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" - this ensures a reusability of
+        //use mongoose ORM as interface to "MongoDB Node.js Native Driver" - this ensures reusability of a
         //MongoDBConnection, instead of connecting everytime a CRUD operation request is sent to the server
         const mongoose = require('mongoose');
         mongoose.Promise = require('bluebird');
