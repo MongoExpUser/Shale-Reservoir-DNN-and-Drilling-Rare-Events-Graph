@@ -124,7 +124,6 @@ class ShaleReservoir extends BaseAIML
             
             //step 1: create layers.....
             const inputShape = [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChannels];
-            
             const inputLayer = {inputShape: inputShape,
                                 kernelSize: inputLayerCNNOptions.kernelSize,
                                 strides: inputLayerCNNOptions.strides,
@@ -134,9 +133,7 @@ class ShaleReservoir extends BaseAIML
             };
             
             const hiddenLayers = [];
-            
-            const hiddenLayerNumber =hiddenLayersCNNOptions.numberOfHiddenLayers;
-            
+            const hiddenLayerNumber = hiddenLayersCNNOptions.numberOfHiddenLayers;
             for(let layerIndex = 0; layerIndex < hiddenLayerNumber; layerIndex ++)
             {
                 hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize,
