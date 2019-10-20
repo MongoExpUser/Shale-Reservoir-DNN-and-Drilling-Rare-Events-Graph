@@ -23,7 +23,8 @@
  * It can also be adapted for use in the browser with the tfjs-vis library enabled for browser visualization.
  *
  *
- * Objectives:
+ * Objectives for "Production Performance i.e. Production Function Regression"
+ * ==========================================================================
  * 1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
  * 2) Then: (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
  * 3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, .... 1825.....n days)
@@ -39,6 +40,17 @@
  *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
  *         Note: Hence, fracture directional disparity = Sm - Sw (well direction), correct to maximum degree of 90.
+ *
+ *
+ * Objectives for "Classification"
+ * ===============================
+ * 1) Given a set of labels/categories/classes for (rock-types/images/formation/facies/etc)
+ * 2) Train the label and input data (rock-types/images/formations/facies/etc) converted to numerical values/datasets.
+ * 3) For fitted/trained dataset, obtain a set of hyper-parameters for the DNN architectures (FFNNClassification or CNNClassification)
+ *    for the (rock-types/images/formations/facies/etc), evaluate and save model.
+ * 4) Based on saved model, then generate/predict classifications for unseen dataset field-wide for (rock-types/images/formations/facies/etc)
+ * 5) Classification helps to map (per field/section(DA)/pad) rock-types/images/formations/facies/etc for hydrocanbon content and quality
+ *    for well placement, hydraulic fracture design and production optimization.
  *
  */
 
