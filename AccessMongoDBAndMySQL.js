@@ -88,6 +88,12 @@ class AccessMongoDBAndMySQL
         return outputObject;
     }
     
+     static validDocument(keys, values)
+    {
+        return  (keys !== null) && (keys !== undefined) && (values !== null) &&
+                (values !== undefined) && (keys.length === values.length);
+    }
+    
     static drillingEventTableSchema()
     {
         //define schema variable and bracket, with correct spaces & commas
@@ -231,8 +237,7 @@ class AccessMongoDBAndMySQL
     static drillingEventDocumentKeyValuePairs(keys, values)
     {
         const keyValuePairsMap = new Map();
-        const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
-                                   (values !== undefined) && (keys.length === values.length);
+        const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
         
         if(validKeyValuePairs === true)
         {
