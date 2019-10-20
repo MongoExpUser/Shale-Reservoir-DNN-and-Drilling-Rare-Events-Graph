@@ -28,7 +28,7 @@ Python-shell.js v1.0.8
 
 Python v3.7
 
-Tensorflow v1.14.0 (Python Version)
+Tensorflow v2.0 (Python Version)
 
 Scikit-learn v0.21.2
 
@@ -42,7 +42,7 @@ MongoDB Server v4.0.13 on Ubuntu 18.04.1
 
 MongoDB Node.js Native Driver v3.3.2 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.7.1 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.7.7 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.18 on Ubuntu 18.04.1
 
