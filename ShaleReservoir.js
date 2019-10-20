@@ -44,7 +44,7 @@
  *
  * Objectives for "Classification"
  * ===============================
- * 1) Given a set of labels/categories/classes for (rock-types/images/formation/facies/etc)
+ * 1) Given a set of labels/categories/classes for (rock-types/images/formations/facies/etc)
  * 2) Train the label and input data (rock-types/images/formations/facies/etc) converted to numerical values/datasets.
  * 3) For fitted/trained dataset, obtain a set of hyper-parameters for the DNN architectures (FFNNClassification or CNNClassification)
  *    for the (rock-types/images/formations/facies/etc), evaluate and save model.
