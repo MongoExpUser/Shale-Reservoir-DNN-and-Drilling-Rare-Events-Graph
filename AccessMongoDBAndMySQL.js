@@ -262,9 +262,7 @@ class AccessMongoDBAndMySQL
         //returns key-value pairs classified/binned into suitable categories
         
         const keyValuePairsMap = new Map();
-        const validKeyValuePairs = (keys !== null) && (keys !== undefined) && (values !== null) &&
-                                   (values !== undefined) && (keys.length === values.length);
-        
+        const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
         
         if(validKeyValuePairs === true)
         {
@@ -301,7 +299,6 @@ class AccessMongoDBAndMySQL
                         keyValuePairsMap.set("mwdLwdData", keyValue);
                         keyValue = {};
                     }
-
                 }
                 else if(index >= 20  && index < 23)
                 {
@@ -312,7 +309,6 @@ class AccessMongoDBAndMySQL
                         keyValuePairsMap.set("eventData", keyValue);
                         keyValue = {};
                     }
-                    
                 }
                 else if(index === 23)
                 {
@@ -327,6 +323,74 @@ class AccessMongoDBAndMySQL
             }
         }
     
+        return keyValuePairsMap;
+    }
+    
+    static shaleReservoirDocumentKeys()
+    {
+        return { "reservoir_characteristics": "reservoir_characteristics",
+                 "completion_details_per_pad":  "completion_details_per_pad",
+                 "production_details_per_pad": "production_details_per_pad"
+        };
+    }
+    
+    static shaleReservoirDocumentValues()
+    {
+        return {
+                    //1. reservoir_characteristics
+                    reservoir_characteristics: {
+                        reservoir_type: "dolomite_shale",
+                        fluid_type: "oil",
+                        fluid_species_mol_fraction: { HO: 0.0800, LO: 0.9090, CH4: 0.0090, CO2: 0.0010, others_traces: 0.0010 },
+                        oil_api: 38.1,
+                        maturity_level_Ro: 0.72,
+                        init_oil_sat_frac: 0.82,
+                        porosity_frac: 0.04,
+                        thickness_ft: 86.2,
+                        toc_frac: 0.056,
+                        perm_nD: 5.1,
+                        tvd_pressure_proxy_ft: 8900.3,
+                        avg_calcite_frac: 0.017
+                    },
+                    //2. completion_details_per_pad
+                    completion_details_per_pad: {
+                        avg_number_of_stages_per_well: 20,
+                        avg_perf_inverval_per_well_ft: 5200,
+                        avg_proppant_loading_per_well_lbs: 9000.1,
+                        avg_pumped_fluid_vol_per_well_mm_bbls: 4.2,
+                        avg_direc_rel_to_max_prin_stress_per_well_deg: 78.0,
+                        fracturing_fluid_type: "slickwater",
+                        number_of_wells: 5
+                    },
+                    //  3. production_details_per_pad
+                    production_details_per_pad: {
+                        ip_mboe_per_day_30day_avg: 1.12,
+                        ip_mboe_per_day_12hrs_avg: 1.50,
+                        cum_prod_boe_mm_bbls: { months_06: 0.342, months_18: 0.560, months_36: 0.637}
+                    }
+            }
+    }
+    
+    static shaleReservoirDocumentKeyValuePairsBinned(keys, values)
+    {
+        //returns key-value pairs classified/binned into suitable categories
+         
+        //shale reservoir document: data in this document are used for shale analytics with AIML algorithms
+        //note: this document schema is equivalent to TABLE schema in regular MySQL
+        //note: the schema has embedded documents that is equivalent/similar to normalization
+        //    : so, there is no need for seperate document, everything is embedded within a single document
+        //    : this makes anaytics less cumbersome, with no need for JOINING different documents (TABLES equivalent in MYSQL)
+        
+        const keyValuePairsMap = new Map();
+        const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
+        
+        if(validKeyValuePairs === true)
+        {
+            keyValuePairsMap.set(keys.reservoir_characteristics, values.reservoir_characteristics);
+            keyValuePairsMap.set(keys.completion_details_per_pad, values.completion_details_per_pad);
+            keyValuePairsMap.set(keys.production_details_per_pad, values.production_details_per_pad);
+        }
+
         return keyValuePairsMap;
     }
     
