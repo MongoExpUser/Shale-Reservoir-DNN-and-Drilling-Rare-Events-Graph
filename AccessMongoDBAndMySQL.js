@@ -368,7 +368,7 @@ class AccessMongoDBAndMySQL
                         avg_perf_inverval_per_well_ft: 5200,
                         avg_proppant_loading_per_well_lbs: 9000.1,
                         avg_pumped_fluid_vol_per_well_mm_bbls: 4.2,
-                        avg_well_direc_relative_to_max_prin_stress_deg_deg: 78.0,  // also called: avg_well_directional_disparity_deg
+                        avg_well_direc_relative_to_max_prin_stress_deg_deg: 78.0,  // also called: // also called: avg_fracture_directional_disparity_deg
                         number_of_wells: 5
                     },
                     //  3. production_details_per_pad
