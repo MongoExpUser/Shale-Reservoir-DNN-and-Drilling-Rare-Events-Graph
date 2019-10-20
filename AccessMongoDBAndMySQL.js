@@ -88,7 +88,7 @@ class AccessMongoDBAndMySQL
         return outputObject;
     }
     
-     static validDocument(keys, values)
+    static validDocument(keys, values)
     {
         return  (keys !== null) && (keys !== undefined) && (values !== null) &&
                 (values !== undefined) && (keys.length === values.length);
