@@ -62,7 +62,7 @@ class ShaleReservoir extends BaseAIML
         {
             //step 1: create layers.....
             const inputLayer = {inputShape: [inputSize], units: unitsPerInputLayer, activation: inputLayerActivation};
-            let hiddenLayers = [];
+            const hiddenLayers = [];
             for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
             {
                 hiddenLayers.push({units: unitsPerHiddenLayer, activation: hiddenLayersActivation})
@@ -102,11 +102,17 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
+            //check model if model is okay, by printing summary
+            model.summary();
+            
             //step 5: return model.....
             return model;
         }
         else if(DNNProblemOption === "CNNClassification")
         {
+  
+            const model = tf.sequential();
+            
             //iii.convolutional DNN/MLP (CNN) classification
             
             //step 1: create layers.....
@@ -118,11 +124,14 @@ class ShaleReservoir extends BaseAIML
                                 activation: inputLayerActivation,
                                 kernelInitializer: inputLayerCNNOptions.kernelInitializer
             };
-            let hiddenLayers = [];
-            for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
+            const hiddenLayers = [];
+            const hiddenLayerNumber =hiddenLayersCNNOptions.numberOfHiddenLayers
+            for(let layerIndex = 0; layerIndex < hiddenLayerNumber; layerIndex ++)
             {
-                hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize, strides: hiddenLayersCNNOptions.strides,
-                                   filters: hiddenLayersCNNOptions.filters, activation: hiddenLayersActivation,
+                hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize,
+                                   strides: hiddenLayersCNNOptions.strides,
+                                   filters: hiddenLayersCNNOptions.filters,
+                                   activation: hiddenLayersActivation,
                                    kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
                 });
             }
@@ -151,7 +160,7 @@ class ShaleReservoir extends BaseAIML
             //note: loss should be "categoricalCrossentropy" or "sparseCategoricalCrossentropy" or "binaryCrossentropy" or any other valid value
             //note: optimizer should be 'softmax' or any valid value suitable for classification
             //note: assumed input tensors are correctly defined, else error will be thrown
-            compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
+            let compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
                 
             //step 4: compile model
             model.compile(compileOptions);
@@ -164,7 +173,6 @@ class ShaleReservoir extends BaseAIML
         }
         else
         {
-            //do nothing:
             console.log("Run is terminated because no 'DNN Problem Option' is selected.");
             console.log("Select one DNNOption: 'FFNNRegression' or 'FFNNClassification or 'CNNClassification'.");
             return;
@@ -177,7 +185,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see under shaleReservoirProductionPerformance() method below (lines 572 and 576)
+        //    : see under shaleReservoirProductionPerformance() method below (lines 580 and 584)
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -332,7 +340,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see under testShaleReservoirClassification() method below (lines 739 and 746)
+        //    : see under testShaleReservoirClassification() method below (lines 747and 752)
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -737,9 +745,7 @@ class ShaleReservoir extends BaseAIML
         
         //instantiate main Shale Reservoir Class with relevant arguments
         const shrTwo = new ShaleReservoir(modelingOption, undefined, gpuOption, inputFromCSVFileX, inputFromCSVFileY, undefined, undefined, undefined);
-
-        DNNProblemOption = "FFNNClassification" // or "CNNClassification", "FFNNClassification" is the default argument value
-
+      
         switch(DNNProblemOption)
         {
             case("FFNNClassification"):
