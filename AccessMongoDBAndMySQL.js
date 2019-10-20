@@ -262,7 +262,7 @@ class AccessMongoDBAndMySQL
         /*
             note:
             1) returns key-value pairs (for drilling event document) classified/binned into suitable categories
-            2) data in this document are used for rear event (anomaly detection) analytics with AIML algorithms
+            2) data in this document are used for drilling rear event/anomaly detection analytics with AIML algorithms
             3) data are denormlized with embedded documents as sub-documents (i.e. classified/binned)
         */
         
