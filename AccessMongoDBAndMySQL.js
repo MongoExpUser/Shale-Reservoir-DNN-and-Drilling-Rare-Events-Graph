@@ -259,7 +259,14 @@ class AccessMongoDBAndMySQL
     
     static drillingEventDocumentKeyValuePairsBinned(keys, values)
     {
-        //returns key-value pairs classified/binned into suitable categories
+        /*
+            note:
+            1) returns key-value pairs (for drilling event document) classified/binned into suitable categories
+            2) data in this document are used for rear event (anomaly detection) analytics with AIML algorithms
+            3) data are denormlized with embedded documents as sub-documents (i.e. classified/binned)
+        */
+        
+        AccessMongoDBAndMySQL.convertMapToObject(documentObjectMap);
         
         const keyValuePairsMap = new Map();
         const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
@@ -322,7 +329,7 @@ class AccessMongoDBAndMySQL
                 }
             }
         }
-    
+       
         return keyValuePairsMap;
     }
     
@@ -373,13 +380,12 @@ class AccessMongoDBAndMySQL
     
     static shaleReservoirDocumentKeyValuePairsBinned(keys, values)
     {
-        //returns key-value pairs classified/binned into suitable categories
-         
-        //shale reservoir document: data in this document are used for shale analytics with AIML algorithms
-        //note: this document schema is equivalent to TABLE schema in regular MySQL
-        //note: the schema has embedded documents that is equivalent/similar to normalization
-        //    : so, there is no need for seperate document, everything is embedded within a single document
-        //    : this makes anaytics less cumbersome, with no need for JOINING different documents (TABLES equivalent in MYSQL)
+        /*
+            note:
+            1) returns key-value pairs (for shale reservoir document) classified/binned into suitable categories
+            2) data in this document are used for shale reservoir analytics with AIML algorithms
+            3) data are denormlized with embedded documents as sub-documents (i.e. classified/binned)
+        */
         
         const keyValuePairsMap = new Map();
         const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
