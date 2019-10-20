@@ -102,21 +102,17 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
-            //check model if model is okay, by printing summary
-            model.summary();
             
             //step 5: return model.....
             return model;
         }
         else if(DNNProblemOption === "CNNClassification")
         {
-  
-            const model = tf.sequential();
-            
             //iii.convolutional DNN/MLP (CNN) classification
             
             //step 1: create layers.....
             const inputShape = [inputLayerCNNOptions.imageWidthSize, inputLayerCNNOptions.imageHeightSize, inputLayerCNNOptions.imageChannels];
+            
             const inputLayer = {inputShape: inputShape,
                                 kernelSize: inputLayerCNNOptions.kernelSize,
                                 strides: inputLayerCNNOptions.strides,
@@ -124,8 +120,11 @@ class ShaleReservoir extends BaseAIML
                                 activation: inputLayerActivation,
                                 kernelInitializer: inputLayerCNNOptions.kernelInitializer
             };
+            
             const hiddenLayers = [];
-            const hiddenLayerNumber =hiddenLayersCNNOptions.numberOfHiddenLayers
+            
+            const hiddenLayerNumber =hiddenLayersCNNOptions.numberOfHiddenLayers;
+            
             for(let layerIndex = 0; layerIndex < hiddenLayerNumber; layerIndex ++)
             {
                 hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize,
@@ -135,6 +134,7 @@ class ShaleReservoir extends BaseAIML
                                    kernelInitializer: hiddenLayersCNNOptions.kernelInitializer
                 });
             }
+            
             //note: use thesame kernelInitializer as for hidden layers
             const outputLayer = {units: unitsPerOutputLayer,
                                  activation: outputLayerActivation,
@@ -165,9 +165,6 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
-            //check model if model is okay, by printing summary
-            model.summary();
-            
             //step 5: return model.....
             return model;
         }
@@ -185,7 +182,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see under shaleReservoirProductionPerformance() method below (lines 580 and 584)
+        //    : see under shaleReservoirProductionPerformance() method below 
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -336,11 +333,12 @@ class ShaleReservoir extends BaseAIML
     
     shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize, dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer,
                                  unitsPerOutputLayer, inputLayerActivation, outputLayerActivation, hiddenLayersActivation, numberOfHiddenLayers, optimizer,
-                                 loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption)
+                                 loss, lossSummary, existingSavedModel, pathToSaveTrainedModel, pathToExistingSavedTrainedModel,
+                                 DNNProblemOption, inputLayerCNNOptions=undefined, hiddenLayersCNNOptions=undefined)
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see under testShaleReservoirClassification() method below (lines 747and 752)
+        //    : see under testShaleReservoirClassification() method below
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -370,17 +368,18 @@ class ShaleReservoir extends BaseAIML
                 return;
             }
             
+            //create, train, predict and save new model
+                  
             if(DNNProblemOption === "FFNNClassification")
             {
+                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FNNClassification" option
+            
+                const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                                                      hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                                                      model, tf, DNNProblemOption);
+     
                 if(existingSavedModel  !== true)
                 {
-                    //create, train, predict and save new model
-                    //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FNNClassification" option
-                    //training data temporarily here:
-                    const DNNProblemOption = "FFNNClassification";
-                    const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
-                                                              hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
-                                                              model, tf, DNNProblemOption);
                     if(compiledModel)
                     {
                         //if model is successfully compiled: then train, predict and save model
@@ -407,7 +406,8 @@ class ShaleReservoir extends BaseAIML
                                     const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
                                     console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                                 }
-                            }        
+                            }
+                            
                         }).then(function(informationHistory)
                         {
                             //print loss and accuracy summary, if desired
@@ -429,7 +429,7 @@ class ShaleReservoir extends BaseAIML
                             //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
                             //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
                             compiledModel.save(pathToSaveTrainedModel);
-                                        
+                            
                         }).catch(function(error)
                         {
                             if(error)
