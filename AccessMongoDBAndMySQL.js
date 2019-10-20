@@ -271,8 +271,6 @@ class AccessMongoDBAndMySQL
             3) data are denormlized with embedded documents as sub-documents (i.e. classified/binned)
         */
         
-        AccessMongoDBAndMySQL.convertMapToObject(documentObjectMap);
-        
         const keyValuePairsMap = new Map();
         const validKeyValuePairs = AccessMongoDBAndMySQL.validDocument(keys, values);
         
