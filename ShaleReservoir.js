@@ -114,7 +114,6 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
-            
             //step 5: return model.....
             return model;
         }
@@ -131,10 +130,8 @@ class ShaleReservoir extends BaseAIML
                                 activation: inputLayerActivation,
                                 kernelInitializer: inputLayerCNNOptions.kernelInitializer
             };
-            
             const hiddenLayers = [];
-            const hiddenLayerNumber = hiddenLayersCNNOptions.numberOfHiddenLayers;
-            for(let layerIndex = 0; layerIndex < hiddenLayerNumber; layerIndex ++)
+            for(let layerIndex = 0; layerIndex < numberOfHiddenLayers; layerIndex ++)
             {
                 hiddenLayers.push({kernelSize: hiddenLayersCNNOptions.kernelSize,
                                    strides: hiddenLayersCNNOptions.strides,
@@ -170,7 +167,7 @@ class ShaleReservoir extends BaseAIML
             //note: optimizer should be 'softmax' or any valid value suitable for classification
             //note: assumed input tensors are correctly defined, else error will be thrown
             let compileOptions = {optimizer: optimizer, loss: loss, metrics:['accuracy']};
-                
+            
             //step 4: compile model
             model.compile(compileOptions);
             
