@@ -486,6 +486,7 @@ class AccessMongoDBAndMySQL
         //connect with "MongoDB Node.js Native Driver". See - https://www.npmjs.com/package/mongodb
         const mongodb = require('mongodb');
         const fs = require('fs');
+        const util = require('util');
         const uri = String('mongodb://' + dbUserName + ':' + dbUserPassword + '@' + dbDomainURL + '/' + dbName);
         const mda = new AccessMongoDBAndMySQL();
         const mongodbOptions = mda.mongoDBConnectionOptions(sslCertOptions, enableSSL);
@@ -623,7 +624,7 @@ class AccessMongoDBAndMySQL
                                         }
                                                 
                                         console.log("Some or all documents and their fields (key-value pairs) in " + String(collectionName) + " COLLECTION are shown below!");
-                                        console.log(foundCollection);
+                                        console.log(util.inspect(foundCollection, { showHidden: true, colors: true, depth: 4 }));
                                         console.log();
                                         
                                         //5...... drop/delete collection, if desired
@@ -679,6 +680,7 @@ class AccessMongoDBAndMySQL
         //connect with "MySQL Node.js Driver". See - https://www.npmjs.com/package/mysql
         const mysql = require('mysql');
         const fs = require('fs');
+        const util = require('util');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
         const dbName = String(mysqlOptions.database);
@@ -795,7 +797,7 @@ class AccessMongoDBAndMySQL
                                     }
                                     
                                     console.log("Some or all rows and column values in " + String(tableName) + " TABLE are shown below!");
-                                    console.log(result);
+                                    console.log(util.inspect(result, { showHidden: true, colors: true, depth: 4 }));
                                     console.log();
                          
                                     //5. drop/delete table, if desired
@@ -835,6 +837,7 @@ class AccessMongoDBAndMySQL
         //connect with "MySQL Connector/Node.js". See - https://www.npmjs.com/package/@mysql/xdevapi
         const mysqlx = require('@mysql/xdevapi');
         const fs = require('fs');
+        const util = require('util');
         const mda = new AccessMongoDBAndMySQL();
         const mysqlxOptions = mda.mySQLConnectionOptions(sslCertOptions, enableSSL, connectionOptions);
         const dbName = String(mysqlxOptions.database);
@@ -933,7 +936,7 @@ class AccessMongoDBAndMySQL
                     db.getCollection(collectionName).find().execute(function(foundCollection)
                     {
                         console.log("Document with id (", foundCollection._id, ") and its key-value pair in " + String(collectionName) + " COLLECTION, is shown below!");
-                        console.log(foundCollection);
+                        console.log(util.inspect(foundCollection, { showHidden: true, colors: true, depth: 4 }));
                                     
                     }).catch(function(showCollectionError)
                     {
