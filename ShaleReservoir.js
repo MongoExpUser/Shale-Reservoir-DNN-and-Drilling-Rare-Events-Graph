@@ -44,16 +44,15 @@
  *
  * Objectives for "Classification"
  * ===============================
- * 1) Given a set of labels/categories/classes for (rock-types/images/formations/facies/etc)
- * 2) Train the label and input data (rock-types/images/formations/facies/etc) converted to numerical values/datasets.
- * 3) For fitted/trained dataset, obtain a set of hyper-parameters for the DNN architectures (FFNNClassification or CNNClassification)
- *    for the (rock-types/images/formations/facies/etc), evaluate and save model.
- * 4) Based on saved model, then generate/predict classifications for unseen dataset field-wide for (rock-types/images/formations/facies/etc)
- * 5) Classification helps to map (per field/section(DA)/pad) rock-types/images/formations/facies/etc for hydrocanbon content and quality
- *    for well placement, hydraulic fracture design and production optimization.
+ * 1) Given a set of labels/categories/classes (output) for rock-types/images/formations/facies/etc (input).
+ * 2) Train the output and input data (rock-types/images/formations/facies/etc) converted to numerical values/datasets.
+ * 3) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (FFNNClassification or CNNClassification)
+ *    for the rock-types/images/formations/facies/etc., evaluate and save model.
+ * 4) Based on saved model, then generate/predict classifications for unseen dataset field-wide for rock-types/images/formations/facies/etc.
+ * 5) Classification helps to map (per field/section(DA)/pad) rock-types/images/formations/facies/etc. for hydrocanbon content and quality
+ *    that can be used for optimal well placement, hydraulic fracture design and production optimization.
  *
  */
-
 
 const BaseAIML = require('./BaseAIML.js').BaseAIML;
 
