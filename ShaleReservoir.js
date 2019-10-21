@@ -187,7 +187,7 @@ class ShaleReservoir extends BaseAIML
     {
         //note: the abstraction in this method is simplified and similar to sklearn's MLPRegressor(args),
         //    : such that calling the modelingOption (DNN) is reduced to just 2 lines of statements
-        //    : see under shaleReservoirProductionPerformance() method below 
+        //    : see under shaleReservoirProductionPerformance() method below (lines 572 and 576)
         
         //import module(s) and create model
         const shr = new ShaleReservoir();
@@ -256,11 +256,10 @@ class ShaleReservoir extends BaseAIML
                 }
             }
             
+            //create, train, predict and save new model or use existing saved model
             if(existingSavedModel !== true)
             {
-                //create, train, predict and save new model
-            
-                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FFNNRegression" option
+                //a. create compiled model using modelEngine() method on ShaleReservoir() class with "FFNNRegression" option
                 const DNNProblemOption = "FFNNRegression";
                 const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
                                                      hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
@@ -292,6 +291,7 @@ class ShaleReservoir extends BaseAIML
                                 console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
                             }
                         }
+                        
                     }).then(function(informationHistory)
                     {
                         //print loss summary, if desired
@@ -312,7 +312,6 @@ class ShaleReservoir extends BaseAIML
                         //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
                         //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
                         compiledModel.save(pathToSaveTrainedModel);
-                        
                     }).catch(function(error)
                     {
                         if(error)
@@ -373,92 +372,96 @@ class ShaleReservoir extends BaseAIML
                 return;
             }
             
-            //create, train, predict and save new model
-                  
-            if(DNNProblemOption === "FFNNClassification")
+            //create, train, predict and save new model or use existing saved model
+            if(existingSavedModel  !== true)
             {
-                //a. create model: invoke modelEngine() method on ShaleReservoir() class with "FNNClassification" option
-            
-                const compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
-                                                      hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
-                                                      model, tf, DNNProblemOption);
-     
-                if(existingSavedModel  !== true)
+                //a. create compiled model using modelEngine() method on ShaleReservoir() class with "FNNClassification" or "CNNClassification"  option
+                let compiledModel;
+                
+                switch(DNNProblemOption)
                 {
-                    if(compiledModel)
+                    case("FFNNClassification"):
+                        compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                                                        hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                                                        model, tf, DNNProblemOption);
+                        break;
+                        
+                    case("CNNClassification"):
+                        compiledModel = shr.modelEngine(inputSize, unitsPerInputLayer, inputLayerActivation, numberOfHiddenLayers, unitsPerHiddenLayer,
+                                                        hiddenLayersActivation, unitsPerOutputLayer, outputLayerActivation, dropoutRate, optimizer, loss,
+                                                        model, tf, DNNProblemOption, inputLayerCNNOptions, hiddenLayersCNNOptions);
+                        break;
+                }
+                
+                if(compiledModel)
+                {
+                    //if model is successfully compiled: then train, predict and save model
+                                    
+                    //b. begin training: train the model using the data and time the training
+                    const beginTrainingTime = new Date();
+                    console.log(" ")
+                    console.log("...............Training Begins.......................................");
+                                    
+                    //x = features, y = label/category/class/bin/discrete-value
+                    compiledModel.fit(x, y,
                     {
-                        //if model is successfully compiled: then train, predict and save model
-                                    
-                        //b. begin training: train the model using the data and time the training
-                        const beginTrainingTime = new Date();
-                        console.log(" ")
-                        console.log("...............Training Begins.......................................");
-                                    
-                        //x = features, y = label/category/class/bin/discrete-value
-                        compiledModel.fit(x, y,
-                        {
-                            epochs: epochs,
-                            batchSize: batchSize,
-                            validationSplit: validationSplit,
-                            verbose: verbose,
+                        epochs: epochs,
+                        batchSize: batchSize,
+                        validationSplit: validationSplit,
+                        verbose: verbose,
                                         
-                            //customized logging verbosity
-                            callbacks:
-                            {
-                                onEpochEnd: async function (epoch, logs)
-                                {
-                                    const loss = Number(logs.loss).toFixed(6);
-                                    const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
-                                    console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
-                                }
-                            }
-                            
-                        }).then(function(informationHistory)
+                        //customized logging verbosity
+                        callbacks:
                         {
-                            //print loss and accuracy summary, if desired
-                            if(lossSummary === true)
+                            onEpochEnd: async function (epoch, logs)
                             {
+                                const loss = Number(logs.loss).toFixed(6);
+                                const mem = ((tf.memory().numBytes)/1E+6).toFixed(6);
+                                console.log("Epoch =", epoch, "Loss =", loss, "   Allocated Memory (MB) =", mem);
+                            }
+                        }
+                            
+                    }).then(function(informationHistory)
+                    {
+                        //print loss and accuracy summary, if desired
+                        if(lossSummary === true)
+                        {
                                 console.log('Array of loss summary at each epoch:', informationHistory.history.loss);
                                 console.log('Array of acc summary at each epoch:', informationHistory.history.acc);
-                            }
+                        }
                                         
-                            //print training time & signify ending
-                            shr.runTimeDNN(beginTrainingTime, "Training Time");
-                            console.log("........Training Ends................................................");
-                            console.log();
+                        //print training time & signify ending
+                        shr.runTimeDNN(beginTrainingTime, "Training Time");
+                        console.log("........Training Ends................................................");
+                        console.log();
                                         
-                            //c. predict and print results
-                            shr.predictProductionAndPrintResults(x, y, compiledModel, existingSavedModel=false);
+                        //c. predict and print results
+                        shr.predictProductionAndPrintResults(x, y, compiledModel, existingSavedModel=false);
                                         
-                            //d. save model's topology & weights in the specified sub-folder (i.e. pathToSaveTrainedModel)
-                            //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
-                            //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
-                            compiledModel.save(pathToSaveTrainedModel);
+                        //d. save model's topology & weights in the specified sub-folder (i.e. pathToSaveTrainedModel)
+                        //   of the current folder as:  model.json & weights.bin, respectively, model can be used later as
+                        //   "existingSavedModel" for predicting without any need to re-create and re-train - see below
+                        compiledModel.save(pathToSaveTrainedModel);
                             
-                        }).catch(function(error)
-                        {
-                            if(error)
-                            {
-                                console.log(error, " : TensorFlow error successfully intercepted.");
-                            }
-                        });
-                    }
-                    else
+                    }).catch(function(error)
                     {
-                        //if model is not successfully compiled
-                        console.log("Model is not successfully compiled or valid: check for errors in the input values..")
-                        return;
-                    }
+                        if(error)
+                        {
+                            console.log(error, " : TensorFlow error successfully intercepted.");
+                        }
+                    });
                 }
-                else if(existingSavedModel === true)
+                else
                 {
-                        //predict with exiting saved model: no need for creating and training new model
-                        shr.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
+                    //if model is not successfully compiled
+                    console.log("Model is not successfully compiled or valid: check for errors in the input values..")
+                    return;
                 }
             }
-            else if(DNNProblemOption === "CNNClassification")
+            else if(existingSavedModel === true)
             {
-                // add training, prediction and saving codes later...-> in progress
+                //predict with exiting saved model: no need for creating and training new model
+                shr.predictProductionAndPrintResultsBasedOnExistingSavedModel(x, y, tf, pathToExistingSavedTrainedModel);
             }
         }
     }
