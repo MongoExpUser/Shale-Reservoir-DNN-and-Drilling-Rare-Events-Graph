@@ -713,34 +713,34 @@ class ShaleReservoir extends BaseAIML
         const mongodb = commonModules.mongodb;
         const assert = commonModules.assert;
         const model = commonModules.model;
-        const Communication  = require('./Communication.js').Communication;  
+        const Communication  = require('./Communication.js').Communication;
         const cmm = new Communication();
         
         //training parameters
-        const batchSize = 32;
-        const epochs = 500;
-        const validationSplit = 0.1;           // for large dataset, set about 10% (0.1) aside for validation
-        const verbose = 1;                     // 1 for full logging verbosity, and 0 for none
+        let batchSize = 100;
+        let epochs = 500;
+        let validationSplit = 0.1;             // for large dataset, set about 10% (0.1) aside for validation
+        let verbose = 1;                       // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
         let inputSize = undefined;             //no. of input parameters (no. of col - Inputs = log_values_or_data_or_rockimages_or_others etc.)
         let outputSize = undefined;            //no. of output parameters (Output = categories_or_labels_or_classes_or_bins )
         let inputDim =  undefined;             //no. of datapoint (no. of row for inputSize and outputSize = should be thesame)
-        const dropoutRate = 0.02;
-        const unitsPerInputLayer = 5;
-        const unitsPerHiddenLayer = 10;
+        let dropoutRate = 0.2;
+        let unitsPerInputLayer = 10;
+        let unitsPerHiddenLayer = 10;
         let unitsPerOutputLayer = outputSize;
-        const inputLayerActivation = "relu";
-        const hiddenLayersActivation = "relu";
-        const outputLayerActivation = "softmax";
-        const numberOfHiddenLayers = 2;
-        const optimizer = "adam";
-        const loss = "categoricalCrossentropy"; //or "sparseCategoricalCrossentropy"; or "binaryCrossentropy";
-        const lossSummary = true;
-        const existingSavedModel = false;       //or true;
-        const pathToSaveTrainedModel = "file://myShaleProductionModel-0";
+        let inputLayerActivation = "relu";
+        let hiddenLayersActivation = "relu";
+        let outputLayerActivation = "softmax";
+        let numberOfHiddenLayers = 50;
+        let optimizer = "adam";
+        let loss = "categoricalCrossentropy"; //or "sparseCategoricalCrossentropy"; or "binaryCrossentropy";
+        let lossSummary = true;
+        let existingSavedModel = false;       //or true;
+        let pathToSaveTrainedModel = "file://myShaleProductionModel-0";
         let pathToExistingSavedTrainedModel = null;
-        const fileLocation  = path.format({ root: './'});
+        let fileLocation  = path.format({ root: './'});
         
         //declare dataset variables
         let fileNameX = undefined;
@@ -753,76 +753,87 @@ class ShaleReservoir extends BaseAIML
             pathToExistingSavedTrainedModel = pathToSaveTrainedModel + "/model.json";
         }
         
-        switch(DNNProblemOption)
+        if(DNNProblemOption === "FFNNClassification")
         {
-            case("FFNNClassification"):
-                //1. define dataset from "csv files on disk"
-                fileNameX = "pitch_dataset_X.csv";         // or "_eagle_ford_datasets_X.csv" or "duvernay_datasets_X.csv" or "bakken_datasets_X.csv"
-                fileNameY = "pitch_dataset_Y_Encoded.csv"; // or "_eagle_ford_datasets_Y.csv" or "duvernay_datasets_Y.csv" or "bakken_datasets_Y.csv"
+            //1. define dataset from "csv files on disk"
+            fileNameX = "pitch_dataset_X.csv";         // or "_eagle_ford_datasets_X.csv" or "duvernay_datasets_X.csv" or "bakken_datasets_X.csv"
+            fileNameY = "pitch_dataset_Y_Encoded.csv"; // or "_eagle_ford_datasets_Y.csv" or "duvernay_datasets_Y.csv" or "bakken_datasets_Y.csv"
                
-                //observations on pitch_dataset
-                //a. reference/location of pitch data is: https://storage.googleapis.com/mlb-pitch-data/pitch_type_training_data.csv'
-                //b. headers in "pitch_type_training_data.csv" are: vx0, vy0, vz0, ax, ay, az, start_speed, left_handed_pitcher, pitch_code
-                //c. note: columns 1-8 in the file (pitch_type_training_data.csv) has been separated into "pitch_dataset_X.csv"
-                //d. note: last (9th) column (pitch_code) in the file (pitch_type_training_data.csv) has been encoded and seperated into "pitch_dataset_Y.csv"
+            //observations on pitch_dataset
+            //a. reference/location of pitch data is: https://storage.googleapis.com/mlb-pitch-data/pitch_type_training_data.csv'
+            //b. headers in "pitch_type_training_data.csv" are: vx0, vy0, vz0, ax, ay, az, start_speed, left_handed_pitcher, pitch_code
+            //c. note: columns 1-8 in the file (pitch_type_training_data.csv) has been separated into "pitch_dataset_X.csv"
+            //d. note: last (9th) column (pitch_code) in the file (pitch_type_training_data.csv) has been encoded and seperated into "pitch_dataset_Y.csv"
                 
-                //2. load dataset into TensorFlow's Tensor dataset
-                const path = require('path');
-                const fileLocation  = path.format({ root: './'});  //cwd
-                //assign csv files into "pathTofileX" and "pathTofileY"
-                const pathTofileX = fileLocation + fileNameX;
-                const pathTofileY = fileLocation + fileNameY;
-                //read csv files, in pathTofileX & pathTofileY, to JS arrays
-                const outputInJSArrayX = cmm.readInputCSVfile(pathTofileX);
-                const outputInJSArrayY = cmm.readInputCSVfile(pathTofileY);
-                //convert JS's Arrays into TensorFlow's Tensors: outputs include tensors & summaries
-                const tensorOutputX = shr.getTensor(outputInJSArrayX);
-                const tensorOutputY = shr.getTensor(outputInJSArrayY);
-                //get reference to only the Tensors: these are the final input tensors to the DNN model
-                const tensorOutputTensorX = tensorOutputX["csvFileArrayOutputToTensor"];
-                const tensorOutputTensorY = tensorOutputY["csvFileArrayOutputToTensor"];
-                //assign final tensors to "inputFromCSVFileX" and "inputFromCSVFileY"
-                inputFromCSVFileX = tensorOutputTensorX;
-                inputFromCSVFileY = tensorOutputTensorY;
+            //2. load dataset into TensorFlow's Tensor dataset
+            const path = require('path');
+            const fileLocation  = path.format({ root: './'});  //cwd
+            //assign csv files into "pathTofileX" and "pathTofileY"
+            const pathTofileX = fileLocation + fileNameX;
+            const pathTofileY = fileLocation + fileNameY;
+            //read csv files, in pathTofileX & pathTofileY, to JS arrays
+            const outputInJSArrayX = cmm.readInputCSVfile(pathTofileX);
+            const outputInJSArrayY = cmm.readInputCSVfile(pathTofileY);
+            //convert JS's Arrays into TensorFlow's Tensors: outputs include tensors & summaries
+            const tensorOutputX = shr.getTensor(outputInJSArrayX);
+            const tensorOutputY = shr.getTensor(outputInJSArrayY);
+            //get reference to only the Tensors: these are the final input tensors to the DNN model
+            const tensorOutputTensorX = tensorOutputX["csvFileArrayOutputToTensor"];
+            const tensorOutputTensorY = tensorOutputY["csvFileArrayOutputToTensor"];
+            //assign final tensors to "inputFromCSVFileX" and "inputFromCSVFileY"
+            inputFromCSVFileX = tensorOutputTensorX;
+            inputFromCSVFileY = tensorOutputTensorY;
                 
-                //3. print output Tensors and data type summaries, if desired
-                function printTensors(printTensors=true)
+            //3. print output Tensors and data type summaries, if desired
+            function printTensors(printTensors=true)
+            {
+                if(printTensors === true)
                 {
-                    if(printTensors === true)
-                    {
-                        inputFromCSVFileX.print(true); //data values & data type summary
-                        inputFromCSVFileY.print(true); //data values & data type summary
-                        console.log("X", inputFromCSVFileX); //detailed data type summary
-                        console.log("Y", inputFromCSVFileY); //detailed data type summary
-                    }
+                    inputFromCSVFileX.print(true);       //data values & data type summary
+                    inputFromCSVFileY.print(true);       //data values & data type summary
+                    console.log("X", inputFromCSVFileX); //detailed data type summary
+                    console.log("Y", inputFromCSVFileY); //detailed data type summary
                 }
+            }
                 
-                printTensors(true);
+            printTensors(false);
                 
-                //4. define input size and dimension and output no. of labels
-                //a. infer inputSize and inputDim from tensorOutputX's shape
-                let inputSize = parseInt(tensorOutputX["inputSize"]);
-                let inputDim = parseInt(tensorOutputX["inputDim"]);
-                //b. infer outputSize (no. of labels) from tensorOutputY's shape and assign to unitsPerOutputLayer
-                let outputSize = parseInt(tensorOutputY["inputSize"]);;
-                let unitsPerOutputLayer = outputSize;
+            //4. initialize/define input size and dimension and output no. of labels
+            //a. infer inputSize and inputDim from tensorOutputX's shape
+            inputSize = parseInt(tensorOutputX["inputSize"]);
+            inputDim = parseInt(tensorOutputX["inputDim"]);
+            //b. infer outputSize (no. of labels) from tensorOutputY's shape and assign to unitsPerOutputLayer
+            outputSize = parseInt(tensorOutputY["inputSize"]);;
+            unitsPerOutputLayer = outputSize;
             
-                //5. finally classify in 2 lines of statements
-                //a) instantiate main Shale Reservoir Class with relevant arguments
-                const shrTwoFFNN = new ShaleReservoir(modelingOption, undefined, gpuOption, inputFromCSVFileX, inputFromCSVFileY, undefined, undefined, undefined);
-                //b) invoke shaleReservoirClassification() method with relevant arguments
-                shrTwoFFNN.shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
-                                                        dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
-                                                        inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
-                                                        numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
-                                                        pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption);
-                break;
-                            
-            case("CNNClassification"):
-                //add test for "CNNClassification" later...in progress
-                break;
+            //5. finally classify in 2 lines of statements
+            //a) instantiate main Shale Reservoir Class with relevant arguments
+            const shrTwoFFNN = new ShaleReservoir(modelingOption, undefined, gpuOption, inputFromCSVFileX, inputFromCSVFileY, undefined, undefined, undefined);
+            //b) invoke shaleReservoirClassification() method with relevant arguments
+            shrTwoFFNN.shaleReservoirClassification(batchSize, epochs, validationSplit, verbose, inputDim, inputSize,
+                                                    dropoutRate, unitsPerInputLayer, unitsPerHiddenLayer, unitsPerOutputLayer,
+                                                    inputLayerActivation, outputLayerActivation, hiddenLayersActivation,
+                                                    numberOfHiddenLayers, optimizer, loss, lossSummary, existingSavedModel,
+                                                    pathToSaveTrainedModel, pathToExistingSavedTrainedModel, DNNProblemOption);
+        }
+        else if(DNNProblemOption === "CNNClassification")
+        {
+            //1. define additional specific input arguments relevant to "CNN classification"
+            const inputLayerCNNOptions   = {imageWidthSize: 28, imageHeightSize: 28, imageChannels: 1,
+                                            kernelSize: 5, filters: 8, strides: 1,
+                                            kernelInitializer: "varianceScaling",
+                                            poolSizeX: 2, poolSizeY: 2,
+                                            poolStridesX: 2, poolStridesY: 2
+            };
+            const hiddenLayersCNNOptions = {kernelSize: 5, filters: 16, strides: 1,
+                                            kernelInitializer: "varianceScaling",
+                                            poolSizeX: 2, poolSizeY: 2,
+                                            poolStridesX: 2, poolStridesY: 2
+            };
+                                           
+            //add remaining part "CNNClassification" test later...in progress
         }
     }
-    }
+}
 
 module.exports = {ShaleReservoir};
