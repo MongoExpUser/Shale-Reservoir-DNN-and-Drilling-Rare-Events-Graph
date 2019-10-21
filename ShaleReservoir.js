@@ -148,12 +148,16 @@ class ShaleReservoir extends BaseAIML
             
             //step 2: add conv2d layers, "maxPooling layers" for downsampling, and dropout layers and then flaten before output layer ......
             model.add(tf.layers.conv2d(inputLayer));
-            model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+            model.add(tf.layers.maxPooling2d({poolSize: [inputLayerCNNOptions.poolSizeX, inputLayerCNNOptions.poolSizeY],
+                                              strides: [hiddenLayersCNNOptions.poolStridesX, hiddenLayersCNNOptions.poolStridesY]
+            }));
             model.add(tf.layers.dropout(dropoutRate));
             for(let eachLayer in hiddenLayers)
             {
                 model.add(tf.layers.conv2d(hiddenLayers[eachLayer]));
-                model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
+                model.add(tf.layers.maxPooling2d({poolSize: [hiddenLayersCNNOptions.poolSizeX, hiddenLayersCNNOptions.poolSizeY],
+                                                  strides: [hiddenLayersCNNOptions.poolStridesX, hiddenLayersCNNOptions.poolStridesY]
+                }));
                 model.add(tf.layers.dropout(dropoutRate));
             }
             //flatten output from the 2D filters into a 1D vector before feeding into classification output layer
@@ -170,7 +174,10 @@ class ShaleReservoir extends BaseAIML
             //step 4: compile model
             model.compile(compileOptions);
             
-            //step 5: return model.....
+            //step 5: print summary to check topology
+            model.summary();
+            
+            //step 6: return model.....
             return model;
         }
         else
