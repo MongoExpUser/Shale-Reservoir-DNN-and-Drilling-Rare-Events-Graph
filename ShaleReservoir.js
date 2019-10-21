@@ -831,7 +831,7 @@ class ShaleReservoir extends BaseAIML
                                             poolStridesX: 2, poolStridesY: 2
             };
                                            
-            //add remaining part "CNNClassification" test later...in progress
+            //add remaining part of "CNNClassification" test later ... in progress
         }
     }
 }
