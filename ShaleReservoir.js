@@ -496,7 +496,7 @@ class ShaleReservoir extends BaseAIML
         const dropoutRate = 0.02;
         const unitsPerInputLayer = 100;
         const unitsPerHiddenLayer = 100;
-        const unitsPerOutputLayer = 1;
+        const unitsPerOutputLayer = outputSize;
         const inputLayerActivation = "relu";
         const hiddenLayersActivation = "relu";
         const outputLayerActivation = "linear";
