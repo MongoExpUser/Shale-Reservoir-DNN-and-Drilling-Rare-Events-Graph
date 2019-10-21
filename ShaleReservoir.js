@@ -762,10 +762,10 @@ class ShaleReservoir extends BaseAIML
             //observations on pitch_dataset
             //a. reference/location of pitch data is: https://storage.googleapis.com/mlb-pitch-data/pitch_type_training_data.csv'
             //b. headers in "pitch_type_training_data.csv" are: vx0, vy0, vz0, ax, ay, az, start_speed, left_handed_pitcher, pitch_code
-            //c. note: columns 1-8 in the file (pitch_type_training_data.csv) has been separated into "pitch_dataset_X.csv"
+            //c. note: columns 1-8 in the file (pitch_type_training_data.csv) have been separated into "pitch_dataset_X.csv"
             //d. note: last (9th) column (pitch_code) in the file (pitch_type_training_data.csv) has been encoded and seperated into "pitch_dataset_Y.csv"
                 
-            //2. load dataset into TensorFlow's Tensor dataset
+            //2. load dataset into TensorFlow's Tensor data type
             const path = require('path');
             const fileLocation  = path.format({ root: './'});  //cwd
             //assign csv files into "pathTofileX" and "pathTofileY"
