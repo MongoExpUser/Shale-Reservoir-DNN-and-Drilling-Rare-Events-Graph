@@ -49,7 +49,7 @@
  * 3) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (FFNNClassification or CNNClassification)
  *    for the rock-types/images/formations/facies/etc., evaluate and save model.
  * 4) Based on saved model, then generate/predict classifications for unseen dataset field-wide for rock-types/images/formations/facies/etc.
- * 5) Classification helps to map (per field/section(DA)/pad) rock-types/images/formations/facies/etc. for hydrocanbon content and quality
+ * 5) Classification helps to map (per field/section(DA)/pad) rock-types/images/formations/facies/etc. for fluid content and quality
  *    that can be used for optimal well placement, hydraulic fracture design and production optimization.
  *
  */
