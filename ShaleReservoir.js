@@ -486,7 +486,7 @@ class ShaleReservoir extends BaseAIML
         //training parameters
         const batchSize = 32;
         const epochs = 300;
-        const validationSplit = 0;    // for large dataset, set to about 10% (0.1) aside
+        const validationSplit = 0;    // for large dataset, set about 10% (0.1) aside for validation
         const verbose = 0;            // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
@@ -712,7 +712,7 @@ class ShaleReservoir extends BaseAIML
         //training parameters
         const batchSize = 32;
         const epochs = 500;
-        const validationSplit = 0.1;           // for large dataset, set to about 10% (0.1) aside
+        const validationSplit = 0.1;           // for large dataset, set about 10% (0.1) aside for validation
         const verbose = 1;                     // 1 for full logging verbosity, and 0 for none
         
         //model contruction parameters
