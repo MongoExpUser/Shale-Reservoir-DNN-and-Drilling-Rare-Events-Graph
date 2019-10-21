@@ -738,7 +738,7 @@ class ShaleReservoir extends BaseAIML
         let loss = "categoricalCrossentropy"; //or "sparseCategoricalCrossentropy"; or "binaryCrossentropy";
         let lossSummary = true;
         let existingSavedModel = false;       //or true;
-        let pathToSaveTrainedModel = "file://myShaleProductionModel-0";
+        let pathToSaveTrainedModel = "file://myShaleClassificationModel-0";
         let pathToExistingSavedTrainedModel = null;
         let fileLocation  = path.format({ root: './'});
         
