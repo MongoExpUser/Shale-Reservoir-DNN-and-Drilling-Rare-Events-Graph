@@ -174,11 +174,13 @@ class ShaleFFNN_Test(TestCase):
     self.count = "{}{}".format("FFNN_classification : ",  1)
     sfc = ShaleFFNN()
     sfc.FFNN_classification()
+  # End test_FFNN_classification() method
     
   def tearDown(self):
     # do nothing but confirm success
     print("Successful tested", self.count, ".....ok")
   # End tearDown() method
+
 
 # invoke test
 main(verbosity=2)
