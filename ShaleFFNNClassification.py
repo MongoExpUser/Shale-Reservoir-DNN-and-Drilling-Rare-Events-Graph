@@ -8,7 +8,7 @@
 # * @License Ends
 # *
 # *
-# * ...Ecotert's Shale_FFNN.py  (released as open-source under MIT License) implements:
+# * ...Ecotert's ShaleFFNNClassification.py  (released as open-source under MIT License) implements:
 #
 #
 #  1) Feed-forward Deep Neural Network (FFNN) classification with TensorFlow library.
