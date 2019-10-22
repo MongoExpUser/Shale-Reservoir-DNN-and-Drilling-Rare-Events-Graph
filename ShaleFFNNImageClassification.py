@@ -107,8 +107,8 @@ class ShaleFFNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 5
-      batch_size = 128
+      epochs = 100
+      batch_size = 256
       existing_saved_model = False
       save_model = True
       saved_model_name = "shale_classification_model"
