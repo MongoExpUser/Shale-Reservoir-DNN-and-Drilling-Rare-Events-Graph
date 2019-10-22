@@ -38,7 +38,7 @@ except(ImportError) as err:
 
 class ShaleFFNN():
   
-  """Shale reservoir properties and images classification"""
+  """Shale reservoir images classification"""
   
   #class constructor
   def __init__(self):
