@@ -10,13 +10,13 @@
 # *
 # * ...Ecotert's ShaleFFNNImageClassification.py  (released as open-source under MIT License) implements:
 #
+#  1) ShaleFFNN() for: Feed-forward Deep Neural Network (FFNN) classification with TensorFlow library.
 #
-#  1) Feed-forward Deep Neural Network (FFNN) classification with TensorFlow library.
-#
-#  2) A class to test ShaleFFNN() class
+#  2) A class (ShaleFFNN_Test()) to test ShaleFFNN() class
 #
 #
-#  For shale reservoir images classification
+#
+#  Application: shale reservoir images classification
 #
 #
 # ****************************************************************************************************************************
