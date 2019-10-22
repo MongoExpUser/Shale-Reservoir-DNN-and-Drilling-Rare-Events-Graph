@@ -158,7 +158,7 @@ class ShaleFFNN():
       print("Now evaluating loaded saved model on test data ")
       score = loaded_saved_model.evaluate(test_images, test_labels, verbose=verbose)
       #3. print loss and accuracy of evaluation
-      print(loaded_saved_model.metrics_names[0], "{:0.4f}%".format(score[0]*100))
+      print(loaded_saved_model.metrics_names[0], "{:0.4f}".format(score[0]))
       print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
   #End FFNN_classification() method
   
