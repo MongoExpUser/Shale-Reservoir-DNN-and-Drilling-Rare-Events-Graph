@@ -116,7 +116,7 @@ class ShaleFFNN():
     # create, train, evaluate and save new model
     if not existing_saved_model:
       # compose/create model with loop to generalise number of hidden layers
-      model = tf.keras.models.Sequential()
+      model = Sequential()
       # reformat data: transforms  format of images from 2d-array (of shape_x by shape_y pixels), to a 1d-array of shape_x * shape_y pixels.
       model.add(Flatten(input_shape=(shape_x, shape_y)))
       # add dense layers and dropouts for input and hidden layers
