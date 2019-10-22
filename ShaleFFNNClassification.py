@@ -36,7 +36,7 @@ try:
 except(ImportError) as err:
     print(str(err))
 
-class Shale_FFNN():
+class ShaleFFNN():
   
   """Shale reservoir properties and images classification"""
   
@@ -164,7 +164,7 @@ class Shale_FFNN():
   #End FFNN_classification() method
   
 
-class Shale_FFNN_Test(TestCase):
+class ShaleFFNN_Test(TestCase):
   """ Test FFNN """
   
   def setUp(self):
@@ -173,7 +173,7 @@ class Shale_FFNN_Test(TestCase):
     
   def test_FFNN_classification(self):
     self.count = "{}{}".format("FFNN_classification : ",  1)
-    sfc = Shale_FFNN()
+    sfc = ShaleFFNN()
     sfc.FFNN_classification()
     
   def tearDown(self):
