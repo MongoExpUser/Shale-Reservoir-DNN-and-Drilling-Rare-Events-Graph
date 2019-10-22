@@ -90,9 +90,7 @@ class ShaleFFNN():
       print("-----------------------------------------------------")
       # load data
       data_set = tf.keras.datasets.mnist
-      #(X_train, y_train),(X_test, y_test) = data_set.load_data()
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
-      #X_train, X_test = X_train / 255.0, X_test / 255.0
       train_images, test_images = train_images / 255.0, test_images / 255.0
       # define hyper-parameters and other inputs
       shape_x = 28
