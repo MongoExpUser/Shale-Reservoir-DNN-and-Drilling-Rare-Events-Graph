@@ -32,7 +32,8 @@ try:
     from tensorflow.keras.models import load_model, model_from_json
     from tensorflow.keras import backend, optimizers, Sequential
     from tensorflow.keras.utils import plot_model, to_categorical
-    from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+    from tensorflow.keras.layers import Dense, Dropout, Flatten
+    #from tensorflow.keras.layers import Conv2D, MaxPooling2D # use for CNN later
 except(ImportError) as err:
     print(str(err))
 
@@ -124,7 +125,7 @@ class ShaleFFNN():
       for layer_index in range(number_of_hidden_layers):
         model.add(Dense(units=unit_per_hidden_layer, activation=hidden_layers_activation))
         model.add(Dropout(dropout, noise_shape=None, seed=None))
-      #add dense layers and dropouts for output layer
+      #add dense layers for output layer
       model.add(Dense(unit_per_output_layer, activation=output_layer_activation))
       # compile the model
       model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
