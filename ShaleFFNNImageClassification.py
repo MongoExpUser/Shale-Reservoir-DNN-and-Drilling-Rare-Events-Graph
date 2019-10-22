@@ -54,7 +54,7 @@ class ShaleFFNN():
     
     """Feed-forward Deep Neural Network (FFNN) for shale "images"  classification.
        The abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
-       such that calling the method is reduced to just 1 line statement with the properly defined
+       such that calling the method is reduced to just 1 line of statement with the properly defined
        input "image data", hyper-parameters and other inputs as arguments
     """
     
