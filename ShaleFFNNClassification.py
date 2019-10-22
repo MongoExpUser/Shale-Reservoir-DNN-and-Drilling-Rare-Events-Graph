@@ -13,7 +13,7 @@
 #
 #  1) Feed-forward Deep Neural Network (FFNN) classification with TensorFlow library.
 #
-#  2) Class to test FFNN
+#  2) A class to test ShaleFFNN() class
 #
 #
 #  For shale reservoir images classification
