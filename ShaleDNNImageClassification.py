@@ -403,7 +403,7 @@ class ShaleFFNNAndCNN_Test(TestCase):
   
   def tearDown(self):
     # do nothing but confirm success
-    print("Successful tested", self.count, ".....ok")
+    print("Successfully tested", self.count, ".....ok")
   # End tearDown() method
 
 # invoke test
