@@ -260,7 +260,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 30
+      epochs = 3
       batch_size = 256
       existing_saved_model = False
       save_model = True
@@ -277,12 +277,12 @@ class ShaleFFNNAndCNN():
       model = Sequential()
       # add convolutional layer with input_shape, filters, kernel_size, strides, and activation function; pooling layer and dropout layer
       model.add(Conv2D(input_shape=(channels, image_width, image_height), filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=input_layer_activation))
-      model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_after_input_layer"))
-      model.add(Dropout(dropout))
-      # in a loop, add convolutional layer(s) with filters, kernel_size, strides, and activation function; pooling layer and dropout layer
+      # add 2 pooling layers and dropout layers, with a sandwiched Conv2D layer
       for layer_index in range(number_of_hidden_layers):
+        model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_after_input_layer"))
+        model.add(Dropout(dropout))
         model.add(Conv2D(filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=hidden_layers_activation))
-        model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_before_output_full_connected_layer"))
+        model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_before_output_fully_connected_layer"))
         model.add(Dropout(dropout))
       #flatten output from the 2D filters into a 1D vector before feeding into fully-connected classification output layer
       model.add(Flatten())
@@ -333,7 +333,7 @@ class ShaleFFNNAndCNN_Test(TestCase):
     self.count = 0
   # End setUp() method
     
-  def test_FFNN_classification(self):
+  def _test_FFNN_classification(self):
     self.count = "{}{}".format("FFNN_classification : ",  1)
     sfc = ShaleFFNNAndCNN()
     sfc.FFNN_classification()
