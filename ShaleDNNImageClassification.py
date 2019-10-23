@@ -260,7 +260,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 3
+      epochs = 30
       batch_size = 256
       existing_saved_model = False
       save_model = True
@@ -333,7 +333,7 @@ class ShaleFFNNAndCNN_Test(TestCase):
     self.count = 0
   # End setUp() method
     
-  def _test_FFNN_classification(self):
+  def test_FFNN_classification(self):
     self.count = "{}{}".format("FFNN_classification : ",  1)
     sfc = ShaleFFNNAndCNN()
     sfc.FFNN_classification()
