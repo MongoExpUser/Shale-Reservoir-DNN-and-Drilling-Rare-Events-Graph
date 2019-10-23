@@ -339,7 +339,7 @@ class ShaleFFNNAndCNN_Test(TestCase):
     self.count = 0
   # End setUp() method
     
-  def _test_FFNN_classification(self):
+  def test_FFNN_classification(self):
     self.count = "{}{}".format("FFNN_classification : ",  1)
     sfc = ShaleFFNNAndCNN()
     sfc.FFNN_classification()
