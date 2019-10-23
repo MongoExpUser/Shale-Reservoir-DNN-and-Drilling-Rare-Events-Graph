@@ -1,4 +1,3 @@
-
 # ****************************************************************************************************************************
 # * @License Starts
 # *
@@ -187,30 +186,25 @@ class ShaleFFNNAndCNN():
     if cnn_options:
       # load data
       data_set = ffnn_options.data
-      (data_train, target_train), (data_test, target_test) = data_set.load_data()
+      (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       
       # define channel, images height and widths
       channels = cnn.channels
       image_height = cnn.channels
       image_width = cnn.channels
+    
+      # re-shape train and test images data into the given channel, image height and imge width
+      train_images = train_images.reshape(train_images.shape[0], channels, image_height,image_width)
+      test_images = test_images.reshape(test_images.shape[0], channels, image_height, image_width)
+  
+      # re-scale pixel intensity to between 0 and 1
+      train_images = train_images / 255
+      test_images = test_images / 255
       
-      # reshape training image data into features
-      data_train = data_train.reshape(data_train.shape[0], channels, image_height,image_width)
-      # reshape test image data into features
-      data_test = data_test.reshape(data_test.shape[0], channels, height, width)
-      # rescale pixel intensity to between 0 and 1
-      features_train = data_train / 255
-      features_test = data_test / 255
-      # one-hot encode target
-      target_train = to_categorical(target_train)
-      target_test = to_categorical(target_test)
-      number_of_classes = target_test.shape[1]
-      
-      # rename variables to images and labels for clarity
-      train_images, train_labels =  features_train, target_train
-      test_images, test_labels =  features_test, target_test
+      # encode labels
+      train_labels = to_categorical( train_labels)
+      test_labels = to_categorical(test_labels)
       number_of_labels = test_labels.shape[1]
-      number_of_labels = cnn.number_of_labels #target_test.shape[1]
       
       # defined hyper-parameters and other inputs
       input_layer_activation =  cnn_options.input_layer_activation
@@ -245,7 +239,7 @@ class ShaleFFNNAndCNN():
       image_height = 28
       image_width = 28
       
-      # res-shape train and test images data into the given channel, image height and imge width
+      # re-shape train and test images data into the given channel, image height and imge width
       train_images = train_images.reshape(train_images.shape[0], channels, image_height,image_width)
       test_images = test_images.reshape(test_images.shape[0], channels, image_height, image_width)
   
@@ -266,7 +260,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 3
+      epochs = 30
       batch_size = 256
       existing_saved_model = False
       save_model = True
