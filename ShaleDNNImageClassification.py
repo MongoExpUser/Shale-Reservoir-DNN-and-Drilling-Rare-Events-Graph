@@ -142,7 +142,7 @@ class ShaleFFNNAndCNN():
       score = model.evaluate(test_images, test_labels, verbose=verbose)
       
       #print loss and accuracy of evaluation
-      print(model.metrics_names[0], "{:0.4f}%".format(score[0]*100))
+      print(model.metrics_names[0], "{:0.4f}%".format(score[0]))
       print(model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
       
       #save model in the current working directory (CWD), if desired
