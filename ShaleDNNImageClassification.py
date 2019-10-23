@@ -134,7 +134,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 100
+      epochs = 50
       batch_size = 64
       existing_saved_model = False
       save_model = True
@@ -185,12 +185,7 @@ class ShaleFFNNAndCNN():
        input "image data", hyper-parameters and other inputs as arguments
     """
     
-     # set that the color channel value will be first
-    backend.set_image_data_format("channels_first")
-    # set seed
-    np.random.seed(0)
-    
-    # pass in arguments (dataset, hyper-parameters and other inputs)
+    # pass in arguments (dataset, hyper-parameters  and other inputs)
     if cnn_options:
       # load data
       data_set = ffnn_options.data
@@ -231,7 +226,8 @@ class ShaleFFNNAndCNN():
       pool_size = cnn_options.pool_size
       kernel_size = cnn_options.kernel_size
       strides = cnn_options.strides
-      number_of_hidden_layers = 1  # fix this value
+      number_of_hidden_layers = 1     # fix this value (i.e. not required in the argument)
+      data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       
     # defined default dataset, hyper-parameters and other inputs, if not defined in the argument
     if not cnn_options:
@@ -277,12 +273,15 @@ class ShaleFFNNAndCNN():
       pool_size = 2
       kernel_size = 5
       strides = 1
-      number_of_hidden_layers = 1
+      number_of_hidden_layers = 1     # fix this value
+      data_format = "channels_first"  # fix this value
       
     # create, fit/train, evaluate and save new model
     if not existing_saved_model:
       # compose/create model with loop to generalise number of hidden layers
       model = Sequential()
+      # set data_format value
+      backend.set_image_data_format(data_format)
       # add convolutional layer with input_shape, filters, kernel_size, strides, and activation function; pooling layer and dropout layer
       model.add(Conv2D(input_shape=(channels, image_width, image_height), filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=input_layer_activation))
       # add 2 pooling layers and dropout layers, with a sandwiched Conv2D layer
