@@ -51,7 +51,7 @@ class ShaleFFNNAndCNN():
     print("Using Keras version", tf.keras.__version__, "on this system.")
     print("")
     
-  def predict_with_existing_saved_model(self, saved_model_name=None, optimizer=None, loss=None,
+  def evaluate_with_existing_saved_model(self, saved_model_name=None, optimizer=None, loss=None,
                                         test_images=None, test_labels=None, verbose=None):
     # 1. load existing saved model
     filename = open(saved_model_name + ".json", 'r')
@@ -66,7 +66,7 @@ class ShaleFFNNAndCNN():
     #3. print loss and accuracy of evaluation
     print(loaded_saved_model.metrics_names[0], "{:0.4f}".format(score[0]))
     print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
-  # End predict_with_existing_saved_model() method
+  # End evaluate_with_existing_saved_model() method
   
   def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
     with open(saved_model_name + ".json", "w") as filename:
@@ -173,9 +173,9 @@ class ShaleFFNNAndCNN():
       if save_model:
         self.save_model_in_current_working_directory(saved_model_name, model)
       
-    # predict with existing saved model
+    # evaluate with existing saved model
     if existing_saved_model:
-      self.predict_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
+      self.evaluate_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
   #End FFNN_classification() method
   
   def CNN_classification(self, cnn_options=None):
@@ -312,9 +312,9 @@ class ShaleFFNNAndCNN():
       if save_model:
         self.save_model_in_current_working_directory(saved_model_name, model)
     
-    # predict with existing saved model
+    # evaluate with existing saved model
     if existing_saved_model:
-      self.predict_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
+      self.evaluate_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
   #End CNN_classification() method
   
 class ShaleFFNNAndCNN_Test(TestCase):
