@@ -29,7 +29,6 @@ try:
     """ import commonly used modules and check for import error """
     import numpy as np
     import tensorflow as tf
-    from pprint import pprint
     import matplotlib.pyplot as plt
     from unittest import TestCase, main
     from tensorflow.keras.models import load_model, model_from_json
@@ -52,8 +51,32 @@ class ShaleFFNNAndCNN():
     print("Using Keras version", tf.keras.__version__, "on this system.")
     print("")
     
-  def FFNN_classification(self, ffnn_options=None):
+  def predict_with_existing_saved_model(self, saved_model_name=None, optimizer=None, loss=None,
+                                        test_images=None, test_labels=None, verbose=None):
+    # 1. load existing saved model
+    filename = open(saved_model_name + ".json", 'r')
+    loaded_saved_model = model_from_json(filename.read())
+    filename.close()
+    loaded_saved_model.load_weights(saved_model_name + ".h5")
+    print("Saved model is successfully loaded from the disk in the CWD")
+    # 2.  evaluate loaded saved model
+    loaded_saved_model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
+    print("Now evaluating loaded saved model on test data ")
+    score = loaded_saved_model.evaluate(test_images, test_labels, verbose=verbose)
+    #3. print loss and accuracy of evaluation
+    print(loaded_saved_model.metrics_names[0], "{:0.4f}".format(score[0]))
+    print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
+  # End predict_with_existing_saved_model() method
+  
+  def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
+    with open(saved_model_name + ".json", "w") as filename:
+      filename.write(model.to_json())
+    # serialize weights to HDF5 (binary format)
+    model.save_weights(saved_model_name + ".h5")
+    print("Model is successfully saved to disk in the CWD")
+  # End save_model_in_current_working_directory() method
     
+  def FFNN_classification(self, ffnn_options=None):
     """Feed-forward Deep Neural Network (FFNN) for shale "images"  classification.
        The abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
        such that calling the method is reduced to just 1 line of statement with the properly defined
@@ -92,7 +115,7 @@ class ShaleFFNNAndCNN():
       print("------------------------------------------------------------------------------------------")
       print("No argument is provided for FFNN image classification model: using default mnist dataset. ")
       print("------------------------------------------------------------------------------------------")
-       # load data from MNIST data
+      # load data from MNIST data
       data_set = tf.keras.datasets.mnist
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       train_images, test_images = train_images / 255.0, test_images / 255.0
@@ -123,13 +146,14 @@ class ShaleFFNNAndCNN():
       model = Sequential()
       # reformat data: transforms  format of images from 2d-array (of shape_x by shape_y pixels), to a 1d-array of shape_x * shape_y pixels.
       model.add(Flatten(input_shape=(shape_x, shape_y)))
-      # add dense layers and dropouts for input and hidden layers
+      # add dense and dropout layers for input layer
       model.add(Dense(units=unit_per_input_layer, activation=input_layer_activation))
       model.add(Dropout(dropout, noise_shape=None, seed=None))
+      # add dense and dropout layers for hidden layers
       for layer_index in range(number_of_hidden_layers):
         model.add(Dense(units=unit_per_hidden_layer, activation=hidden_layers_activation))
         model.add(Dropout(dropout, noise_shape=None, seed=None))
-      #add dense layers and dropouts for output layer
+      # add dense layers and dropouts for output layer
       model.add(Dense(unit_per_output_layer, activation=output_layer_activation))
       
       # compile the model
@@ -145,29 +169,13 @@ class ShaleFFNNAndCNN():
       print(model.metrics_names[0], "{:0.4f}%".format(score[0]))
       print(model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
       
-      #save model in the current working directory (CWD), if desired
+      # save model in the current working directory (CWD), if desired
       if save_model:
-        with open(saved_model_name + ".json", "w") as filename:
-            filename.write(model.to_json())
-        # serialize weights to HDF5 (binary format)
-        model.save_weights(saved_model_name + ".h5")
-      print("Model is successfully saved to disk in the CWD")
+        self.save_model_in_current_working_directory(saved_model_name, model)
       
     # predict with existing saved model
     if existing_saved_model:
-      # 1. load existing saved model
-      filename = open(saved_model_name + ".json", 'r')
-      loaded_saved_model = model_from_json(filename.read())
-      filename.close()
-      loaded_saved_model.load_weights(saved_model_name + ".h5")
-      print("Saved model is successfully loaded from the disk in the CWD")
-      # 2.  evaluate loaded saved model
-      loaded_saved_model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
-      print("Now evaluating loaded saved model on test data ")
-      score = loaded_saved_model.evaluate(test_images, test_labels, verbose=verbose)
-      #3. print loss and accuracy of evaluation
-      print(loaded_saved_model.metrics_names[0], "{:0.4f}".format(score[0]))
-      print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
+      self.predict_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
   #End FFNN_classification() method
   
   def CNN_classification(self, cnn_options=None):
@@ -301,29 +309,13 @@ class ShaleFFNNAndCNN():
       print(model.metrics_names[0], "{:0.4f}".format(score[0]))
       print(model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
       
-      #save model in the current working directory (CWD), if desired
+      # save model in the current working directory (CWD), if desired
       if save_model:
-        with open(saved_model_name + ".json", "w") as filename:
-            filename.write(model.to_json())
-        # serialize weights to HDF5 (binary format)
-        model.save_weights(saved_model_name + ".h5")
-      print("Model is successfully saved to disk in the CWD")
+        self.save_model_in_current_working_directory(saved_model_name, model)
     
     # predict with existing saved model
     if existing_saved_model:
-      # 1. load existing saved model
-      filename = open(saved_model_name + ".json", 'r')
-      loaded_saved_model = model_from_json(filename.read())
-      filename.close()
-      loaded_saved_model.load_weights(saved_model_name + ".h5")
-      print("Saved model is successfully loaded from the disk in the CWD")
-      # 2.  evaluate loaded saved model
-      loaded_saved_model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
-      print("Now evaluating loaded saved model on test data ")
-      score = loaded_saved_model.evaluate(test_images, test_labels, verbose=verbose)
-      #3. print loss and accuracy of evaluation
-      print(loaded_saved_model.metrics_names[0], "{:0.4f}".format(score[0]))
-      print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
+      self.predict_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
   #End CNN_classification() method
   
 class ShaleFFNNAndCNN_Test(TestCase):
