@@ -188,7 +188,7 @@ class ShaleFFNNAndCNN():
     # pass in arguments (dataset, hyper-parameters  and other inputs)
     if cnn_options:
       # load data
-      data_set = ffnn_options.data
+      data_set = cnn_options.data
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       
       # define channel, images height and widths
@@ -211,8 +211,8 @@ class ShaleFFNNAndCNN():
       
       # defined hyper-parameters and other inputs
       input_layer_activation =  cnn_options.input_layer_activation
-      hidden_layers_activation =  ffnn_options.hidden_layers_activation
-      output_layer_activation =  ffnn_options.output_layer_activation
+      hidden_layers_activation =  cnn_options.hidden_layers_activation
+      output_layer_activation =  cnn_options.output_layer_activation
       dropout = cnn_options.dropout
       optimizer = cnn_options.optimizer
       loss = cnn_options.loss
