@@ -85,6 +85,7 @@ class ShaleFFNNAndCNN():
       plt.grid(True)
       plt.imshow(train_images[index], cmap=plt.cm.binary)
       plt.xlabel(train_labels[index])
+      plt.xlabel(label_names[train_labels[index]])
     plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
   # End view_train_images_and_train_labels_option_one() method
 
@@ -95,7 +96,7 @@ class ShaleFFNNAndCNN():
         ax = fig.add_subplot(8,8, index+1, xticks=[], yticks=[]) # each data in a 8x8 (64 images)
         ax.imshow(train_images[index], cmap=plt.cm.binary, interpolation='nearest')
         label_offset = 7
-        ax.text(0, label_offset, str(train_labels[index]))   #label the image with the target value
+        ax.text(0, label_offset, str(label_names[train_labels[index]]))   #label the image with the target value
     plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
   # End view_train_images_and_train_labels_option_two() method
   
@@ -194,11 +195,13 @@ class ShaleFFNNAndCNN():
       print("------------------------------------------------------------------------------------------")
       # load data from MNIST data
       data_set = tf.keras.datasets.mnist
+      #
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       train_images, test_images = train_images / 255.0, test_images / 255.0
 
       # define hyper-parameters and other inputs
       label_names = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
+      #
       shape_x = 28
       shape_y = 28
       input_layer_activation = 'relu'
@@ -212,7 +215,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 2
+      epochs = 30
       batch_size = 64
       existing_saved_model = False
       save_model = True
@@ -223,7 +226,7 @@ class ShaleFFNNAndCNN():
       input_labels_expected_prediction = test_labels
       
     #display all images with class names and verify data format
-    self.view_train_images_and_train_labels_option_two(train_images, train_labels, label_names, image_filename)
+    self.view_train_images_and_train_labels_option_one(train_images, train_labels, label_names, image_filename)
       
     # create, fit/train, evaluate and save new model
     if not existing_saved_model:
@@ -342,6 +345,7 @@ class ShaleFFNNAndCNN():
       print("-----------------------------------------------------------------------------------------")
       # load data from MNIST data
       data_set = tf.keras.datasets.mnist
+      #
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       
       #make copies of original image before processing/re-shaping (to be used for image view/plot/display)
@@ -370,6 +374,7 @@ class ShaleFFNNAndCNN():
       
       # defined hyper-parameters and other inputs
       label_names = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
+      #
       input_layer_activation = 'relu'
       hidden_layers_activation = 'relu'
       output_layer_activation = 'softmax'
@@ -377,7 +382,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 2
+      epochs = 30
       batch_size = 256
       existing_saved_model = False
       save_model = True
@@ -395,7 +400,7 @@ class ShaleFFNNAndCNN():
       input_labels_expected_prediction = original_test_labels
       
     #display all images with class names and verify data format
-    self.view_train_images_and_train_labels_option_two(original_train_images, original_train_labels, label_names, image_filename)
+    self.view_train_images_and_train_labels_option_one(original_train_images, original_train_labels, label_names, image_filename)
     
     # create, fit/train, evaluate and save new model
     if not existing_saved_model:
