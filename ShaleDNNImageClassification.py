@@ -38,6 +38,7 @@ try:
 except(ImportError) as err:
     print(str(err))
 
+
 class ShaleFFNNAndCNN():
   
   """Shale reservoir images classification"""
@@ -50,6 +51,14 @@ class ShaleFFNNAndCNN():
     print("Using TensorFlow version", tf.__version__, "on this system.")
     print("Using Keras version", tf.keras.__version__, "on this system.")
     print("")
+  # End  __init__() method
+    
+  def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
+    with open(saved_model_name + ".json", "w") as filename:
+      filename.write(model.to_json())
+    model.save_weights(saved_model_name + ".h5") # serialize weights to HDF5 (binary format)
+    print("Model is successfully saved to disk in the CWD")
+  # End save_model_in_current_working_directory() method
     
   def evaluate_with_existing_saved_model(self, saved_model_name=None, optimizer=None, loss=None, test_images=None, test_labels=None, verbose=None):
     # 1. load existing saved model
@@ -67,15 +76,7 @@ class ShaleFFNNAndCNN():
     print(loaded_saved_model.metrics_names[1], "{:0.4f}%".format(score[1]*100))
   # End evaluate_with_existing_saved_model() method
   
-  def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
-    with open(saved_model_name + ".json", "w") as filename:
-      filename.write(model.to_json())
-    # serialize weights to HDF5 (binary format)
-    model.save_weights(saved_model_name + ".h5")
-    print("Model is successfully saved to disk in the CWD")
-  # End save_model_in_current_working_directory() method
-  
-  def view_train_images_with_train_labels_option_one(self, train_images=None, train_labels=None, label_names=None, image_filename=None):
+  def view_train_images_and_train_labels_option_one(self, train_images=None, train_labels=None, label_names=None, image_filename=None):
     plt.figure(figsize=(10,10)) # figure size in inches
     for index in range(25):
       plt.subplot(5,5, index+1) # each data in a 5x5 (25 images)
@@ -83,11 +84,11 @@ class ShaleFFNNAndCNN():
       plt.yticks([])
       plt.grid(True)
       plt.imshow(train_images[index], cmap=plt.cm.binary)
-      plt.xlabel(label_names[train_labels[index]])
-    plt.savefig(image_filename + ".png", dpi=300) # save figure in the CWD
-  # End view_train_images_with_train_labels_option_one() method
+      plt.xlabel(train_labels[index])
+    plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
+  # End view_train_images_and_train_labels_option_one() method
 
-  def view_train_images_with_train_labels_option_two(self, train_images=None, train_labels=None, label_names=None, image_filename=None):
+  def view_train_images_and_train_labels_option_two(self, train_images=None, train_labels=None, label_names=None, image_filename=None):
     fig = plt.figure(figsize=(6,6))  # figure size in inches
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
     for index in range(64):
@@ -95,32 +96,59 @@ class ShaleFFNNAndCNN():
         ax.imshow(train_images[index], cmap=plt.cm.binary, interpolation='nearest')
         label_offset = 7
         ax.text(0, label_offset, str(train_labels[index]))   #label the image with the target value
-    plt.savefig(image_filename + ".png", dpi=300) # save figure in the CWD
-  # End view_train_images_with_train_labels_option_two() method
+    plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
+  # End view_train_images_and_train_labels_option_two() method
   
-  def predict_with_new_or_existing_saved_model(self, model=None, input_images_to_predict=None, input_labels_expected_prediction=None, image_filename=None):
-    # predict labels of the "test_images" or "other unseen images"
+  def ffnn_predict_and_view_with_new_or_existing_saved_model(self, model=None, input_images_to_predict=None, input_labels_expected_prediction=None, label_names=None, image_filename=None):
+     # predict labels of the "test_images" or "other unseen images"
     predictions = model.predict(input_images_to_predict)
     expectations = input_labels_expected_prediction
     
-    # plot all predicted labels of the "test_images" or "other unseen images" with coded color (blue=correct, red=incorrect)
-    fig = plt.figure(figsize=(6, 6))   # figure size in inches
-    fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
-    for index in range(64):
-      ax = fig.add_subplot(8, 8, index + 1, xticks=[], yticks=[]) # each data in a 8x8 (64 images)
-      ax.imshow(input_images_to_predict[index], cmap=plt.cm.binary, interpolation='nearest')
-      label_offset = 7
-      label_offset_confidence = 24
-      label_prediction = np.argmax(predictions[index])
-      #label_prediction_confidence = predictions[index]
-      if label_prediction == expectations[index]:
-        ax.text(0, label_offset, str(label_prediction), color='green')     # label the image with the target value
+    # plot all predicted labels of the "test_images" or "other unseen images" with coded color (green=correct, red=incorrect)
+    # a. image
+    def _image(i=None, predictions_array=None, actual_label=None, img=None):
+      predictions_array, actual_label, img = predictions_array, actual_label[i], img[i]
+      plt.grid(False)
+      plt.xticks([])
+      plt.yticks([])
+      plt.imshow(img, cmap=plt.cm.binary)
+      label_prediction = np.argmax(predictions_array)
+      if label_prediction == actual_label:
+        color = 'green'
       else:
-        ax.text(0, label_offset, str(label_prediction), color='red')       # label the image with the target value
-    plt.savefig(image_filename + "_predictions_vs_expections.png", dpi=300)  # save figure in the CWD
-  # End predict_with_new_or_existing_saved_model() method
+        color = 'red'
+      #plt.xlabel("{} {:0.1f}% ({})".format(label_names[label_prediction], 100*np.max(predictions_array), label_names[actual_label]), color='color')
+      plt.xlabel("{} {:0.1f}% {}".format(label_names[label_prediction] + " @ ", 100*np.max(predictions_array), "prob."), color=color)
+    
+    # b. value_list
+    def _value(i=None, predictions_list=None, actual_label=None):
+      predictions_list, actual_label = predictions_list, actual_label[i]
+      plt.grid(False)
+      plt.xticks(range(10))
+      plt.yticks([])
+      thisplot = plt.bar(range(10), predictions_list, color='gray')
+      plt.ylim([0, 1])
+      label_prediction = np.argmax(predictions_list)
+      thisplot[label_prediction].set_color('red')
+      thisplot[actual_label].set_color('blue')
+    
+    # c. final plot
+    def _final_plot(number_of_rows=None, number_of_columns=None):
+      number_of_images = number_of_rows * number_of_columns
+      plt.figure(figsize=(2 * 2 * number_of_columns, 2 * number_of_rows))
+      for i in range(number_of_images):
+        plt.subplot(number_of_rows, 2 * number_of_columns, (2*i + 1))
+        _image(i, predictions[i], input_labels_expected_prediction, input_images_to_predict)
+        plt.subplot(number_of_rows, 2 * number_of_columns, (2*i + 2))
+        _value(i, predictions[i], input_labels_expected_prediction)
+      plt.tight_layout()
+      plt.savefig(image_filename + "_predictions_vs_expections_all_with_probability.png", dpi=300)  # save figure in the CWD
+      
+    #d. make plot
+    _final_plot(number_of_rows=5, number_of_columns=3)
+  # End predict_and_view_with_new_or_existing_saved_model_ffnn_option() method
   
-  def FFNN_classification(self, ffnn_options=None):
+  def ffnn_classification(self, ffnn_options=None):
     """Feed-forward Deep Neural Network (FFNN) for shale "images"  classification.
        The abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
        such that calling the method is reduced to just 1 line of statement with the properly defined
@@ -133,9 +161,9 @@ class ShaleFFNNAndCNN():
       data_set = ffnn_options.data
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       train_images, test_images = train_images / 255.0, test_images / 255.0
-      label_names = fnn_options.label_names
-      
+
       # define hyper-parameters and other inputs
+      label_names = ffnn.label_names
       shape_x = ffnn_options.shape_x
       shape_y = ffnn_options.shape_y
       input_layer_activation =  ffnn_options.input_layer_activation
@@ -168,9 +196,9 @@ class ShaleFFNNAndCNN():
       data_set = tf.keras.datasets.mnist
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
       train_images, test_images = train_images / 255.0, test_images / 255.0
-      label_names = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
       # define hyper-parameters and other inputs
+      label_names = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
       shape_x = 28
       shape_y = 28
       input_layer_activation = 'relu'
@@ -184,7 +212,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 50
+      epochs = 2
       batch_size = 64
       existing_saved_model = False
       save_model = True
@@ -192,10 +220,10 @@ class ShaleFFNNAndCNN():
       image_filename = "ffnn_image"
       make_predictions = True
       input_images_to_predict = test_images
-      input_labels_expected_prediction= test_labels
+      input_labels_expected_prediction = test_labels
       
     #display all images with class names and verify data format
-    self.view_train_images_with_train_labels_option_two(train_images, train_labels, label_names, image_filename)
+    self.view_train_images_and_train_labels_option_two(train_images, train_labels, label_names, image_filename)
       
     # create, fit/train, evaluate and save new model
     if not existing_saved_model:
@@ -216,6 +244,11 @@ class ShaleFFNNAndCNN():
       # compile the model
       model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
       
+      # print model summary
+      print("Model Topology.")
+      print("===============")
+      model.summary()
+      
       # fit/train the model
       model.fit(train_images, train_labels, epochs=epochs, batch_size=batch_size,  verbose=verbose)
       
@@ -234,12 +267,12 @@ class ShaleFFNNAndCNN():
     if existing_saved_model:
       self.evaluate_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
       
-    # if desired, finally make prediction with test_images or other images, plot predictions and print % of correct match
+    # if desired, finally make prediction with test_images or other images, plot predictionss
     if make_predictions:
-      self.predict_with_new_or_existing_saved_model(model, input_images_to_predict, input_labels_expected_prediction, image_filename)
-  #End FFNN_classification() method
+      self.ffnn_predict_and_view_with_new_or_existing_saved_model(model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
+  # End ffnn_classification() method
   
-  def CNN_classification(self, cnn_options=None):
+  def cnn_classification(self, cnn_options=None):
     """Convolutional Deep Neural Network (CNN) for shale "images" classification.
        The abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
        such that calling the method is reduced to just 1 line of statement with the properly defined
@@ -251,7 +284,12 @@ class ShaleFFNNAndCNN():
       # load data
       data_set = cnn_options.data
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
-      label_names = cnn_options.label_names
+      
+      #make copies of original image before processing/re-shaping (to be used for image view/plot/display)
+      original_train_images =  train_images
+      original_train_labels = train_labels
+      original_test_images = test_images
+      original_test_labels = test_labels
       
       # define channel, images height and widths
       channels = cnn.channels
@@ -272,6 +310,7 @@ class ShaleFFNNAndCNN():
       number_of_labels = test_labels.shape[1]
       
       # defined hyper-parameters and other inputs
+      label_names = cnn.label_names
       input_layer_activation =  cnn_options.input_layer_activation
       hidden_layers_activation =  cnn_options.hidden_layers_activation
       output_layer_activation =  cnn_options.output_layer_activation
@@ -289,8 +328,12 @@ class ShaleFFNNAndCNN():
       pool_size = cnn_options.pool_size
       kernel_size = cnn_options.kernel_size
       strides = cnn_options.strides
-      number_of_hidden_layers = 1     # fix this value (i.e. not required in the argument)
+      number_of_hidden_layers = 2     # fix this value (i.e. not required in the argument)
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
+      #
+      make_predictions = cnn_options.make_predictions
+      input_images_to_predict = cnn_options.input_images_to_predict
+      input_labels_expected_prediction = cnn_options.input_labels_expected_prediction
      
     # defined default dataset, hyper-parameters and other inputs, if not defined in the argument
     if not cnn_options:
@@ -300,7 +343,12 @@ class ShaleFFNNAndCNN():
       # load data from MNIST data
       data_set = tf.keras.datasets.mnist
       (train_images, train_labels), (test_images, test_labels) = data_set.load_data()
-      label_names = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+      
+      #make copies of original image before processing/re-shaping (to be used for image view/plot/display)
+      original_train_images =  train_images
+      original_train_labels = train_labels
+      original_test_images = test_images
+      original_test_labels = test_labels
       
       # define channel, image height and imge width
       channels = 1
@@ -321,6 +369,7 @@ class ShaleFFNNAndCNN():
       number_of_labels = test_labels.shape[1]
       
       # defined hyper-parameters and other inputs
+      label_names = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
       input_layer_activation = 'relu'
       hidden_layers_activation = 'relu'
       output_layer_activation = 'softmax'
@@ -328,7 +377,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 30
+      epochs = 2
       batch_size = 256
       existing_saved_model = False
       save_model = True
@@ -338,30 +387,41 @@ class ShaleFFNNAndCNN():
       pool_size = 2
       kernel_size = 5
       strides = 1
-      number_of_hidden_layers = 1     # fix this value (i.e. not required in the argument)
+      number_of_hidden_layers = 2     # fix this value (i.e. not required in the argument)
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
+      #
+      make_predictions = True
+      input_images_to_predict = original_test_images
+      input_labels_expected_prediction = original_test_labels
+      
+    #display all images with class names and verify data format
+    self.view_train_images_and_train_labels_option_two(original_train_images, original_train_labels, label_names, image_filename)
     
     # create, fit/train, evaluate and save new model
     if not existing_saved_model:
       # compose/create model with loop to generalise number of hidden layers
       model = Sequential()
-      # set data_format value
+      # a. set data_format value
       backend.set_image_data_format(data_format)
-      # add convolutional layer with input_shape, filters, kernel_size, strides, and activation function; pooling layer and dropout layer
+      # b. input: add convolutional layer with input_shape, filters, kernel_size, strides, and activation function
       model.add(Conv2D(input_shape=(channels, image_width, image_height), filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=input_layer_activation))
-      # add 2 pooling layers and dropout layers, with a sandwiched Conv2D layer
-      for layer_index in range(number_of_hidden_layers):
-        model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_after_input_layer"))
-        model.add(Dropout(dropout))
+      # c. hidden: in a loop, add 2 Conv2D layers; follow each by a pooling layer and a dropout layer->
+      # note = number_of_hidden_layers = 2"
+      for index in range(number_of_hidden_layers):
         model.add(Conv2D(filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=hidden_layers_activation))
-        model.add(MaxPooling2D(pool_size=(pool_size, pool_size), name="max_pooling_before_output_fully_connected_layer"))
+        model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
         model.add(Dropout(dropout))
-      #flatten output from the 2D filters into a 1D vector before feeding into fully-connected classification output layer
+      #d. output: flatten output from the 2D filters into a 1D vector before feeding into fully-connected classification output layer
       model.add(Flatten())
       model.add(Dense(number_of_labels, activation=output_layer_activation))
-
+      
       # compile the model
       model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
+      
+      # print model summary
+      print("Model Topology.")
+      print("===============")
+      model.summary()
       
       # fit/train the model
       model.fit(train_images, train_labels, epochs=epochs, verbose=verbose, batch_size=batch_size)
@@ -380,7 +440,13 @@ class ShaleFFNNAndCNN():
     # evaluate with existing saved model
     if existing_saved_model:
       self.evaluate_with_existing_saved_model(saved_model_name, optimizer, loss, test_images, test_labels, verbose)
-  #End CNN_classification() method
+      
+    # if desired, finally make prediction with test_images or other images, plot predictions
+    if make_predictions:
+      #self.cnn_predict_and_view_with_new_or_existing_saved_model(model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
+      pass
+  #End cnn_classification() method
+  
   
 class ShaleFFNNAndCNN_Test(TestCase):
   """ Test FFNN and CNN """
@@ -389,17 +455,17 @@ class ShaleFFNNAndCNN_Test(TestCase):
     self.count = 0
   # End setUp() method
     
-  def test_FFNN_classification(self):
+  def test_ffnn_classification(self):
     self.count = "{}{}".format("FFNN_classification : ",  1)
     sfc = ShaleFFNNAndCNN()
-    sfc.FFNN_classification()
-  #End test_FFNN_classification() method()
+    sfc.ffnn_classification()
+  #End test_ffnn_classification() method()
     
-  def test_CNN_classification(self):
+  def test_cnn_classification(self):
     self.count = "{}{}".format("CNN_classification : ",  2)
     sfc = ShaleFFNNAndCNN()
-    sfc.CNN_classification()
-  #End test_CNN_classification() method
+    sfc.cnn_classification()
+  #End test_cnn_classification() method
   
   def tearDown(self):
     # do nothing but confirm success
