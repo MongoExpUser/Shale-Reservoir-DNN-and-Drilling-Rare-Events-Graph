@@ -405,9 +405,11 @@ class ShaleFFNNAndCNN():
       backend.set_image_data_format(data_format)
       # b. input: add convolutional layer with input_shape, filters, kernel_size, strides, and activation function
       model.add(Conv2D(input_shape=(channels, image_width, image_height), filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=input_layer_activation))
-      # c. hidden: in a loop, add 2 Conv2D layers; follow each by a pooling layer and a dropout layer->
+      # c. hidden: in a loop, add 2 Conv2D layers; each sandwiched in between max_pooling_2d and dropout layers
       # note = number_of_hidden_layers = 2"
       for index in range(number_of_hidden_layers):
+        model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
+        model.add(Dropout(dropout))
         model.add(Conv2D(filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=hidden_layers_activation))
         model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
         model.add(Dropout(dropout))
