@@ -328,7 +328,7 @@ class ShaleFFNNAndCNN():
       pool_size = cnn_options.pool_size
       kernel_size = cnn_options.kernel_size
       strides = cnn_options.strides
-      number_of_hidden_layers = 2     # fix this value (i.e. not required in the argument)
+      number_of_hidden_layers = 1     # fix this value (i.e. not required in the argument)
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = cnn_options.make_predictions
@@ -387,7 +387,7 @@ class ShaleFFNNAndCNN():
       pool_size = 2
       kernel_size = 5
       strides = 1
-      number_of_hidden_layers = 2     # fix this value (i.e. not required in the argument)
+      number_of_hidden_layers = 1     # fix this value (i.e. not required in the argument)
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = True
@@ -405,8 +405,8 @@ class ShaleFFNNAndCNN():
       backend.set_image_data_format(data_format)
       # b. input: add convolutional layer with input_shape, filters, kernel_size, strides, and activation function
       model.add(Conv2D(input_shape=(channels, image_width, image_height), filters=filters, kernel_size=(kernel_size, kernel_size), strides=(strides, strides), activation=input_layer_activation))
-      # c. hidden: in a loop, add 2 Conv2D layers; each sandwiched in between max_pooling_2d and dropout layers
-      # note = number_of_hidden_layers = 2"
+      # c. hidden: in a loop, add 1 Conv2D layer; sandwiched in between max_pooling and dropout layers
+      # note = number_of_hidden_layers = 1"
       for index in range(number_of_hidden_layers):
         model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
         model.add(Dropout(dropout))
