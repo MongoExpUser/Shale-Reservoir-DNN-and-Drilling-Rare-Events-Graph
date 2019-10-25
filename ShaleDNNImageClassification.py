@@ -12,11 +12,11 @@
 #
 #  1) ShaleFFNNAndCNN() class for:
 #
-#    a) Feed-forward Deep Neural Network (FFNN) classification with TensorFlow library.
+#    a) Standard Feed-forward Deep Neural Network (Standard-FFNN) classification with TensorFlow library.
 #
 #    b) Convolutional Deep Neural Network (CNN) classification with TensorFlow library.
 #
-#  2) A class (ShaleFFNNAndCNN_Test()) to test ShaleFFNNAndCNN() class
+#  2) ShaleFFNNAndCNNTest() class testing ShaleFFNNAndCNN() class
 #
 #
 #  Application: shale reservoir images classification
@@ -164,7 +164,7 @@ class ShaleFFNNAndCNN():
   # End predict_and_view_with_new_or_existing_saved_model() method
   
   def ffnn_classification(self, ffnn_options=None):
-    """Feed-forward Deep Neural Network (FFNN) for shale "images"  classification.
+    """Standard Feed-forward Deep Neural Network (Standard-FFNN) for shale "images"  classification.
        The abstraction in this method is simplified and similar to sklearn's MLPClassifier(args),
        such that calling the method is reduced to just 1 line of statement with the properly defined
        input "image data", hyper-parameters and other inputs as arguments
@@ -229,7 +229,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 50
+      epochs = 10
       batch_size = 500
       existing_saved_model = False
       save_model = True
@@ -397,7 +397,7 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 50
+      epochs = 10
       batch_size = 500
       existing_saved_model = False
       save_model = True
@@ -470,7 +470,7 @@ class ShaleFFNNAndCNN():
   #End cnn_classification() method
   
   
-class ShaleFFNNAndCNN_Test(TestCase):
+class ShaleFFNNAndCNNTest(TestCase):
   """ Test FFNN and CNN """
   
   def setUp(self):
@@ -478,13 +478,13 @@ class ShaleFFNNAndCNN_Test(TestCase):
   # End setUp() method
     
   def test_ffnn_classification(self):
-    self.count = "{}{}".format("FFNN_classification : ",  1)
+    self.count = "{}{}".format("Standard-FFNN Classification : ",  1)
     sfc = ShaleFFNNAndCNN()
     sfc.ffnn_classification()
   #End test_ffnn_classification() method()
     
   def test_cnn_classification(self):
-    self.count = "{}{}".format("CNN_classification : ",  2)
+    self.count = "{}{}".format("CNN classification : ",  2)
     sfc = ShaleFFNNAndCNN()
     sfc.cnn_classification()
   #End test_cnn_classification() method
