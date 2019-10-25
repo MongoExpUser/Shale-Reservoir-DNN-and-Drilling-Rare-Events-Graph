@@ -350,8 +350,8 @@ class ShaleFFNNAndCNN():
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = cnn_options.make_predictions
-      input_images_to_predict = test_images #original_test_images
-      input_labels_expected_prediction = test_labels #original_test_labels
+      input_images_to_predict = test_images 
+      input_labels_expected_prediction = test_labels 
      
     # defined default dataset, hyper-parameters and other inputs, if not defined in the argument
     if not cnn_options:
@@ -411,8 +411,8 @@ class ShaleFFNNAndCNN():
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = True
-      input_images_to_predict = test_images #original_test_images
-      input_labels_expected_prediction = test_labels #original_test_labels
+      input_images_to_predict = test_images 
+      input_labels_expected_prediction = test_labels 
       
     #display all images with class names and verify data format
     self.view_train_images_and_train_labels_option_one(original_train_images, original_train_labels, label_names, image_filename)
