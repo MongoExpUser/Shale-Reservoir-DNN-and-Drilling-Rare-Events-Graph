@@ -86,7 +86,7 @@ class ShaleFFNNAndCNN():
       plt.imshow(train_images[index], cmap=plt.cm.binary)
       plt.xlabel(train_labels[index])
       plt.xlabel(label_names[train_labels[index]])
-    plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
+    plt.savefig(image_filename + "_all_labels.png", dpi=300) # save figure in the CWD
   # End view_train_images_and_train_labels_option_one() method
 
   def view_train_images_and_train_labels_option_two(self, train_images=None, train_labels=None, label_names=None, image_filename=None):
@@ -100,54 +100,68 @@ class ShaleFFNNAndCNN():
     plt.savefig(image_filename + "_all.png", dpi=300) # save figure in the CWD
   # End view_train_images_and_train_labels_option_two() method
   
-  def ffnn_predict_and_view_with_new_or_existing_saved_model(self, model=None, input_images_to_predict=None, input_labels_expected_prediction=None, label_names=None, image_filename=None):
-     # predict labels of the "test_images" or "other unseen images"
+  def predict_and_view_with_new_or_existing_saved_model(self, option=None, model=None, input_images_to_predict=None, input_labels_expected_prediction=None, label_names=None, image_filename=None):
+    # predict labels unseen images" with coded color (green=correct, red=incorrect)
+    
+    # a. define correct, incorrect and neutral colors
+    correct_color = 'green'
+    incorrect_color = 'red'
+    neutral_color = 'gray'
+
+    #.b define predictions and expectations
     predictions = model.predict(input_images_to_predict)
     expectations = input_labels_expected_prediction
     
-    # plot all predicted labels of the "test_images" or "other unseen images" with coded color (green=correct, red=incorrect)
-    # a. image
-    def _image(i=None, predictions_array=None, actual_label=None, img=None):
-      predictions_array, actual_label, img = predictions_array, actual_label[i], img[i]
+    # c. image plot
+    def image(index=None, predictions_array=None, actual_label=None, img=None):
+      predictions_array, actual_label, img = predictions_array, actual_label[index], img[index]
       plt.grid(False)
       plt.xticks([])
       plt.yticks([])
-      plt.imshow(img, cmap=plt.cm.binary)
       label_prediction = np.argmax(predictions_array)
-      if label_prediction == actual_label:
-        color = 'green'
+      if option == "ffnn":
+        plt.imshow(img, cmap=plt.cm.binary)
+        confirm = (label_prediction == actual_label)
+      elif option == "cnn":
+        plt.imshow(img.squeeze(), cmap=plt.cm.binary)
+        confirm = (label_prediction == list(actual_label).index(1))
+      if confirm:
+        color = correct_color
       else:
-        color = 'red'
-      #plt.xlabel("{} {:0.1f}% ({})".format(label_names[label_prediction], 100*np.max(predictions_array), label_names[actual_label]), color='color')
-      plt.xlabel("{} {:0.1f}% {}".format(label_names[label_prediction] + " @ ", 100*np.max(predictions_array), "prob."), color=color)
-    
-    # b. value_list
-    def _value(i=None, predictions_list=None, actual_label=None):
-      predictions_list, actual_label = predictions_list, actual_label[i]
+        color = incorrect_color
+      plt.xlabel("{} {:0.1f}% {}".format(label_names[label_prediction] + " @ ", 100*np.max(predictions_array), "conf."), color=color)
+          
+    # d. value plot
+    def value(index=None, predictions_list=None, actual_label=None):
+      predictions_list, actual_label = predictions_list, actual_label[index]
       plt.grid(False)
       plt.xticks(range(10))
       plt.yticks([])
-      thisplot = plt.bar(range(10), predictions_list, color='gray')
+      thisplot = plt.bar(range(10), predictions_list, color=neutral_color)
       plt.ylim([0, 1])
       label_prediction = np.argmax(predictions_list)
-      thisplot[label_prediction].set_color('red')
-      thisplot[actual_label].set_color('blue')
+      if option == "ffnn":
+        thisplot[label_prediction].set_color(incorrect_color)
+        thisplot[actual_label].set_color(correct_color)
+      if option == "cnn":
+        thisplot[label_prediction].set_color(incorrect_color)
+        thisplot[list(actual_label).index(1)].set_color(correct_color)
     
-    # c. final plot
-    def _final_plot(number_of_rows=None, number_of_columns=None):
+    # e. final/combined plot
+    def final_plot(number_of_rows=None, number_of_columns=None):
       number_of_images = number_of_rows * number_of_columns
       plt.figure(figsize=(2 * 2 * number_of_columns, 2 * number_of_rows))
-      for i in range(number_of_images):
-        plt.subplot(number_of_rows, 2 * number_of_columns, (2*i + 1))
-        _image(i, predictions[i], input_labels_expected_prediction, input_images_to_predict)
-        plt.subplot(number_of_rows, 2 * number_of_columns, (2*i + 2))
-        _value(i, predictions[i], input_labels_expected_prediction)
+      for index in range(number_of_images):
+        plt.subplot(number_of_rows, 2 * number_of_columns, (2*index + 1))
+        image(index, predictions[index], input_labels_expected_prediction, input_images_to_predict)
+        plt.subplot(number_of_rows, 2 * number_of_columns, (2*index + 2))
+        value(index, predictions[index], input_labels_expected_prediction)
       plt.tight_layout()
-      plt.savefig(image_filename + "_predictions_vs_expections_all_with_probability.png", dpi=300)  # save figure in the CWD
+      plt.savefig(image_filename + "_pred_vs_expect_all_labels.png", dpi=300)  # save figure in the CWD
       
-    #d. make plot
-    _final_plot(number_of_rows=5, number_of_columns=3)
-  # End predict_and_view_with_new_or_existing_saved_model_ffnn_option() method
+    # f. invoke final plot
+    final_plot(number_of_rows=5, number_of_columns=3)
+  # End predict_and_view_with_new_or_existing_saved_model() method
   
   def ffnn_classification(self, ffnn_options=None):
     """Feed-forward Deep Neural Network (FFNN) for shale "images"  classification.
@@ -215,8 +229,8 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'sparse_categorical_crossentropy'
       verbose = 1
-      epochs = 30
-      batch_size = 64
+      epochs = 50
+      batch_size = 500
       existing_saved_model = False
       save_model = True
       saved_model_name = "classification_model_ffnn"
@@ -272,7 +286,8 @@ class ShaleFFNNAndCNN():
       
     # if desired, finally make prediction with test_images or other images, plot predictionss
     if make_predictions:
-      self.ffnn_predict_and_view_with_new_or_existing_saved_model(model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
+      option="ffnn"
+      self.predict_and_view_with_new_or_existing_saved_model(option, model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
   # End ffnn_classification() method
   
   def cnn_classification(self, cnn_options=None):
@@ -335,8 +350,8 @@ class ShaleFFNNAndCNN():
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = cnn_options.make_predictions
-      input_images_to_predict = cnn_options.input_images_to_predict
-      input_labels_expected_prediction = cnn_options.input_labels_expected_prediction
+      input_images_to_predict = test_images #original_test_images
+      input_labels_expected_prediction = test_labels #original_test_labels
      
     # defined default dataset, hyper-parameters and other inputs, if not defined in the argument
     if not cnn_options:
@@ -382,8 +397,8 @@ class ShaleFFNNAndCNN():
       optimizer = 'adam'
       loss = 'categorical_crossentropy'
       verbose = 1
-      epochs = 30
-      batch_size = 256
+      epochs = 50
+      batch_size = 500
       existing_saved_model = False
       save_model = True
       saved_model_name = "classification_model_cnn"
@@ -396,8 +411,8 @@ class ShaleFFNNAndCNN():
       data_format = "channels_first"  # fix this value (i.e. not required in the argument)
       #
       make_predictions = True
-      input_images_to_predict = original_test_images
-      input_labels_expected_prediction = original_test_labels
+      input_images_to_predict = test_images #original_test_images
+      input_labels_expected_prediction = test_labels #original_test_labels
       
     #display all images with class names and verify data format
     self.view_train_images_and_train_labels_option_one(original_train_images, original_train_labels, label_names, image_filename)
@@ -450,8 +465,8 @@ class ShaleFFNNAndCNN():
       
     # if desired, finally make prediction with test_images or other images, plot predictions
     if make_predictions:
-      #self.cnn_predict_and_view_with_new_or_existing_saved_model(model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
-      pass
+      option="cnn"
+      self.predict_and_view_with_new_or_existing_saved_model(option, model, input_images_to_predict, input_labels_expected_prediction, label_names, image_filename)
   #End cnn_classification() method
   
   
