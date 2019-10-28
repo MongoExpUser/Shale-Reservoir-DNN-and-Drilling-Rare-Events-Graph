@@ -418,9 +418,9 @@ class ShaleDNN():
   def test_dataset_ffnn_images_classification(self, test=True, data_option="digits"):
     # defined default dataset, hyper-parameters and other inputs
     if test:
-      print("------------------------------------------------------------------------------------------")
-      print("No argument is provided for FFNN image classification model: using default mnist dataset. ")
-      print("------------------------------------------------------------------------------------------")
+      print("-------------------------------------------------------------")
+      print("Using MNIST dataset to test FFNN image classification model. ")
+      print("-------------------------------------------------------------")
       
       # load data from MNIST datasets
       if data_option == "digits":
@@ -465,9 +465,9 @@ class ShaleDNN():
   def test_dataset_cnn_images_classification(self, test=True, data_option="digits"):
     # defined default dataset, hyper-parameters and other inputs
     if test:
-      print("------------------------------------------------------------------------------------------")
-      print("No argument is provided for FFNN image classification model: using default mnist dataset. ")
-      print("------------------------------------------------------------------------------------------")
+      print("------------------------------------------------------------")
+      print("Using MNIST dataset to test CNN image classification model. ")
+      print("------------------------------------------------------------")
       
       # load data from MNIST datasets
       if data_option == "digits":
