@@ -24,7 +24,7 @@
 #  2) ShaleDNNTest() class testing ShaleDNN() class
 #
 #
-#  Applications:  rock-types/images/formations/facies/
+#  Applications:  
 #
 #  i)   Shale reservoir images classification
 #  ii)  Shale reservoir non-image properties classification (rock-types/formations/facies/zones/geo-bodies/any-discrete-property)
