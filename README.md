@@ -28,11 +28,11 @@ Python-shell.js v1.0.8
 
 Python v3.7
 
-Tensorflow v2.0 (Python Version)
+Tensorflow v2.0.0 (Python Version)
 
-Scikit-learn v0.21.2
+Scikit-learn v0.21.3
 
-Keras v2.2.4
+Keras v2.2.4-tf
 
 C11
 
