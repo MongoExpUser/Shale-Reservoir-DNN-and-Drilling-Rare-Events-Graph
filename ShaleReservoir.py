@@ -76,7 +76,7 @@ class ShaleDNN():
   
   def __init__(self):
     print()
-    print("Initiating Shale AIML Engine for Classification and Regression.")
+    print("Initiating Shale AIML Engine.")
   # End  __init__() method
     
   def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
