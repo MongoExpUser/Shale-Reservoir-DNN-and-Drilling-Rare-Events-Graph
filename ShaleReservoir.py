@@ -75,6 +75,7 @@ class ShaleDNN():
   """
   
   def __init__(self):
+    print()
     print("Initiating Shale AIML Engine for Classification and Regression.")
   # End  __init__() method
     
