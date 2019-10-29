@@ -35,8 +35,8 @@
 
 
 try:
-  """ import commonly used modules, print tensorflow version 
-       and keras version, and then check for import error 
+  """  import commonly used modules, print tensorflow version
+       and keras version, and then check for import error
   """
   #import
   import numpy as np
