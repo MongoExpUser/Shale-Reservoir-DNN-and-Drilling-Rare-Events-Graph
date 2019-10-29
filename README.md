@@ -18,9 +18,9 @@ JavaScript ES6+
 
 Node v13.0.1
 
-Tensorflow.js v1.2.11 - @tensorflow/tfjs@1.2.10 (Pure JavaScript Version)
+Tensorflow.js v1.3.0 - @tensorflow/tfjs@1.3.0 (Pure JavaScript Version)
 
-Tensorflow.js v1.2.11 - @tensorflow/tfjs-node@1.2.10 (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v1.3.0 - @tensorflow/tfjs-node@1.3.0 (Node.js CPU Version - with native C++ bindings)
 
 Tensorflow.js v1.2.9 - @tensorflow/tfjs-node-gpu@1.2.9 (Node.js GPU Version - with native C++ bindings)
 
