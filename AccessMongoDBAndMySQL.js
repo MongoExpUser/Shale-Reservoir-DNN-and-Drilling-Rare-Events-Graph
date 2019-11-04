@@ -94,6 +94,195 @@ class AccessMongoDBAndMySQL
                 (values !== undefined) && (keys.length === values.length);
     }
     
+    static reservoirTableSchema()
+    {
+        //define schema variable and bracket, with correct spaces & commas
+        let schema = "";
+        let closeBracket = ")";
+        
+         //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirDocumentsKeys();
+        
+        //define data types, with correct spaces and commas
+        const doubleDataType = " DOUBLE, ";
+        const textDataType = " TEXT, ";
+        const intDataType = " INT, ";
+
+
+        //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
+        schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
+        
+        //then concatenate all keys, data types, spaces and commas
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index === 0)
+            {
+                schema = schema + inputKeys[index] + intDataType;
+            }
+            else if(index === 1)
+            {
+                schema = schema + inputKeys[index] + textDataType;  //Reservoir_ID: foreign key designate to other TABLES
+            }
+            else if(index > 1)
+            {
+                schema = schema + inputKeys[index] +  doubleDataType;
+            }
+        }
+        
+        //add constraints on GR and Deep resistvity data
+        let check_constraints = "CHECK (0>=Avg_GR_api<=150), CHECK (0>=Avg_Deep_Resis_ohm_m<= 2000)";
+
+        //finally concatenate all, including check_constraints and close bracket to get the "tableSchema"
+        const tableSchema = schema + check_constraints + closeBracket;
+        
+        return tableSchema;
+        
+    }
+    
+    static reservoirTableKeys()
+    {
+        //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+        let keys = "";
+        let seperator =  ", ";
+        let openBracket = " ("
+        let closeBracket = ")";
+        
+        //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirDocumentsKeys();
+        
+        //then concatenate opening bracket, all keys, spaces, commas and close bracket
+        keys = keys + openBracket;
+        
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index < (inputKeys.length-1))
+            {
+                keys = keys + inputKeys[index] + seperator;
+            }
+            else
+            {
+                keys = keys + inputKeys[index];
+            }
+        }
+        
+        keys = keys + closeBracket;
+    
+        return keys;
+        
+    }
+    
+    static reservoirTableValuesOne()
+    {
+        //values below map directly, sequentially, to keys in reservoirDocumentsKeys()
+        return [1200, 'Upper-Yoho', 540.89, 25.23, 3445.90, 3001.35];
+    }
+
+    static reservoirTableValuesTwo()
+    {
+        //values below map directly, sequentially, to keys in reservoirDocumentsKeys()
+        return [1400, 'Middle-Salabe', 345.61, 20.11, 8000.00, 7609.62];
+    }
+
+    static reservoirDocumentsKeys()
+    {
+        return ["Reservoir_ID", "Reservoir_Zone", "Avg_Deep_Resis_ohm_m", "Avg_GR_api", "Top_MD_ft", "Top_TVD_ft"];
+    }
+
+    static reservoirSTOOIPTableSchema()
+    {
+        //define schema variable and bracket, with correct spaces & commas
+        let schema = "";
+        let closeBracket = ")";
+        
+         //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirSTOOIPDocumentsKeys();
+        
+        //define data types, with correct spaces and commas
+        const doubleDataType = " DOUBLE, ";
+        const intDataType = " INT, ";
+        const doubleDataTypeClosed = " DOUBLE";
+
+
+        //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
+        schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
+        
+        //then concatenate all keys, data types, spaces and commas
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index === 0)
+            {
+                schema = schema + inputKeys[index] + intDataType;
+            }
+            else if(index > 0 && index < 7)
+            {
+                schema = schema + inputKeys[index] +  doubleDataType;
+            }
+            else
+            {
+                schema = schema + inputKeys[index] +  doubleDataType;
+            }
+        }
+        
+        //add foreign_key_constraints for Reservoir_ID
+        let foreign_key_constraint = "FOREIGN KEY (Reservoir_ID) REFERENCES Reservoirs(Reservoir_ID)";
+
+        //finally concatenate all, including foreign_key_constraint and close bracket to get the "tableSchema"
+        const tableSchema = schema + foreign_key_constraint + closeBracket;
+        
+        return tableSchema;
+    }
+    
+    static reservoirSTOOIPTableKeys()
+    {
+        //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+        let keys = "";
+        let seperator =  ", ";
+        let openBracket = " ("
+        let closeBracket = ")";
+        
+        //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirSTOOIPDocumentsKeys();
+        
+        //then concatenate opening bracket, all keys, spaces, commas and close bracket
+        keys = keys + openBracket;
+        
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index < (inputKeys.length-1))
+            {
+                keys = keys + inputKeys[index] + seperator;
+            }
+            else
+            {
+                keys = keys + inputKeys[index];
+            }
+        }
+        
+        keys = keys + closeBracket;
+    
+        return keys;
+        
+    }
+    
+    static reservoirSTOOIPTableValuesOne()
+    {
+        //values below map directly, sequentially, to keys in reservoirSTOOIPDocumentsKeys()
+        //note: STOOIP_bbls = 7758 * Area_acres * Net_pay_ft * Porosity_frac * Oil_sat_frac * (1/Bo) * (1/10E+6)
+        return [1200, 103.15, 0.2645, 0.8378, 100, 600, 997.89, 1.0000];
+    }
+    
+    static reservoirSTOOIPTableValuesTwo()
+    {
+        //values below map directly, sequentially, to keys in reservoirSTOOIPDocumentsKeys()
+        //note: STOOIP_bbls = 7758 * Area_acres * Net_pay_ft * Porosity_frac * Oil_sat_frac * (1/Bo) * (1/10E+6)
+        return [1400, 81.19, 0.2237, 0.7301, 89, 720, 1200, 1.0001];
+    }
+    
+    static reservoirSTOOIPDocumentsKeys()
+    {
+        return ["Reservoir_ID", "STOOIP_mm_bbls", "Porosity_frac", "Oil_sat_frac", "Net_pay_ft", "Area_acres", "Perm_mD", "Bo_factor"];
+    }
+    
     static drillingEventTableSchema()
     {
         //define schema variable and bracket, with correct spaces & commas
