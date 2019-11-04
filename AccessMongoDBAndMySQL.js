@@ -329,7 +329,7 @@ class AccessMongoDBAndMySQL
         //add check constraints on some LWD data
         let constraints = "CHECK (0>=GR_api<=150), CHECK (0>=DEEP_RESISTIVITY_ohm_m<= 2000)";
         
-        //finally concatenate all, including constraints and close bracket to get the "tableSchema"
+         //finally concatenate all, including constraints and closeBracket to get the "tableSchema"
         const tableSchema = schema + constraints + closeBracket;
         
         return tableSchema;
