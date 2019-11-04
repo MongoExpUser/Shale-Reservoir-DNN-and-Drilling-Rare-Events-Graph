@@ -174,7 +174,7 @@ class AccessMongoDBAndMySQL
         
         keys = keys + closeBracket;
     
-        return keys
+        return keys;
     }
 
     static drillingEventTableValues()
