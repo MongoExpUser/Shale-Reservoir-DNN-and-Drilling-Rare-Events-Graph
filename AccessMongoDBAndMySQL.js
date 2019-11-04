@@ -94,11 +94,43 @@ class AccessMongoDBAndMySQL
                 (values !== undefined) && (keys.length === values.length);
     }
     
+    static reservdataPipeline(reservoirZone=undefined, option=undefined)
+    {
+        let sqlQuery = "";
+        
+        if(option === "prolific_reservoir_zone")
+        {
+            // 1. ten top-most prolific very-sandy SPECIFIED "reservoirZone"
+            sqlQuery = "" +
+                "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " +
+                "FROM ReservoirProduction rsp " +
+                "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " +
+                "WHERE rs.Reservoir_Zone=" + "'" + reservoirZone  + "'" + " AND rs.Avg_GR_api<30 " +
+                "ORDER BY rsp.Cum_prod_mm_bbls " +
+                "LIMIT 10;";
+            return sqlQuery;
+        }
+        else if(option === "thickest_reservoir_zone")
+        {
+            // 2. five top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
+            sqlQuery = "" +
+                "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " +
+                "FROM Reservoir rs " +
+                "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
+                "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
+                "ORDER BY rsp.Cum_prod_mm_bbls " +
+                "LIMIT 5;";
+            return sqlQuery;
+        }
+    }
+    
     static reservoirTableSchema()
     {
         //define schema variable and bracket, with correct spaces & commas
         let schema = "";
         let closeBracket = ")";
+        let openBracket  = "(";
+        let closeIndexBracket = "), "
         
          //define input keys
         let inputKeys = AccessMongoDBAndMySQL.reservoirDocumentsKeys();
@@ -107,7 +139,8 @@ class AccessMongoDBAndMySQL
         const doubleDataType = " DOUBLE, ";
         const textDataType = " TEXT, ";
         const intDataType = " INT, ";
-
+        
+        const indexStatement = "INDEX ";
 
         //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
         schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
@@ -117,11 +150,13 @@ class AccessMongoDBAndMySQL
         {
             if(index === 0)
             {
-                schema = schema + inputKeys[index] + intDataType;
+                //this is Reservoir_ID: foreign key designate to other TABLES -> must be INDEXED
+                schema = schema + inputKeys[index] + intDataType + indexStatement + openBracket + inputKeys[index] + closeIndexBracket;
             }
             else if(index === 1)
             {
-                schema = schema + inputKeys[index] + textDataType;  //Reservoir_ID: foreign key designate to other TABLES
+                
+                schema = schema + inputKeys[index] + textDataType;
             }
             else if(index > 1)
             {
@@ -129,14 +164,13 @@ class AccessMongoDBAndMySQL
             }
         }
         
-        //add constraints on GR and Deep resistvity data
-        let check_constraints = "CHECK (0>=Avg_GR_api<=150), CHECK (0>=Avg_Deep_Resis_ohm_m<= 2000)";
-
-        //finally concatenate all, including check_constraints and close bracket to get the "tableSchema"
-        const tableSchema = schema + check_constraints + closeBracket;
+        //add check constraints on GR and Deep resistvity data
+        let check_constraints = "CHECK (0>=Avg_GR_api<=150), CHECK (0>=Avg_Deep_Resis_ohm_m<=2000)";
+        
+        //finally concatenate all, including check_constraints,  & closeBracket to get the "tableSchema"
+        const tableSchema = schema + check_constraints +  closeBracket;
         
         return tableSchema;
-        
     }
     
     static reservoirTableKeys()
@@ -144,7 +178,7 @@ class AccessMongoDBAndMySQL
         //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
         let keys = "";
         let seperator =  ", ";
-        let openBracket = " ("
+        let openBracket = " (";
         let closeBracket = ")";
         
         //define input keys
@@ -193,6 +227,8 @@ class AccessMongoDBAndMySQL
         //define schema variable and bracket, with correct spaces & commas
         let schema = "";
         let closeBracket = ")";
+        let openBracket  = "(";
+        let closeIndexBracket = "), ";
         
          //define input keys
         let inputKeys = AccessMongoDBAndMySQL.reservoirSTOOIPDocumentsKeys();
@@ -200,8 +236,8 @@ class AccessMongoDBAndMySQL
         //define data types, with correct spaces and commas
         const doubleDataType = " DOUBLE, ";
         const intDataType = " INT, ";
-        const doubleDataTypeClosed = " DOUBLE";
-
+        
+        const indexStatement = "INDEX ";
 
         //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
         schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
@@ -211,11 +247,8 @@ class AccessMongoDBAndMySQL
         {
             if(index === 0)
             {
-                schema = schema + inputKeys[index] + intDataType;
-            }
-            else if(index > 0 && index < 7)
-            {
-                schema = schema + inputKeys[index] +  doubleDataType;
+                //this is Reservoir_ID: foreign key designate to other TABLES -> must be INDEXED
+                schema = schema + inputKeys[index] + intDataType + indexStatement + openBracket + inputKeys[index] + closeIndexBracket;
             }
             else
             {
@@ -223,10 +256,10 @@ class AccessMongoDBAndMySQL
             }
         }
         
-        //add foreign_key_constraints for Reservoir_ID
-        let foreign_key_constraint = "FOREIGN KEY (Reservoir_ID) REFERENCES Reservoirs(Reservoir_ID)";
+        //add foreign key constraint for Reservoir_ID
+        let foreign_key_constraint = "FOREIGN KEY (Reservoir_ID) REFERENCES Reservoir(Reservoir_ID)";
 
-        //finally concatenate all, including foreign_key_constraint and close bracket to get the "tableSchema"
+        //finally concatenate all, including foreign_key_constraint and closeBracket to get the "tableSchema"
         const tableSchema = schema + foreign_key_constraint + closeBracket;
         
         return tableSchema;
@@ -281,6 +314,97 @@ class AccessMongoDBAndMySQL
     static reservoirSTOOIPDocumentsKeys()
     {
         return ["Reservoir_ID", "STOOIP_mm_bbls", "Porosity_frac", "Oil_sat_frac", "Net_pay_ft", "Area_acres", "Perm_mD", "Bo_factor"];
+    }
+    
+    static reservoirProductionTableSchema()
+    {
+        //define schema variable and bracket, with correct spaces & commas
+        let schema = "";
+        let closeBracket = ")";
+        let openBracket  = "(";
+        let closeIndexBracket = "), "
+        
+         //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirProductionDocumentsKeys();
+        
+        //define data types, with correct spaces and commas
+        const doubleDataType = " DOUBLE, ";
+        const intDataType = " INT, ";
+        
+        const indexStatement = "INDEX ";
+
+        //add "ROWID" primary key as auto increment (primary key is like automatically assigned "_id" in MongoDB)
+        schema = " (ROWID INT AUTO_INCREMENT PRIMARY KEY, ";
+        
+        //then concatenate all keys, data types, spaces and commas
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index === 0)
+            {
+                //this is Reservoir_ID: foreign key designate to other TABLES -> must be INDEXED
+                schema = schema + inputKeys[index] + intDataType + indexStatement + openBracket + inputKeys[index] + closeIndexBracket;
+            }
+            else
+            {
+                schema = schema + inputKeys[index] +  doubleDataType;
+            }
+        }
+        
+        //add foreign key constraint for Reservoir_ID
+        let foreign_key_constraint = "FOREIGN KEY (Reservoir_ID) REFERENCES Reservoir(Reservoir_ID)";
+
+        //finally concatenate all, including foreign_key_constraint and closeBracket to get the "tableSchema"
+        const tableSchema = schema + foreign_key_constraint + closeBracket;
+        
+        return tableSchema;
+    }
+    
+    static reservoirProductionTableKeys()
+    {
+        //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+        let keys = "";
+        let seperator =  ", ";
+        let openBracket = " ("
+        let closeBracket = ")";
+        
+        //define input keys
+        let inputKeys = AccessMongoDBAndMySQL.reservoirProductionDocumentsKeys();
+        
+        //then concatenate opening bracket, all keys, spaces, commas and close bracket
+        keys = keys + openBracket;
+        
+        for(let index = 0; index < inputKeys.length; index++)
+        {
+            if(index < (inputKeys.length-1))
+            {
+                keys = keys + inputKeys[index] + seperator;
+            }
+            else
+            {
+                keys = keys + inputKeys[index];
+            }
+        }
+        
+        keys = keys + closeBracket;
+    
+        return keys;
+    }
+    
+    static reservoirProductionTableValuesOne()
+    {
+        //values below map directly, sequentially, to keys in reservoirProductionDocumentsKeys()
+        return [1200, 0.3671, 1.0211, 365.0];
+    }
+    
+    static reservoirProductionTableValuesTwo()
+    {
+        //values below map directly, sequentially, to keys in reservoirProductionDocumentsKeys()
+        return [1400, 1.0206, 0.7656, 1460.0];
+    }
+    
+    static reservoirProductionDocumentsKeys()
+    {
+        return ["Reservoir_ID", "Cum_prod_mm_bbls", "Prod_Rate_m_bopd", "Days"];
     }
     
     static drillingEventTableSchema()
