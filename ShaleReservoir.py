@@ -110,7 +110,7 @@ class ShaleDNN():
       connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
-    except(DataError, OperationalError, DatabaseError, ProgrammingError, InternalError, IntegrityError, Warning, InterfaceError) as err:
+    except(Exception) as err:
       # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
                              
@@ -128,11 +128,16 @@ class ShaleDNN():
       pprint(conn.fetchone())
       print()
       # c.
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all_reservoir_zones_and_volume_indicators")
+      conn.execute(sql_query)
+      pprint(conn.fetchone())
+      print()
+      # d.
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all")
       conn.execute(sql_query)
       pprint(conn.fetchone())
       print()
-    except(DataError, OperationalError, DatabaseError, ProgrammingError, InternalError, IntegrityError, Warning, InterfaceError) as err:
+    except(Exception) as err:
        # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
     finally:
@@ -149,41 +154,46 @@ class ShaleDNN():
 
     if option == "prolific_reservoir_zones":
       # 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
-      sql_query = "" + \
-        "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " + \
-        "FROM ReservoirProduction rsp " + \
-        "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " + \
-        "WHERE rs.Reservoir_Zone=" + "'" + reservoir_zone  + "'" + " AND rs.Avg_GR_api<30 " + \
-        "ORDER BY rsp.Cum_prod_mm_bbls " + \
-        "LIMIT " + str(nth_limit) + ";"
-        
+      sql_query = """
+                    SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days
+                    FROM ReservoirProduction rsp
+                    INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID
+                    WHERE rs.Reservoir_Zone=""" + 'reservoir_zone' + "{}{}{}".format(""" AND rs.Avg_GR_api<30
+                    ORDER BY rsp.Cum_prod_mm_bbls
+                    LIMIT
+                   """, str(nth_limit), ";")
+      
     elif option == "thickest_reservoir_zones":
       # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
-      sql_query = "" + \
-        "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " + \
-        "FROM Reservoir rs " + \
-        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
-        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " + \
-        "ORDER BY rsp.Cum_prod_mm_bbls " + \
-        "LIMIT " + str(nth_limit) + ";"
+      sql_query = "{}{}{}".format(
+                   """
+                    SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days
+                    FROM Reservoir rs
+                    INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID
+                    INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID
+                    ORDER BY rsp.Cum_prod_mm_bbls
+                    LIMIT
+                   """, str(nth_limit), ";"
+                  )
         
     elif option == "all_reservoir_zones_and_volume_indicators":
       # 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
-      sql_query = "" + \
-        "SELECT rs.Reservoir_Zone, rs.Reservoir_ID, rs.Top_TVD_ft, rso.STOOIP_mm_bbls, rso.Net_pay_ft, rsp.Cum_prod_mm_bbls, rsp.Days " + \
-        "FROM Reservoir rs " + \
-        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
-        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " + \
-        "ORDER BY rsp.Days;"
-        
+      sql_query = """
+                    SELECT rs.Reservoir_Zone, rs.Reservoir_ID, rs.Top_TVD_ft, rso.STOOIP_mm_bbls, rso.Net_pay_ft, rsp.Cum_prod_mm_bbls, rsp.Days
+                    FROM Reservoir rs
+                    INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID
+                    INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID
+                    ORDER BY rsp.Days;
+                  """
+                  
     elif option == "all":
       # 4. all properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
-      sql_query = "" + \
-        "SELECT * " + \
-        "FROM Reservoir rs " + \
-        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
-        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID;"
-        
+      sql_query = """
+                   SELECT *
+                   FROM Reservoir rs
+                   INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID
+                   INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID;
+                  """
     else:
       # 5. default
       # do nothing: just confirm "No" option is specified
