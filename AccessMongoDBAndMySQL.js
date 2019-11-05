@@ -125,7 +125,7 @@ class AccessMongoDBAndMySQL
         else
         {
             //3. .... add more data pipeline as deem necessary
-            return null;
+            return sqlQuery;
         }
     
     static reservoirTableSchema()
