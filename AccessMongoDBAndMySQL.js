@@ -94,35 +94,39 @@ class AccessMongoDBAndMySQL
                 (values !== undefined) && (keys.length === values.length);
     }
     
-    static reservdataPipeline(reservoirZone=undefined, option=undefined)
+    static reservdataPipeline(nthLimit=30, reservoirZone=undefined, option=undefined)
     {
         let sqlQuery = "";
         
         if(option === "prolific_reservoir_zone")
         {
-            // 1. ten top-most prolific very-sandy SPECIFIED "reservoirZone"
+            // 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
             sqlQuery = "" +
                 "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " +
                 "FROM ReservoirProduction rsp " +
                 "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " +
                 "WHERE rs.Reservoir_Zone=" + "'" + reservoirZone  + "'" + " AND rs.Avg_GR_api<30 " +
                 "ORDER BY rsp.Cum_prod_mm_bbls " +
-                "LIMIT 10;";
+                "LIMIT " + String(nthLimit) + ";";
             return sqlQuery;
         }
         else if(option === "thickest_reservoir_zone")
         {
-            // 2. five top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
+            // 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
             sqlQuery = "" +
                 "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " +
                 "FROM Reservoir rs " +
                 "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
                 "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
                 "ORDER BY rsp.Cum_prod_mm_bbls " +
-                "LIMIT 5;";
+                "LIMIT " + String(nthLimit) + ";";
             return sqlQuery;
         }
-    }
+        else
+        {
+            //3. .... add more data pipeline as deem necessary
+            return null;
+        }
     
     static reservoirTableSchema()
     {
