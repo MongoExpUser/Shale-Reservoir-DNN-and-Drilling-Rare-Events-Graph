@@ -41,7 +41,9 @@ try:
   """
   #import
   import numpy as np
+  import pymysql.cursors
   import tensorflow as tf
+  from pprint import pprint
   from random import randint
   import matplotlib.pyplot as plt
   from unittest import TestCase, main
@@ -82,7 +84,64 @@ class ShaleDNN():
     print("Initiating Shale AIML Engine.")
   # End  __init__() method
   
-  def reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=None):
+  def connect_to_mysql_from_python_using_pymysql_connector(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
+    # set ssl certificates and connection options
+    if required_ssl:
+      ca_file = ssl_certificates["ca"]
+      key_file = ssl_certificates["key"]
+      cert_file = ssl_certificates["cert"]
+    else:
+      ca_file  = None
+      key_file = None
+      cert_file = None
+      
+    # connection options
+    host = mysql_connection_options["host"]
+    user = mysql_connection_options["user"]
+    port = mysql_connection_options["port"]
+    password = mysql_connection_options["password"]
+    db = mysql_connection_options["db"]
+    ssl = {'ssl: ': {'ca': ca_file, 'key': key_file, 'cert': cert_file}}
+  
+    # 1. connect to database
+    try:
+      charset='utf8mb4'
+      cursorclass=pymysql.cursors.DictCursor
+      connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
+      print()
+      print("{}{}{}".format("Connection to database (", db, ") is established."))
+    except(DataError, OperationalError, DatabaseError, ProgrammingError, InternalError, IntegrityError, Warning, InterfaceError) as err:
+      # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
+      print(str(err))
+                             
+    # 2. execute some queries for data pipeline
+    try:
+      conn = connection.cursor()
+      # a.
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=20, reservoir_zone="Upper-Yoho", option="prolific_reservoir_zones")
+      conn.execute(sql_query)
+      pprint(conn.fetchone())
+      print()
+      # b.
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=10, reservoir_zone=None, option="thickest_reservoir_zones")
+      conn.execute(sql_query)
+      pprint(conn.fetchone())
+      print()
+      # c.
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all")
+      conn.execute(sql_query)
+      pprint(conn.fetchone())
+      print()
+    except(DataError, OperationalError, DatabaseError, ProgrammingError, InternalError, IntegrityError, Warning, InterfaceError) as err:
+       # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
+      print(str(err))
+      print(str(err))
+    finally:
+      connection.close()
+      print("{}{}{}".format("Connection to database (", db, ") is closed."))
+  # End connect_to_mysql_from_python_using_pymysql_connector() method
+
+  def reservoir_data_pipeline_for_analytics(self, nth_limit=None, reservoir_zone=None, option=None):
     sql_query = "";
         
     if not nth_limit:
@@ -97,7 +156,7 @@ class ShaleDNN():
         "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " + \
         "WHERE rs.Reservoir_Zone=" + "'" + reservoir_zone  + "'" + " AND rs.Avg_GR_api<30 " + \
         "ORDER BY rsp.Cum_prod_mm_bbls " + \
-        "LIMIT " + String(nthLimit) + ";"
+        "LIMIT " + str(nth_limit) + ";"
         
     elif option == "thickest_reservoir_zones":
       # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
@@ -107,7 +166,7 @@ class ShaleDNN():
         "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
         "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " + \
         "ORDER BY rsp.Cum_prod_mm_bbls " + \
-        "LIMIT " + String(nthLimit) + ";"
+        "LIMIT " + str(nth_limit) + ";"
         
     elif option == "all_reservoir_zones_and_volume_indicators":
       # 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
@@ -134,6 +193,7 @@ class ShaleDNN():
       # add more data pipelines option(s) as deem necessary ....
       
     #confirm query syntax is okay
+    print()
     print("SQL query is okay....")
 
     return sql_query;
