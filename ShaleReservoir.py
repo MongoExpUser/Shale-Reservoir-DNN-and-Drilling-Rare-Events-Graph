@@ -135,7 +135,6 @@ class ShaleDNN():
     except(DataError, OperationalError, DatabaseError, ProgrammingError, InternalError, IntegrityError, Warning, InterfaceError) as err:
        # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
-      print(str(err))
     finally:
       connection.close()
       print("{}{}{}".format("Connection to database (", db, ") is closed."))
@@ -192,10 +191,6 @@ class ShaleDNN():
       return
       # add more data pipelines option(s) as deem necessary ....
       
-    #confirm query syntax is okay
-    print()
-    print("SQL query is okay....")
-
     return sql_query;
   #End reservoir_data_pipeline_for_analytics() method
     
