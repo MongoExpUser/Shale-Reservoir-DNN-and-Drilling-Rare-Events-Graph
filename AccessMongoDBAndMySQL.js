@@ -94,7 +94,7 @@ class AccessMongoDBAndMySQL
                 (values !== undefined) && (keys.length === values.length);
     }
     
-    static reservoirdataPipeline(nthLimit=undefined, reservoirZone=undefined, option=undefined)
+    static reservoirdataPipelineForAnalytics(nthLimit=undefined, reservoirZone=undefined, option=undefined)
     {
         let sqlQuery = "";
         
