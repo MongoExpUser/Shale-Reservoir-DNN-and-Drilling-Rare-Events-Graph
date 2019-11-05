@@ -130,6 +130,7 @@ class ShaleDNN():
       # 5. default
       # do nothing: just confirm "No" option is specified
       print("No option is specified....")
+      return
       # add more data pipelines option(s) as deem necessary ....
       
     #confirm query syntax is okay
