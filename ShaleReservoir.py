@@ -101,7 +101,7 @@ class ShaleDNN():
     port = mysql_connection_options["port"]
     password = mysql_connection_options["password"]
     db = mysql_connection_options["db"]
-    ssl = {'ssl: ': {'ca': ca_file, 'key': key_file, 'cert': cert_file}}
+    ssl = {'ssl:' : {'ca': ca_file, 'key': key_file, 'cert': cert_file}}
   
     # 1. connect to database
     try:
@@ -149,7 +149,7 @@ class ShaleDNN():
     sql_query = "";
         
     if not nth_limit:
-      #default nthLimit to 5, if not given or undefined as argument
+      #default nth_limit to 5, if not given or undefined as argument
       nth_limit = 5;
 
     if option == "prolific_reservoir_zones":
