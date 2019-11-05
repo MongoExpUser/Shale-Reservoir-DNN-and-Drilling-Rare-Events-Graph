@@ -94,39 +94,58 @@ class AccessMongoDBAndMySQL
                 (values !== undefined) && (keys.length === values.length);
     }
     
-    static reservoirdataPipeline(nthLimit=30, reservoirZone=undefined, option=undefined)
+    static reservoirdataPipeline(nthLimit=undefined, reservoirZone=undefined, option=undefined)
     {
         let sqlQuery = "";
         
-        if(option === "prolific_reservoir_zone")
+        if(nthLimit === null || nthLimit === undefined)
+        {
+            //default nthLimit to 5, if not given or undefined as argument
+            nthLimit = 5;
+        }
+        
+        switch(option)
         {
             // 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
-            sqlQuery = "" +
-                "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " +
-                "FROM ReservoirProduction rsp " +
-                "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " +
-                "WHERE rs.Reservoir_Zone=" + "'" + reservoirZone  + "'" + " AND rs.Avg_GR_api<30 " +
-                "ORDER BY rsp.Cum_prod_mm_bbls " +
-                "LIMIT " + String(nthLimit) + ";";
-            return sqlQuery;
-        }
-        else if(option === "thickest_reservoir_zone")
-        {
+            case ("prolificReservoirZones"):
+                sqlQuery = "" +
+                    "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " +
+                    "FROM ReservoirProduction rsp " +
+                    "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " +
+                    "WHERE rs.Reservoir_Zone=" + "'" + reservoirZone  + "'" + " AND rs.Avg_GR_api<30 " +
+                    "ORDER BY rsp.Cum_prod_mm_bbls " +
+                    "LIMIT " + String(nthLimit) + ";";
+                break;
+
             // 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
-            sqlQuery = "" +
-                "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " +
-                "FROM Reservoir rs " +
-                "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
-                "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
-                "ORDER BY rsp.Cum_prod_mm_bbls " +
-                "LIMIT " + String(nthLimit) + ";";
-            return sqlQuery;
+            case ("thickestReservoirZones"):
+                sqlQuery = "" +
+                    "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " +
+                    "FROM Reservoir rs " +
+                    "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
+                    "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
+                    "ORDER BY rsp.Cum_prod_mm_bbls " +
+                    "LIMIT " + String(nthLimit) + ";";
+                break;
+                
+            // 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
+            case ("allReservoirZonesAndVolumeIndicators"):
+                sqlQuery = "" +
+                    "SELECT rs.Reservoir_Zone, rs.Reservoir_ID, rs.Top_TVD_ft, rso.STOOIP_mm_bbls, rso.Net_pay_ft, rsp.Cum_prod_mm_bbls, rsp.Days " +
+                    "FROM Reservoir rs " +
+                    "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
+                    "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
+                    "ORDER BY rsp.Days;";
+                break;
+            
+            // 4. default
+            default:
+                //do nothing: ...add more data pipelines as deem necessary
+                break;
         }
-        else
-        {
-            //3. .... add more data pipeline as deem necessary
-            return sqlQuery;
-        }
+        
+        return sqlQuery;
+    }
     
     static reservoirTableSchema()
     {
