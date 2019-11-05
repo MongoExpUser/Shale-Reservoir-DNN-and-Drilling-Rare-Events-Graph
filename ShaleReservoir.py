@@ -10,7 +10,7 @@
 # *
 # * ...Ecotert's ShaleReservoir.py  (released as open-source under MIT License) implements:
 #
-#  1) ShaleDNN() class with  TensorFlow library for:
+#  1) ShaleDNN() class for:
 #
 #    a) Standard Feed-forward Deep Neural Network (Standard-FFNN) images classification.
 #
@@ -20,11 +20,12 @@
 #
 #    d) Standard Feed-forward Deep Neural Network (Standard-FFNN) production volumes/rates regresssion.
 #
+#    e) ELT/Data pipelining
 #
 #  2) ShaleDNNTest() class testing ShaleDNN() class
 #
 #
-#  Applications:  
+#  Applications:
 #
 #  i)   Shale reservoir images classification
 #  ii)  Shale reservoir non-image properties classification (rock-types/formations/facies/zones/geo-bodies/any-discrete-property)
@@ -72,12 +73,70 @@ class ShaleDNN():
       (3) non-image properties classification with standard-ffnn and
       
       (4) production volumes/rates regression with standard-ffnn
+      
+      (5) ELT/Data pipelining
   """
   
   def __init__(self):
     print()
     print("Initiating Shale AIML Engine.")
   # End  __init__() method
+  
+  def reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=None):
+    sql_query = "";
+        
+    if not nth_limit:
+      #default nthLimit to 5, if not given or undefined as argument
+      nth_limit = 5;
+
+    if option == "prolific_reservoir_zones":
+      # 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
+      sql_query = "" + \
+        "SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days " + \
+        "FROM ReservoirProduction rsp " + \
+        "INNER JOIN Reservoir rs ON rsp.Reservoir_ID=rs.Reservoir_ID " + \
+        "WHERE rs.Reservoir_Zone=" + "'" + reservoir_zone  + "'" + " AND rs.Avg_GR_api<30 " + \
+        "ORDER BY rsp.Cum_prod_mm_bbls " + \
+        "LIMIT " + String(nthLimit) + ";"
+        
+    elif option == "thickest_reservoir_zones":
+      # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
+      sql_query = "" + \
+        "SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days " + \
+        "FROM Reservoir rs " + \
+        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
+        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " + \
+        "ORDER BY rsp.Cum_prod_mm_bbls " + \
+        "LIMIT " + String(nthLimit) + ";"
+        
+    elif option == "all_reservoir_zones_and_volume_indicators":
+      # 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
+      sql_query = "" + \
+        "SELECT rs.Reservoir_Zone, rs.Reservoir_ID, rs.Top_TVD_ft, rso.STOOIP_mm_bbls, rso.Net_pay_ft, rsp.Cum_prod_mm_bbls, rsp.Days " + \
+        "FROM Reservoir rs " + \
+        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
+        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " + \
+        "ORDER BY rsp.Days;"
+        
+    elif option == "all":
+      # 4. all properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
+      sql_query = "" + \
+        "SELECT * " + \
+        "FROM Reservoir rs " + \
+        "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " + \
+        "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID;"
+        
+    else:
+      # 5. default
+      # do nothing: just confirm "No" option is specified
+      print("No option is specified....")
+      # add more data pipelines option(s) as deem necessary ....
+      
+    #confirm query syntax is okay
+    print("SQL query is okay....")
+
+    return sql_query;
+  #End reservoir_data_pipeline_for_analytics() method
     
   def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
     with open(saved_model_name + ".json", "w") as filename:
