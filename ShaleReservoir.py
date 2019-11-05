@@ -110,7 +110,7 @@ class ShaleDNN():
       connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
-    except(Exception) as err:
+    except(MySQLError) as err:
       # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
                              
@@ -137,7 +137,7 @@ class ShaleDNN():
       conn.execute(sql_query)
       pprint(conn.fetchone())
       print()
-    except(Exception) as err:
+    except(MySQLError) as err:
        # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
     finally:
