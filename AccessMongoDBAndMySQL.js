@@ -137,13 +137,22 @@ class AccessMongoDBAndMySQL
                     "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID " +
                     "ORDER BY rsp.Days;";
                 break;
-            
-            // 4. default
+                
+            // 4. all properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
+            case ("all"):
+                sqlQuery = "" +
+                    "SELECT * " +
+                    "FROM Reservoir rs " +
+                    "INNER JOIN ReservoirSTOOIP rso ON rs.Reservoir_ID=rso.Reservoir_ID " +
+                    "INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID;";
+                break;
+
+            // 5. default
             default:
                 //do nothing: ...add more data pipelines as deem necessary
                 break;
         }
-        
+
         return sqlQuery;
     }
     
