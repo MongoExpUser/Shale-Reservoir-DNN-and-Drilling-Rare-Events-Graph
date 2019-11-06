@@ -84,6 +84,17 @@ class ShaleDNN():
     print("Initiating Shale AIML Engine.")
   # End  __init__() method
   
+  def print_output_data_in_two_formats(self, output_data):
+    # note: output_data is a list of dictionaries-> each dictionary represents each row
+    print("Print option 1: As a list of dictionaries)
+    pprint(output_data)
+    print()
+    print("Print Option 2: As dictionaries)
+    for index, item in enumerate(output_data):
+      print(item)
+    print()
+  # print_output_data_in_two_formats() method
+      
   def connect_to_mysql_from_python_using_pymysql_connector(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
     # set ssl certificates and connection options
     if required_ssl:
@@ -103,41 +114,48 @@ class ShaleDNN():
     db = mysql_connection_options["db"]
     ssl = {'ssl:' : {'ca': ca_file, 'key': key_file, 'cert': cert_file}}
   
-    # 1. connect to database
+    # connect to database
     try:
       charset='utf8mb4'
       cursorclass=pymysql.cursors.DictCursor
       connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
+      return connection
     except(MySQLError) as err:
       # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
-                             
-    # 2. execute some queries for data pipeline
+  # End connect_to_mysql_from_python_using_pymysql_connector() method
+  
+  def execute_some_queries_for_data_pipeline(self, connection, db):
+    # execute some queries for data pipeline
     try:
-      conn = connection.cursor()
+      cursor = connection.cursor()
       # a.
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=20, reservoir_zone="Upper-Yoho", option="prolific_reservoir_zones")
-      conn.execute(sql_query)
-      pprint(conn.fetchone())
-      print()
+      cursor.execute(sql_query)
+      output_data = cursor.fetchall()
+      self.print_output_data_in_two_formats(output_data)
+      
       # b.
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=10, reservoir_zone=None, option="thickest_reservoir_zones")
-      conn.execute(sql_query)
-      pprint(conn.fetchone())
-      print()
+      cursor.execute(sql_query)
+      output_data = cursor.fetchall()
+      self.print_output_data_in_two_formats(output_data)
+      
       # c.
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all_reservoir_zones_and_volume_indicators")
-      conn.execute(sql_query)
-      pprint(conn.fetchone())
-      print()
+      cursor.execute(sql_query)
+      output_data = cursor.fetchall()
+      self.print_output_data_in_two_formats(output_data)
+      
       # d.
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all")
-      conn.execute(sql_query)
-      pprint(conn.fetchone())
-      print()
-    except(MySQLError) as err:
+      cursor.execute(sql_query)
+      output_data = cursor.fetchall()
+      self.print_output_data_in_two_formats(output_data)
+      
+    except(Exception) as err:
        # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(err))
     finally:
@@ -162,7 +180,7 @@ class ShaleDNN():
                     ORDER BY rsp.Cum_prod_mm_bbls
                     LIMIT
                    """, str(nth_limit), ";")
-      
+                   
     elif option == "thickest_reservoir_zones":
       # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
       sql_query = "{}{}{}".format(
