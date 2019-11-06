@@ -41,11 +41,14 @@ try:
   """
   #import
   import numpy as np
+  from csv import writer
   import pymysql.cursors
   import tensorflow as tf
   from pprint import pprint
   from random import randint
+  from json import dumps, loads
   import matplotlib.pyplot as plt
+  from pymysql.err import MySQLError
   from unittest import TestCase, main
   from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras import backend, optimizers, Sequential
@@ -84,16 +87,41 @@ class ShaleDNN():
     print("Initiating Shale AIML Engine.")
   # End  __init__() method
   
-  def print_output_data_in_two_formats(self, output_data):
+  def view_output_data(self, output_data=None, cursor=None, save_output_data_as_csv=None, filename=None):
     # note: output_data is a list of dictionaries-> each dictionary represents each row
-    print("Print option 1: As a list of dictionaries, row-wise equivalent")
+    print("----------------------------------------")
+    print("Fetched Data: As a List of Dictionaries.")
+    print("   The Dictionaries are TABLES Rows.    ")
+    print("----------------------------------------")
     pprint(output_data)
-    print()
-    print("Print Option 2: As dictionaries, column-wise equivalent")
-    for index, item in enumerate(output_data):
-      print(item)
-    print()
-  # print_output_data_in_two_formats() method
+    # convert to and view as JSON objects
+    print("----------------------------------------")
+    print("JSON Objects Equivalent of Dictionaries.")
+    print("----------------------------------------")
+    output_data_as_json = dumps(output_data, sort_keys=True)
+    print(output_data_as_json)
+    # save as csv, if desired
+    if save_output_data_as_csv:
+      self.create_csv_file_from_json(output_data_as_json, filename)
+      print("----------------------------------------")
+      print("{}{}{}".format("Data successfully saved into ",  filename, " in the CWD."))
+      print()
+  # view_output_data() method
+  
+  def create_csv_file_from_json(self, data, filename):
+    parsed_data = loads(data)
+    # write data into file and save in CWD
+    write_file = open(filename, 'w')
+    csv_writer = writer(write_file)
+    counter = 0
+    for each_row in parsed_data:
+      if counter == 0:
+        header = each_row.keys()
+        csv_writer.writerow(header)
+        counter = counter + 1
+      csv_writer.writerow(each_row.values())
+    write_file.close()
+  # End create_csv_file_from_json() method
       
   def connect_to_mysql_from_python_using_pymysql_connector(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
     # set ssl certificates and connection options
@@ -122,9 +150,9 @@ class ShaleDNN():
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
       return connection
-    except(MySQLError) as err:
-      # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
-      print(str(err))
+    except(MySQLError) as mysql_err:
+      # see all error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
+      print(str(mysql_err))
   # End connect_to_mysql_from_python_using_pymysql_connector() method
   
   def execute_some_queries_for_data_pipeline(self, connection, db):
@@ -132,32 +160,36 @@ class ShaleDNN():
     try:
       cursor = connection.cursor()
       # a.
-      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=20, reservoir_zone="Upper-Yoho", option="prolific_reservoir_zones")
+      option = "prolific_reservoir_zones"
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=20, reservoir_zone="Upper-Yoho", option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
-      self.print_output_data_in_two_formats(output_data)
+      self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
       
       # b.
-      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=10, reservoir_zone=None, option="thickest_reservoir_zones")
+      option = "thickest_reservoir_zones"
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=10, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
-      self.print_output_data_in_two_formats(output_data)
+      self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
       
       # c.
-      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all_reservoir_zones_and_volume_indicators")
+      option = "all_reservoir_zones_and_volume_indicators"
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
-      self.print_output_data_in_two_formats(output_data)
+      self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
       
       # d.
-      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option="all")
+      option = "all"
+      sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
-      self.print_output_data_in_two_formats(output_data)
+      self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
       
-    except(Exception) as err:
-       # see error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
-      print(str(err))
+    except(MySQLError) as mysql_err:
+       # see all error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
+      print(str(mysql_err))
     finally:
       connection.close()
       print("{}{}{}".format("Connection to database (", db, ") is closed."))
