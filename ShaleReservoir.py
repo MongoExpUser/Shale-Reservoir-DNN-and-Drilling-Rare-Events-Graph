@@ -106,12 +106,11 @@ class ShaleDNN():
       print("----------------------------------------")
       print("{}{}{}".format("Data successfully saved into ",  filename, " in the CWD."))
       print()
-  # view_output_data() method
+  # End view_output_data() method
   
   def create_csv_file_from_json(self, data, filename):
     parsed_data = loads(data)
-    # write data into file and save in CWD
-    write_file = open(filename, 'w')
+    write_file = open(filename, 'w') # save in CWD
     csv_writer = writer(write_file)
     counter = 0
     for each_row in parsed_data:
@@ -124,7 +123,6 @@ class ShaleDNN():
   # End create_csv_file_from_json() method
       
   def connect_to_mysql_from_python_using_pymysql_connector(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
-    # set ssl certificates and connection options
     if required_ssl:
       ca_file = ssl_certificates["ca"]
       key_file = ssl_certificates["key"]
@@ -134,7 +132,7 @@ class ShaleDNN():
       key_file = None
       cert_file = None
       
-    # connection options
+    # define all connection options
     host = mysql_connection_options["host"]
     user = mysql_connection_options["user"]
     port = mysql_connection_options["port"]
@@ -151,12 +149,10 @@ class ShaleDNN():
       print("{}{}{}".format("Connection to database (", db, ") is established."))
       return connection
     except(MySQLError) as mysql_err:
-      # see all error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(mysql_err))
   # End connect_to_mysql_from_python_using_pymysql_connector() method
   
-  def execute_some_queries_for_data_pipeline(self, connection, db):
-    # execute some queries for data pipeline
+  def execute_some_queries_for_data_pipeline(self, connection=None, db=None):
     try:
       cursor = connection.cursor()
       # a.
@@ -165,35 +161,75 @@ class ShaleDNN():
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-      
       # b.
       option = "thickest_reservoir_zones"
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=10, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-      
       # c.
       option = "all_reservoir_zones_and_volume_indicators"
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-      
       # d.
       option = "all"
       sql_query = self.reservoir_data_pipeline_for_analytics(nth_limit=None, reservoir_zone=None, option=option)
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-      
     except(MySQLError) as mysql_err:
-       # see all error types here: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/err.py#L105
       print(str(mysql_err))
     finally:
       connection.close()
       print("{}{}{}".format("Connection to database (", db, ") is closed."))
-  # End connect_to_mysql_from_python_using_pymysql_connector() method
+  # End execute_some_queries_for_data_pipeline() method
+  
+  def combined_keys(self, input_keys=None):
+    #define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+    keys = ""
+    seperator =  ", "
+    open_bracket = " ("
+    close_bracket = ")"
+    #then concatenate opening bracket, all keys, spaces, commas and close bracket
+    keys = keys + open_bracket
+    for index in range(len(input_keys)):
+      if index < len(input_keys)-1:
+        keys = keys + input_keys[index] + seperator
+      else:
+        keys = keys + input_keys[index]
+    keys = keys + close_bracket
+    return keys
+  # End combined_keys() method
+  
+  def add_data_to_reservoir_table(self, table_name=None, connection=None, db=None):
+    reservoir_keys =  ["Reservoir_ID", "Reservoir_Zone", "Avg_Deep_Resis_ohm_m", "Avg_GR_api", "Top_MD_ft", "Top_TVD_ft"]
+    # the two set of values below map directly, sequentially, to keys in reservoir_keys list
+    reservoir_values_one = [1201, 'Upper-Yoho', 540.79, 25.22, 3446.90, 3001.45]
+    reservoir_values_two = [1401, 'Middle-Salabe', 345.66, 20.12, 8000.01, 7609.63]
+
+    # insert two set of values into the "table_name" TABLE
+    confirm = (table_name and connection and db)
+    if confirm:
+      try:
+        cursor = connection.cursor()
+        keys = self.combined_keys(input_keys=reservoir_keys)
+        sql_query = "{}{}{}{}".format("INSERT INTO " , table_name, keys, " VALUES (%s, %s, %s, %s, %s, %s)")
+        # a. values_one
+        cursor.execute(sql_query, reservoir_values_one)
+        connection.commit()
+        print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
+        # b. values_two
+        cursor.execute(sql_query, reservoir_values_two)
+        connection.commit()
+        print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
+      except(MySQLError) as mysql_err:
+        print(str(mysql_err))
+      finally:
+        connection.close()
+        print("{}{}{}".format("Connection to database (", db, ") is closed."))
+  # End add_data_to_reservoir_table() method
 
   def reservoir_data_pipeline_for_analytics(self, nth_limit=None, reservoir_zone=None, option=None):
     sql_query = "";
@@ -201,7 +237,6 @@ class ShaleDNN():
     if not nth_limit:
       #default nth_limit to 5, if not given or undefined as argument
       nth_limit = 5;
-
     if option == "prolific_reservoir_zones":
       # 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
       sql_query = """
@@ -212,7 +247,6 @@ class ShaleDNN():
                     ORDER BY rsp.Cum_prod_mm_bbls
                     LIMIT
                    """, str(nth_limit), ";")
-                   
     elif option == "thickest_reservoir_zones":
       # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
       sql_query = "{}{}{}".format(
@@ -225,7 +259,6 @@ class ShaleDNN():
                     LIMIT
                    """, str(nth_limit), ";"
                   )
-        
     elif option == "all_reservoir_zones_and_volume_indicators":
       # 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
       sql_query = """
@@ -235,7 +268,6 @@ class ShaleDNN():
                     INNER JOIN ReservoirProduction rsp ON rs.Reservoir_ID=rsp.Reservoir_ID
                     ORDER BY rsp.Days;
                   """
-                  
     elif option == "all":
       # 4. all properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
       sql_query = """
@@ -250,7 +282,6 @@ class ShaleDNN():
       print("No option is specified....")
       return
       # add more data pipelines option(s) as deem necessary ....
-      
     return sql_query;
   #End reservoir_data_pipeline_for_analytics() method
     
