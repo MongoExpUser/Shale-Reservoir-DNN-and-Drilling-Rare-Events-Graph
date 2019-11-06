@@ -86,10 +86,10 @@ class ShaleDNN():
   
   def print_output_data_in_two_formats(self, output_data):
     # note: output_data is a list of dictionaries-> each dictionary represents each row
-    print("Print option 1: As a list of dictionaries)
+    print("Print option 1: As a list of dictionaries, row-wise equivalent")
     pprint(output_data)
     print()
-    print("Print Option 2: As dictionaries)
+    print("Print Option 2: As dictionaries, column-wise equivalent")
     for index, item in enumerate(output_data):
       print(item)
     print()
