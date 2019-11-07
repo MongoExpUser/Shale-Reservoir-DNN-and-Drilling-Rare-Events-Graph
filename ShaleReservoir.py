@@ -42,7 +42,6 @@ try:
   #import
   import numpy as np
   from csv import writer
-  import pymysql.cursors
   import tensorflow as tf
   from pprint import pprint
   from random import randint
@@ -122,7 +121,7 @@ class ShaleDNN():
     write_file.close()
   # End create_csv_file_from_json() method
       
-  def connect_to_mysql_from_python_using_pymysql_connector(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
+  def connect_to_mysql_from_python(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
     if required_ssl:
       ca_file = ssl_certificates["ca"]
       key_file = ssl_certificates["key"]
@@ -132,7 +131,7 @@ class ShaleDNN():
       key_file = None
       cert_file = None
       
-    # define all connection options
+    # define connection options
     host = mysql_connection_options["host"]
     user = mysql_connection_options["user"]
     port = mysql_connection_options["port"]
@@ -148,9 +147,9 @@ class ShaleDNN():
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
       return connection
-    except(MySQLError) as mysql_err:
-      print(str(mysql_err))
-  # End connect_to_mysql_from_python_using_pymysql_connector() method
+    except(MySQLError) as sql_connection_err:
+      print(str(sql_connection_err))
+  #End connect_to_mysql_from_python() method
   
   def execute_some_queries_for_data_pipeline(self, connection=None, db=None):
     try:
@@ -179,8 +178,8 @@ class ShaleDNN():
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-    except(MySQLError) as mysql_err:
-      print(str(mysql_err))
+    except(MySQLError) as sql_queries_err:
+      print(str(sql_queries_err))
     finally:
       connection.close()
       print("{}{}{}".format("Connection to database (", db, ") is closed."))
