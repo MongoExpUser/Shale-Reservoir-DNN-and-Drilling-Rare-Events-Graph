@@ -205,11 +205,11 @@ class ShaleDNN():
   
   def add_data_to_reservoir_table(self, table_name=None, connection=None, db=None):
     reservoir_keys =  ["Reservoir_ID", "Reservoir_Zone", "Avg_Deep_Resis_ohm_m", "Avg_GR_api", "Top_MD_ft", "Top_TVD_ft"]
-    # the two set of values below map directly, sequentially, to keys in reservoir_keys list
+    # the two sets of values below map directly, sequentially, to keys in reservoir_keys list
     reservoir_values_one = [1201, 'Upper-Yoho', 540.79, 25.22, 3446.90, 3001.45]
     reservoir_values_two = [1401, 'Middle-Salabe', 345.66, 20.12, 8000.01, 7609.63]
 
-    # insert two set of values into the "table_name" TABLE
+    # insert the two sets of values into the "table_name" TABLE
     confirm = (table_name and connection and db)
     if confirm:
       try:
