@@ -144,7 +144,7 @@ class ShaleDNN():
     cert = "ssl-cert"
     ssl_all = {ssl : {ca: ca_file, key: key_file, cert: cert_file}}
     
-    # # connect to database
+    # connect to database
     try:
       charset='utf8mb4'
       cursorclass = pymysql.cursors.DictCursor
