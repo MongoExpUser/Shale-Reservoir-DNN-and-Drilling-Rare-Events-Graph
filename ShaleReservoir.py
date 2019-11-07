@@ -124,9 +124,9 @@ class ShaleDNN():
       
   def connect_to_mysql_from_python(self, mysql_connection_options=None, ssl_certificates=None, required_ssl=True):
     if required_ssl:
-      ca_file = ssl_certificates["ca"]
-      key_file = ssl_certificates["key"]
-      cert_file = ssl_certificates["cert"]
+      ca_file = ssl_certificates["ssl-ca"]
+      key_file = ssl_certificates["ssl-key"]
+      cert_file = ssl_certificates["ssl-cert"]
     else:
       ca_file  = None
       key_file = None
