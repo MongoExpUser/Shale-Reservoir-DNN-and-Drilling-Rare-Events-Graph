@@ -207,7 +207,7 @@ class ShaleDNN():
     return keys
   # End combined_keys() method
   
-  def add_data_to_reservoir_table(self, table_name=None, connection=None, db=None):
+  def insert_data_to_reservoir_table(self, table_name=None, connection=None, db=None):
     reservoir_keys =  ["Reservoir_ID", "Reservoir_Zone", "Avg_Deep_Resis_ohm_m", "Avg_GR_api", "Top_MD_ft", "Top_TVD_ft"]
     # the two sets of values below map directly, sequentially, to keys in reservoir_keys list
     reservoir_values_one = [1201, 'Upper-Yoho', 540.79, 25.22, 3446.90, 3001.45]
@@ -228,12 +228,12 @@ class ShaleDNN():
         cursor.execute(sql_query, reservoir_values_two)
         connection.commit()
         print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
-      except(MySQLError) as mysql_err:
+      except(pymysql.err.MySQLError) as mysql_insert_err:
         print(str(mysql_err))
       finally:
         connection.close()
         print("{}{}{}".format("Connection to database (", db, ") is closed."))
-  # End add_data_to_reservoir_table() method
+  # End insert_data_to_reservoir_table() method
 
   def reservoir_data_pipeline_for_analytics(self, nth_limit=None, reservoir_zone=None, option=None):
     sql_query = "";
