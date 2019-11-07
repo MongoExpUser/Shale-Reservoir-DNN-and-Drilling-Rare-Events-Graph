@@ -242,7 +242,7 @@ class ShaleDNN():
       #default nth_limit to 5, if not given or undefined as argument
       nth_limit = 5;
     if option == "prolific_reservoir_zones":
-      # 1. nth top-most prolific very-sandy SPECIFIED "reservoirZone"
+      # 1. nth top-most prolific very-sandy SPECIFIED "reservoir_zone"
       sql_query = """
                     SELECT rsp.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Prod_Rate_m_bopd, rsp.Days
                     FROM ReservoirProduction rsp
@@ -252,7 +252,7 @@ class ShaleDNN():
                     LIMIT
                    """, str(nth_limit), ";")
     elif option == "thickest_reservoir_zones":
-      # 2. nth top-most thick SPECIFIED "reservoirZone", with Reservoir_ID, Cum_prod and Days
+      # 2. nth top-most thick SPECIFIED "reservoir_zone", with Reservoir_ID, Cum_prod and Days
       sql_query = "{}{}{}".format(
                    """
                     SELECT rs.Reservoir_Zone, rso.Net_pay_ft, rs.Reservoir_ID, rsp.Cum_prod_mm_bbls, rsp.Days
@@ -264,7 +264,7 @@ class ShaleDNN():
                    """, str(nth_limit), ";"
                   )
     elif option == "all_reservoir_zones_and_volume_indicators":
-      # 3. all Reservoir_Zone(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
+      # 3. all "reservoir_zone"(s), with Reservoir_ID, Top_TVD_ft, STOOIP_mm_bbls, Net_pay_ft, Cum_prod and Days
       sql_query = """
                     SELECT rs.Reservoir_Zone, rs.Reservoir_ID, rs.Top_TVD_ft, rso.STOOIP_mm_bbls, rso.Net_pay_ft, rsp.Cum_prod_mm_bbls, rsp.Days
                     FROM Reservoir rs
@@ -273,7 +273,7 @@ class ShaleDNN():
                     ORDER BY rsp.Days;
                   """
     elif option == "all":
-      # 4. all properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
+      # 4. "all" properties ON all TABLES (Reservoir, ReservoirSTOOIP & ReservoirProduction)
       sql_query = """
                    SELECT *
                    FROM Reservoir rs
