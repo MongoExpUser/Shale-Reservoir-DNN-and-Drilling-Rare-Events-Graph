@@ -138,13 +138,17 @@ class ShaleDNN():
     port = mysql_connection_options["port"]
     password = mysql_connection_options["password"]
     db = mysql_connection_options["db"]
-    ssl = {'ssl:' : {'ca': ca_file, 'key': key_file, 'cert': cert_file}}
-  
-    # connect to database
+    ssl = "ssl"
+    ca = "ssl-ca"
+    key = "ssl-key"
+    cert = "ssl-cert"
+    ssl_all = {ssl : {ca: ca_file, key: key_file, cert: cert_file}}
+    
+    # # connect to database
     try:
       charset='utf8mb4'
       cursorclass = pymysql.cursors.DictCursor
-      connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
+      connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl_all, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
       return connection
