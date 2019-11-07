@@ -229,7 +229,7 @@ class ShaleDNN():
         connection.commit()
         print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
       except(pymysql.err.MySQLError) as mysql_insert_err:
-        print(str(mysql_err))
+        print(str(mysql_insert_err))
       finally:
         connection.close()
         print("{}{}{}".format("Connection to database (", db, ") is closed."))
