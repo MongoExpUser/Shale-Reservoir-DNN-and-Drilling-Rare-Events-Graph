@@ -43,7 +43,6 @@ try:
   import numpy as np
   import pymysql.err
   import pymysql.cursors
-  import pymysql.connect
   from csv import writer
   import tensorflow as tf
   from pprint import pprint
@@ -144,7 +143,7 @@ class ShaleDNN():
     # connect to database
     try:
       charset='utf8mb4'
-      cursorclass= pymysql.cursors.DictCursor
+      cursorclass = pymysql.cursors.DictCursor
       connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
