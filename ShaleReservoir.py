@@ -41,13 +41,15 @@ try:
   """
   #import
   import numpy as np
+  import pymysql.err
+  import pymysql.cursors
+  import pymysql.connect
   from csv import writer
   import tensorflow as tf
   from pprint import pprint
   from random import randint
   from json import dumps, loads
   import matplotlib.pyplot as plt
-  from pymysql.err import MySQLError
   from unittest import TestCase, main
   from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras import backend, optimizers, Sequential
@@ -142,12 +144,12 @@ class ShaleDNN():
     # connect to database
     try:
       charset='utf8mb4'
-      cursorclass=pymysql.cursors.DictCursor
+      cursorclass= pymysql.cursors.DictCursor
       connection = pymysql.connect(host=host, user=user, port=port, password=password, db=db, ssl=ssl, charset=charset, cursorclass=cursorclass)
       print()
       print("{}{}{}".format("Connection to database (", db, ") is established."))
       return connection
-    except(MySQLError) as sql_connection_err:
+    except(pymysql.err.MySQLError) as sql_connection_err:
       print(str(sql_connection_err))
   #End connect_to_mysql_from_python() method
   
@@ -178,7 +180,7 @@ class ShaleDNN():
       cursor.execute(sql_query)
       output_data = cursor.fetchall()
       self.view_output_data(output_data, cursor, save_output_data_as_csv=True, filename=option + ".csv")
-    except(MySQLError) as sql_queries_err:
+    except(pymysql.err.MySQLError) as sql_queries_err:
       print(str(sql_queries_err))
     finally:
       connection.close()
