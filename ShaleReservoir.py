@@ -46,10 +46,10 @@ try:
   from csv import writer
   import tensorflow as tf
   from pprint import pprint
-  from random import randint
   from json import dumps, loads
   import matplotlib.pyplot as plt
   from unittest import TestCase, main
+  from random import random, randint, randrange
   from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras import backend, optimizers, Sequential
   from tensorflow.keras.utils import plot_model, to_categorical
@@ -207,12 +207,16 @@ class ShaleDNN():
     return keys
   # End combined_keys() method
   
-  def insert_data_to_reservoir_table(self, table_name=None, connection=None, db=None):
+  def insert_data_to_reservoir_table(self, number_of_datapoints=None, table_name=None, connection=None, db=None):
+    # define keys
     reservoir_keys =  ["Reservoir_ID", "Reservoir_Zone", "Avg_Deep_Resis_ohm_m", "Avg_GR_api", "Top_MD_ft", "Top_TVD_ft"]
-    # the two sets of values below map directly, sequentially, to keys in reservoir_keys list
-    reservoir_values_one = [1201, 'Upper-Yoho', 540.79, 25.22, 3446.90, 3001.45]
-    reservoir_values_two = [1401, 'Middle-Salabe', 345.66, 20.12, 8000.01, 7609.63]
-
+    
+    # define datasets values
+    # the dataset values define below map directly, sequentially, to keys in reservoir_keys list above
+    reservoir_dataset = self.reservoir_datasets(number_of_datapoints=number_of_datapoints)
+    reservoir_values_one = reservoir_dataset[0]
+    reservoir_values_two = reservoir_dataset[1]
+    
     # insert the two sets of values into the "table_name" TABLE
     confirm = (table_name and connection and db)
     if confirm:
@@ -221,12 +225,14 @@ class ShaleDNN():
         keys = self.combined_keys(input_keys=reservoir_keys)
         sql_query = "{}{}{}{}".format("INSERT INTO " , table_name, keys, " VALUES (%s, %s, %s, %s, %s, %s)")
         # a. values_one
-        cursor.execute(sql_query, reservoir_values_one)
-        connection.commit()
+        for index, item in enumerate(reservoir_values_one):
+          cursor.execute(sql_query, reservoir_values_one[index])
+          connection.commit()
         print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
         # b. values_two
-        cursor.execute(sql_query, reservoir_values_two)
-        connection.commit()
+        for index, item in enumerate(reservoir_values_two):
+          cursor.execute(sql_query, reservoir_values_two[index])
+          connection.commit()
         print("{}{}{}{}{}".format("Data successfully inserted into ", table_name, " TABLE in the ", db, " database."))
       except(pymysql.err.MySQLError) as mysql_insert_err:
         print(str(mysql_insert_err))
@@ -234,6 +240,43 @@ class ShaleDNN():
         connection.close()
         print("{}{}{}".format("Connection to database (", db, ") is closed."))
   # End insert_data_to_reservoir_table() method
+  
+  def reservoir_datasets(self, number_of_datapoints=None):
+      reservoir_values_one = []
+      reservoir_values_two = []
+      numbers = number_of_datapoints
+      decm_places = 2
+      
+      for index in range(numbers):
+        if index == 0:
+          if index %2 == 0:
+            values_one = [1201+0, "{}{}".format('Upper-Yoho', '-0'), 540.7945, 25.2207, 3446.9001, 3001.8945]
+            values_two = [1401+0, "{}{}".format('Middle-Salabe', '-0'), 345.6645, 20.5612, 8000.001, 7609.8963]
+          elif index %2 != 0:
+            values_one = [1201+1, "{}{}".format('Upper-Yoho', '-1'), round(540.79+randint(1, 5),dec_places), round(25.22+randint(1, 2),dec_places), 3446.90, 3001.45]
+            values_two = [1401+1, "{}{}".format('Middle-Salabe', '-2'), round(345.66+random()*3,dec_places), round(20.12+random()*4,dec_places), 8000.01, 7609.63]
+          reservoir_values_one.append(values_one)
+          reservoir_values_two.append(values_two)
+        elif index > 0:
+          if index %2 == 0:
+            values_one = [1201+0, "{}{}".format('Upper-Yoho', '-0'), round(reservoir_values_one[index-1][2]+randint(5, 10),decm_places),
+                          round(reservoir_values_one[index-1][3]+randint(2, 3),decm_places), round(reservoir_values_one[index-1][4]+randint(4, 8),decm_places),
+                          round(reservoir_values_one[index-1][5]+randint(2, 4),decm_places)]
+            values_two = [1401+0, "{}{}".format('Middle-Salabe', '-0'), round(reservoir_values_two[index-1][2]+random()*6,decm_places),
+                          round(reservoir_values_two[index-1][3]+random()*2.5,decm_places), round(reservoir_values_two[index-1][4]+random()*8,decm_places),
+                          round(reservoir_values_two[index-1][5]+random()*3,decm_places)]
+          elif index %2 != 0:
+            values_one = [1201+0, "{}{}".format('Upper-Yoho', '-1'), round(reservoir_values_one[index-1][2]+randint(5, 10),decm_places),
+                          round(reservoir_values_one[index-1][3]+randint(2, 3),decm_places), round(reservoir_values_one[index-1][4]+randint(4, 8),decm_places),
+                          round(reservoir_values_one[index-1][5]+randint(2, 4),decm_places)]
+            values_two = [1401+0, "{}{}".format('Middle-Salabe', '-2'), round(reservoir_values_two[index-1][2]+random()*6,decm_places),
+                          round(reservoir_values_two[index-1][3]+random()*2.5,decm_places), round(reservoir_values_two[index-1][4]+random()*8,decm_places),
+                          round(reservoir_values_two[index-1][5]+random()*3,decm_places)]
+          reservoir_values_one.append(values_one)
+          reservoir_values_two.append(values_two)
+  
+      return [reservoir_values_one, reservoir_values_two]
+  # End multi_reservoir_datasets() method
 
   def reservoir_data_pipeline_for_analytics(self, nth_limit=None, reservoir_zone=None, option=None):
     sql_query = "";
