@@ -22,7 +22,7 @@
 #
 #    e) ELT/Data pipelining
 #
-#  2) ShaleDNNTest() class testing ShaleDNN() class
+#  2) ShaleDNNTest() class for testing ShaleDNN() class
 #
 #
 #  Applications:
