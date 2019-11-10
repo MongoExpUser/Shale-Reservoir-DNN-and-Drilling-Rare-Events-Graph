@@ -1,4 +1,4 @@
-# **********************************************************************************************************************************
+# ***********************************************************************************************************************************
 # * @License Starts
 # *
 # * Copyright © 2015 - present. MongoExpUser
@@ -7,10 +7,11 @@
 # *
 # * @License Ends
 # *
-# # ***********************************************************************************************************************************
+# ***********************************************************************************************************************************
+#
 #  ...Ecotert's ShaleReservoir.py  (released as open-source under MIT License) implements:
-# 
-# 
+#
+#
 #  1) ShaleDNN() class for:
 #
 #    a) Standard Feed-forward Deep Neural Network (Standard-FFNN) images classification.
@@ -32,8 +33,8 @@
 #  ii)  Shale reservoir non-image properties classification (rock-types/formations/facies/zones/geo-bodies/any-discrete-property)
 #  iii) Shale reservoir production regression (continuous cumulative production volumes or rates)
 #
-# **********************************************************************************************************************************
-# **********************************************************************************************************************************
+# ***********************************************************************************************************************************
+# ***********************************************************************************************************************************
 
 
 try:
@@ -51,9 +52,9 @@ try:
   import matplotlib.pyplot as plt
   from unittest import TestCase, main
   from random import random, randint, randrange
+  from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras import backend, optimizers, Sequential
   from tensorflow.keras.utils import plot_model, to_categorical
-  from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
   #print version of tensorflow and keras
   print()
@@ -246,7 +247,7 @@ class ShaleDNN():
       reservoir_values_one = []
       reservoir_values_two = []
       numbers = number_of_datapoints
-      decm_places = 2
+      decm_places = 4
       
       for index in range(numbers):
         if index == 0:
@@ -330,7 +331,7 @@ class ShaleDNN():
       print("No option is specified....")
       return
       # add more data pipelines option(s) as deem necessary ....
-    return sql_query;
+    return sql_query
   #End reservoir_data_pipeline_for_analytics() method
     
   def save_model_in_current_working_directory(self, saved_model_name=None, model=None):
