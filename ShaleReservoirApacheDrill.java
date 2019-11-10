@@ -17,8 +17,8 @@
  *
  */
 
-import java.sql.*;
-import java.lang.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
