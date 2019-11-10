@@ -1,4 +1,4 @@
-/*/
+/*
  * @License Starts
  *
  * Copyright © 2015 - present. MongoExpUser
@@ -15,7 +15,6 @@
  *  a) Writing queries against MySQL
  *  b) ETL and building data pipeline from MySQL
  *
- *
  */
 
 import java.sql.*;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
 
 public class ShaleReservoirApacheDrill
 {
@@ -48,7 +46,6 @@ public class ShaleReservoirApacheDrill
   public Object connectToMysqlFromPython()
   {
     // in progress ... add remaining codes later ....
-    
     Object obj = new Object();
     return obj;
   }
@@ -73,7 +70,6 @@ public class ShaleReservoirApacheDrill
   public double [][] reservoirDatasets(int numberOfDatapoints)
   {
     // in progress ... add remaining codes later ....
-    
     double [] reservoirValuesOne = new double[numberOfDatapoints];
     double [] reservoirValuesTwo = new double[numberOfDatapoints];
     double [][] dataSet = {reservoirValuesOne, reservoirValuesTwo};
@@ -83,7 +79,6 @@ public class ShaleReservoirApacheDrill
   public String reservoirDataPipelineForAnalytics()
   {
     // in progress ... add remaining codes later ....
-    
     String sQLQuery = "Query is okay";
     return sQLQuery;
   }
@@ -97,5 +92,4 @@ public class ShaleReservoirApacheDrill
     
     // in progress ... add remaining codes later ....
   }
-
 }
