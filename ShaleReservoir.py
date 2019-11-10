@@ -7,9 +7,10 @@
 # *
 # * @License Ends
 # *
-# *
-# * ...Ecotert's ShaleReservoir.py  (released as open-source under MIT License) implements:
-#
+# # ***********************************************************************************************************************************
+#  ...Ecotert's ShaleReservoir.py  (released as open-source under MIT License) implements:
+# 
+# 
 #  1) ShaleDNN() class for:
 #
 #    a) Standard Feed-forward Deep Neural Network (Standard-FFNN) images classification.
@@ -50,9 +51,9 @@ try:
   import matplotlib.pyplot as plt
   from unittest import TestCase, main
   from random import random, randint, randrange
-  from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras import backend, optimizers, Sequential
   from tensorflow.keras.utils import plot_model, to_categorical
+  from tensorflow.keras.models import load_model, model_from_json
   from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
   #print version of tensorflow and keras
   print()
