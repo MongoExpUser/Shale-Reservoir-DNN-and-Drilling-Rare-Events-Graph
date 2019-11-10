@@ -7,9 +7,7 @@
  *
  * @License Ends
  *
- *
  * ...Ecotert's ShaleReservoirApacheDrill.java  (released as open-source under MIT License) implements:
- *
  *
  *  A class, ShaleReservoirApacheDrill(), with Apache Drill (schema-free SQL engine) library for:
  *
