@@ -15,6 +15,12 @@
  *  a) Writing SQL queries against MongoDB document store
  *  b) ETL/building data pipeline from MongoDB with SQL
  *
+ *  Note: The actions in (a), (b) and (c) above can directly we carried out on a running/active/deployed:
+ *       (1) Apache Drill Shell  - see: https://drill.apache.org/docs/configuring-the-drill-shell/
+ *       (2) Apache Drill Web UI - see: https://drill.apache.org/docs/starting-the-web-ui/
+ *
+ *     The advantage of implementing the above actions in this Java class is that they allow interaction
+ *     with MongoDB programmatically from within an application.
  */
 
 import java.sql.Time;
