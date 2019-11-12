@@ -63,7 +63,6 @@ public class ShaleReservoirApacheDrill
     return "combinedKeys";
   }
   
-  
   public double [][] reservoirDatasets(int numberOfDatapoints)
   {
     // in progress ... add remaining codes later ....
