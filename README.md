@@ -46,7 +46,7 @@ MongoDB Node.js Native Driver v3.3.3 (https://www.npmjs.com/package/mongodb)
 
 Mongoose ORM v5.7.6 (https://www.npmjs.com/package/mongoose)
 
-MySQL Server v8.0.18 on Ubuntu 18.04.1
+MySQL Server v8.0.18 on Ubuntu 18.04.1 (https://dev.mysql.com/downloads/mysql/)
 
 MySQL Node.js Driver v2.17.1 (https://www.npmjs.com/package/mysql)
 
