@@ -9,7 +9,7 @@
  *
  * ...Ecotert's ShaleReservoirApacheDrill.java  (released as open-source under MIT License) implements:
  *
- *  A class ShaleReservoirApacheDrill() that uses Apache Drill (schema-free SQL engine) for:
+ *  A class (ShaleReservoirApacheDrill()) that uses Apache Drill (schema-free SQL engine) for:
  *
  *  a) Accessing reservoir data from MongoDB using SQL
  *  a) Writing SQL queries against MongoDB document store
@@ -17,14 +17,22 @@
  *
  */
 
+import java.sql.Time;
+import java.sql.Date;
 import java.util.List;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.ArrayList;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
 
 
 public class ShaleReservoirApacheDrill
@@ -47,9 +55,17 @@ public class ShaleReservoirApacheDrill
   
   public Object connectToMongoDB(String url, String user, String password)
   {
-    // in progress ... add remaining codes later ....
-    Object obj = new Object();
-    return obj;
+    try
+    {
+      // load mongodb JDBC driver and connect
+      Class.forName("mongodb.jdbc.MongoDriver");
+      Connection connection = DriverManager.getConnection(url, user, password);
+      System.out.println("Successfully connected to MongoDB data store...");
+      
+    } catch(Exception connectionError)
+    {
+        connectionError.printStackTrace();
+    }
   }
   
   public void executeQueriesForDataPipeline()
