@@ -15,7 +15,7 @@
  *  a) Writing SQL queries against MongoDB document store
  *  b) ETL/building data pipeline from MongoDB with SQL
  *
- *  Note: The actions in (a), (b) and (c) above can directly we carried out on a running/active/deployed:
+ *  Note: The actions in (a), (b) and (c) above can be carried out interactively on an active (i.e. running or deployed):
  *       (1) Apache Drill Shell  - see: https://drill.apache.org/docs/configuring-the-drill-shell/
  *       (2) Apache Drill Web UI - see: https://drill.apache.org/docs/starting-the-web-ui/
  *
