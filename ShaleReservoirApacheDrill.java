@@ -53,7 +53,7 @@ public class ShaleReservoirApacheDrill
     // in progress ... add remaining codes later ....
   }
   
-  public Object connectToMongoDB(String url, String user, String password)
+  public void connectToMongoDB(String url, String user, String password)
   {
     try
     {
