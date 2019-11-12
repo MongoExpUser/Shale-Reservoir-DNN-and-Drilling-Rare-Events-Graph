@@ -53,13 +53,13 @@ public class ShaleReservoirApacheDrill
     // in progress ... add remaining codes later ....
   }
   
-  public void connectToMongoDB(String user, String password, String url, int port, String dbName)
+  public void connectToMongoDB(String user, String password, String url, int port, String databasebName)
   {
     try
     {
       // load mongodb JDBC driver and connect
       Class.forName("mongodb.jdbc.MongoDriver");
-      String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + dbName;
+      String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
       Connection connection = DriverManager.getConnection(connectionString);
       System.out.println("Successfully connected to MongoDB data store...");
       
@@ -120,6 +120,8 @@ public class ShaleReservoirApacheDrill
 
   public static void main(String[] args) throws SQLException, ClassNotFoundException
   {
+    //testing
+    
     // in progress ... add remaining codes later ....
     
     //instantiate class and define all input and arguement variables
@@ -128,14 +130,14 @@ public class ShaleReservoirApacheDrill
     String password = "password";
     String url = "url";
     int port = 27017;
-    String dbName = "dbName";
-    String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + dbName;
+    String databasebName = "dbName";
+    String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
     
     //start test
     System.out.println();
     System.out.println("..............................................");
     //connect to mongodb store
-    reservoirDrill.connectToMongoDB(user, password, url, port, dbName);
+    reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
     System.out.print("Connected as: ");
     System.out.println(connectionString);
     System.out.println("..............................................");
