@@ -53,13 +53,14 @@ public class ShaleReservoirApacheDrill
     // in progress ... add remaining codes later ....
   }
   
-  public void connectToMongoDB(String url, String user, String password)
+  public void connectToMongoDB(String user, String password, String url, int port, String dbName)
   {
     try
     {
       // load mongodb JDBC driver and connect
       Class.forName("mongodb.jdbc.MongoDriver");
-      Connection connection = DriverManager.getConnection(url, user, password);
+      String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + dbName;
+      Connection connection = DriverManager.getConnection(connectionString);
       System.out.println("Successfully connected to MongoDB data store...");
       
     } catch(Exception connectionError)
@@ -120,13 +121,24 @@ public class ShaleReservoirApacheDrill
   public static void main(String[] args) throws SQLException, ClassNotFoundException
   {
     // in progress ... add remaining codes later ....
-    ShaleReservoirApacheDrill reservoirDrill = new  ShaleReservoirApacheDrill();
     
-    //testing
+    //instantiate class and define all input and arguement variables
+    ShaleReservoirApacheDrill reservoirDrill = new  ShaleReservoirApacheDrill();
+    String user = "user";
+    String password = "password";
+    String url = "url";
+    int port = 27017;
+    String dbName = "dbName";
+    String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + dbName;
+    
+    //start test
     System.out.println();
     System.out.println("..............................................");
     //connect to mongodb store
-    reservoirDrill.connectToMongoDB(url, user, password);
+    reservoirDrill.connectToMongoDB(user, password, url, port, dbName);
+    System.out.print("Connected as: ");
+    System.out.println(connectionString);
+    System.out.println("..............................................");
     //confirm beginning of test
     System.out.println("Start drilling reservoir with Apache Drill....");
     System.out.println("..............................................");
