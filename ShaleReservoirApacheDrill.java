@@ -20,7 +20,7 @@
  *       (2) Apache Drill Web UI - see: https://drill.apache.org/docs/starting-the-web-ui/
  *
  *     The advantage of implementing the above actions in this Java class is that they allow interaction
- *     with MongoDB programmatically from within an application.
+ *     with MongoDB data store programmatically from within an application.
  */
 
 import java.sql.Time;
