@@ -125,7 +125,18 @@ public class ShaleReservoirApacheDrill
     //testing
     System.out.println();
     System.out.println("..............................................");
+    //connect to mongodb store
+    reservoirDrill.connectToMongoDB(url, user, password);
+    //confirm beginning of test
     System.out.println("Start drilling reservoir with Apache Drill....");
+    System.out.println("..............................................");
+    //confirm reservoir keys
+    System.out.print("Reservoir keys: ");
+    System.out.println(Arrays.toString(keys));
+    System.out.print("Confirm reservoir keys: ");
+    System.out.println(reservoirDrill.combinedKeys(keys));
+    System.out.println("..............................................");
+    //build data pipeline
     System.out.println(reservoirDrill.reservoirDataPipelineForAnalytics());
     System.out.println("..............................................");
     System.out.println();
