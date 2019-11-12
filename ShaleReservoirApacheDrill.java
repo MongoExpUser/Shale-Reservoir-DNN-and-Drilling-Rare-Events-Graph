@@ -73,10 +73,32 @@ public class ShaleReservoirApacheDrill
     // in progress ... add remaining codes later ....
   }
   
-  public String combinedKeys()
+  public String combinedKeys(String [] inputKeys)
   {
-    // in progress ... add remaining codes later ....
-    return "combinedKeys";
+    //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+    String  keys = "";
+    String  seperator =  ", ";
+    String  openBracket = " (";
+    String  closeBracket = ")";
+        
+    //then concatenate opening bracket, all keys, spaces, commas and close bracket
+    keys = keys + openBracket;
+        
+    for(int index = 0; index < inputKeys.length; index++)
+    {
+      if(index < (inputKeys.length-1))
+      {
+        keys = keys + inputKeys[index] + seperator;
+      }
+      else
+      {
+        keys = keys + inputKeys[index];
+      }
+    }
+        
+    keys = keys + closeBracket;
+    
+    return keys;
   }
   
   public double [][] reservoirDatasets(int numberOfDatapoints)
