@@ -56,14 +56,14 @@ class ShaleReservoirApacheSparkDemo():
     spark = SparkSession.builder.appName("ShaleReservoirApacheSparkDemo").getOrCreate()
     
     #to demo speed-up due to spark engine, calculate and print simple reservoir STOOIP (in bbls) in a loop
-    #up to nth number of reservoirs across several fields), and time the results: time can be compared with
+    #up to nth number of reservoirs across several fields, and time the results: time can be compared with
     #the same run on non-spark engine machine
     t0 = time.time()
     for each_number_of_reservoirs in range(total_number_of_reservoirs):
       #note: STOOIP_bbls = 7758 * Area_acres * Net_pay_ft * Porosity_frac * Oil_sat_frac * (1/Bo) * (1/10E+6)
-      stooip = 7758 * (3200 + randint(20, 80)) * (120 + randint(10, 30))  * (0.18*randint(1, 2)) * (0.7681 + random()*0.1) * (1/1.001) * (1/10E+6)
-      print("STOOIP value for reservoir no.", each_number_of_reservoirs, "(MM bbls) = ",  '{0:.4f}'.format(stooip))
-    print("STOOIP computation and printing time (seconds):", '{0:.4f}'.format(time.time()  - t0))
+      stooip_bbls = 7758 * (3200 + randint(20, 80)) * (120 + randint(10, 30))  * (0.18*randint(1, 2)) * (0.7681 + random()*0.1) * (1/1.001) * (1/10E+6)
+      print("STOOIP value for reservoir no.", each_number_of_reservoirs, "(MM bbls) = ", '{0:.4f}'.format(stooip_bbls))
+    print("STOOIP computation and printing time (seconds):", '{0:.4f}'.format(time.time() - t0))
     print("STOOIP computation successfully completed ...")
     
     #stop spark
