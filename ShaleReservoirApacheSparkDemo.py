@@ -9,7 +9,7 @@
 # *
 # ***********************************************************************************************************************************
 #
-#  ...Ecotert's PySparkAppDemo.py  (released as open-source under MIT License) implements:
+#  ...Ecotert's ShaleReservoirApacheSparkDemo.py  (released as open-source under MIT License) implements:
 #
 #
 #  Two simple classes to demonstate and test usage of Apache Spike with Python API (PySpark) to calculate STOOIP
