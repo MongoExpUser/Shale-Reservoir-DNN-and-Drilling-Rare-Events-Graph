@@ -83,12 +83,12 @@ class ShaleReservoirApacheSpark():
     if spark_engine:
       #start spark
       spark = SparkSession.builder.appName("Reservoir STOOIP Demonstration").getOrCreate()
-      #invoke stooip calculation on/with spike engine
+      #invoke stooip calculation with spike engine
       self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")
       #stop spark
       spark.stop()
     else:
-        #invoke stooip calculation on without spike engine
+        #invoke stooip calculation without spike engine
         self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
   # End sample_one() method
 #End ShaleReservoirApacheSpark() class
