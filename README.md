@@ -58,8 +58,8 @@ SQLite3 within Python v3.7 on Ubuntu 18.04.1 (https://docs.python.org/3.7/librar
 
 Apache Drill v1.16.0 (https://drill.apache.org/)
 
-Apache Spark v2.3.4 (https://spark.apache.org/)
+Apache Spark v2.4.4 (https://spark.apache.org/)
 
-Apache Spark Python API v2.3.4 (https://spark.apache.org/docs/latest/api/python/index.html#)
+Apache Spark Python API v2.4.4 (https://spark.apache.org/docs/latest/api/python/index.html#)
 
 MongoDB Spark Connector Python API v.2.4.4 (https://docs.mongodb.com/spark-connector/current/python-api/)
