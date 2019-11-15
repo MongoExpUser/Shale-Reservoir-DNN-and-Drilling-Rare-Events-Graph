@@ -63,3 +63,5 @@ Apache Spark v2.4.4 (https://spark.apache.org/)
 Apache Spark Python API v2.4.4 (https://spark.apache.org/docs/latest/api/python/index.html#)
 
 MongoDB Spark Connector Python API v2.4.4 (https://docs.mongodb.com/spark-connector/current/python-api/)
+
+S3 Python API v3.0.0 (https://pypi.org/project/s3/)
