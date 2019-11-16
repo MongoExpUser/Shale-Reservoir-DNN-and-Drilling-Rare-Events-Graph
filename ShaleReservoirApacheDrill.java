@@ -160,18 +160,16 @@ public class ShaleReservoirApacheDrill
     String url = "url";
     int port = 27017;
     String databasebName = "dbName";
-    String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
-    
+        
     //start test
     System.out.println();
     separator();
     //connect to mongodb store
-    Connection con = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
-    System.out.print("Connected as: ");
-    System.out.println(connectionString);
+    Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
     separator();
     //confirm beginning of test
     System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
+    reservoirDrill.executeQueriesForDataPipeline();
     separator();
     //close connection after drilling
     System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
@@ -179,9 +177,9 @@ public class ShaleReservoirApacheDrill
     
     try
     {
-      if(con != null)
+      if(connection != null)
       {
-        con.close();
+        connection.close();
         System.out.println("Connection closed....");
         separator();
       }
