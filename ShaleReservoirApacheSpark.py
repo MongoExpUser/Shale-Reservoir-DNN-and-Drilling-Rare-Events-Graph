@@ -19,7 +19,7 @@
 
 try:
   """  import commonly used modules; print pyspark, networkx, tensorflow
-       and keras versions; and then check for import error
+       and keras version; and then check for import error
   """
   #import
   
@@ -41,7 +41,7 @@ try:
   #import pyspark.streaming
   #import pyspark.ml
   #import pyspark.mllib
-  #note: pyspark's graphx API for python is NOT yet available:
+  #note: pyspark's graphx API is NOT yet available:
   #    : but can use "networkx" python module for Graph-Based Analysis (see: https://networkx.github.io/)
   #    : On UbuntU Linux: install "networkx" as:
   #      (1) conda: "conda install -c anaconda networkx" or
