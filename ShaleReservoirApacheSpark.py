@@ -71,8 +71,12 @@ class ShaleReservoirApacheSpark():
     print("----------------------------")
   # End  __init__() method
   
-  def calculate_stooip(self, total_number_of_reservoirs=None, engine_name=None):
+  def seperator(self):
     print("------------------------------------------------------------")
+  # End seperator method()
+  
+  def calculate_stooip(self, total_number_of_reservoirs=None, engine_name=None):
+    self.seperator()
     print("{}{}".format(engine_name, "-based STOOIP computation started and in progress ....."))
     t0 = time.time()
     for each_number_of_reservoirs in range(total_number_of_reservoirs):
@@ -81,7 +85,7 @@ class ShaleReservoirApacheSpark():
     print("STOOIP value for reservoir no.", each_number_of_reservoirs+1, "(MM bbls) = ", '{0:.4f}'.format(stooip_bbls))
     print("{}{}{}".format(engine_name, "-based STOOIP computation time (seconds):", '{0:.4f}'.format(time.time() - t0)))
     print("STOOIP computation successfully completed.")
-    print("------------------------------------------------------------")
+    self.seperator()
   # End calculate_stooip() method
       
   def sample_one(self, total_number_of_reservoirs=None, spark_engine=True):
