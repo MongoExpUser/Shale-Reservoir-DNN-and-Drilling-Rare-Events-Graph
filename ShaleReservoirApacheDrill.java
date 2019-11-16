@@ -88,6 +88,7 @@ public class ShaleReservoirApacheDrill
   public void executeQueriesForDataPipeline()
   {
     // in progress ... add remaining codes later ....
+    System.out.println("Drilling in progress.........Just a test of interface: add actual 'drillling/queries'... later...");
   }
   
   public String combinedKeys(String [] inputKeys)
