@@ -18,13 +18,14 @@
 
 
 try:
-  """  import commonly used modules, print Pyspark version, tensorflow version
-       and keras version, and then check for import error
+  """  import commonly used modules; print pyspark, networkx, tensorflow
+       and keras versions; and then check for import error
   """
   #import
   
   import time
   import pyspark
+  import networkx as nx
   from csv import writer
   import tensorflow as tf
   from pprint import pprint
@@ -35,23 +36,29 @@ try:
   from pyspark.sql import SparkSession, DataFrame, types
   #
   #all pyspark sub-modules: commment out - only here for referencing
-  #import sub-sub modules when necesary
+  #import modules and sub modules, when necesary or required
   #import pyspark.sql
   #import pyspark.streaming
   #import pyspark.ml
   #import pyspark.mllib
-  #
-  #print version of tensorflow and keras
+  #note: pyspark's graphx API for python is NOT yet available:
+  #    : but can use "networkx" python module for Graph-Based Analysis (see: https://networkx.github.io/)
+  #    : On UbuntU Linux: install "networkx" as:
+  #      (1) conda: "conda install -c anaconda networkx" or
+  #      (2) pip: "sudo python3.7 -m pip install networkx"
+  #print version of pyspark, tensorflow, keras and networkx
   print()
   print("------------------------------------------------------------")
   print("Using Pyspark version", pyspark.__version__, "on this system.")
   print("Using TensorFlow version", tf.__version__, "on this system. ")
   print("Using Keras version", tf.keras.__version__, "on this system.")
+  print("Using Networkx version", nx.__version__, "on this system.")
   print("------------------------------------------------------------")
   print("")
   #check for error
 except(ImportError) as err:
   print(str(err))
+  
 
 class ShaleReservoirApacheSpark():
   """ A simple class to demonstate usage of Apache Spark™ with Python API (Pyspark)"""
