@@ -22,7 +22,8 @@
  *     The advantage of implementing the above actions in this Java class is that they allow interaction
  *     with MongoDB data store programmatically from within an application.
  */
-
+       
+import java.sql.*;
 import java.sql.Time;
 import java.sql.Date;
 import java.util.List;
@@ -59,20 +60,29 @@ public class ShaleReservoirApacheDrill
     // in progress ... add remaining codes later ....
   }
   
-  public void connectToMongoDB(String user, String password, String url, int port, String databasebName)
+  public Connection connectToMongoDB(String user, String password, String url, int port, String databasebName)
   {
+    Connection connection = null;
+    
+    //connect
     try
     {
       // load mongodb JDBC driver and connect
       Class.forName("mongodb.jdbc.MongoDriver");
       String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
-      Connection connection = DriverManager.getConnection(connectionString);
-      System.out.println("Successfully connected to MongoDB data store...");
+      connection = DriverManager.getConnection(connectionString);
       
-    } catch(Exception connectionError)
+      if(connection != null)
+      {
+        System.out.println("Successfully connected to MongoDB data store...");
+      }
+    }
+    catch(Exception connectionError)
     {
         connectionError.printStackTrace();
     }
+
+    return connection;
   }
   
   public void executeQueriesForDataPipeline()
@@ -82,9 +92,9 @@ public class ShaleReservoirApacheDrill
   
   public String combinedKeys(String [] inputKeys)
   {
-    //define key variable, opening brackets, closing brackets and seperators, with correct spaces & commas
+    //define key variable, opening brackets, closing brackets and separators, with correct spaces & commas
     String  keys = "";
-    String  seperator =  ", ";
+    String  separator =  ", ";
     String  openBracket = " (";
     String  closeBracket = ")";
         
@@ -95,7 +105,7 @@ public class ShaleReservoirApacheDrill
     {
       if(index < (inputKeys.length-1))
       {
-        keys = keys + inputKeys[index] + seperator;
+                keys = keys + inputKeys[index] + separator;
       }
       else
       {
@@ -123,12 +133,25 @@ public class ShaleReservoirApacheDrill
     String sQLQuery = "Query is okay..!";
     return sQLQuery;
   }
+  
+  public static void separator()
+  {
+    System.out.println(".....................................................................");
+  }
 
   public static void main(String[] args) throws SQLException, ClassNotFoundException
   {
     //testing
     
     // in progress ... add remaining codes later ....
+    
+    String [] keys = new String[10];
+    int keysLength =  keys.length;
+    
+    for(int index = 0; index < keysLength; index++)
+    {
+      keys[index] = "reservoir-key_" + String.valueOf(index);
+    }
     
     //instantiate class and define all input and arguement variables
     ShaleReservoirApacheDrill reservoirDrill = new  ShaleReservoirApacheDrill();
@@ -141,24 +164,42 @@ public class ShaleReservoirApacheDrill
     
     //start test
     System.out.println();
-    System.out.println("..............................................");
+    separator();
     //connect to mongodb store
-    reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
+    Connection con = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
     System.out.print("Connected as: ");
     System.out.println(connectionString);
-    System.out.println("..............................................");
+    separator();
     //confirm beginning of test
-    System.out.println("Start drilling reservoir with Apache Drill....");
-    System.out.println("..............................................");
+    System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
+    separator();
+    //close connection after drilling
+    System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
+    separator();
+    
+    try
+    {
+      if(con != null)
+      {
+        con.close();
+        System.out.println("Connection closed....");
+        separator();
+      }
+    }
+    catch(Exception closeConnectionCError)
+    {
+        closeConnectionCError.printStackTrace();
+    }
+    
     //confirm reservoir keys
     System.out.print("Reservoir keys: ");
     System.out.println(Arrays.toString(keys));
     System.out.print("Confirm reservoir keys: ");
     System.out.println(reservoirDrill.combinedKeys(keys));
-    System.out.println("..............................................");
+    separator();
     //build data pipeline
     System.out.println(reservoirDrill.reservoirDataPipelineForAnalytics());
-    System.out.println("..............................................");
+    separator();
     System.out.println();
   }
 }
