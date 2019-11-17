@@ -72,23 +72,20 @@ public class ShaleReservoirApacheDrill
       String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
       connection = DriverManager.getConnection(connectionString);
       
-      if(connection instanceof Connection)
+      if(connection != null)
       {
         System.out.println("Successfully connected to MongoDB data store...");
       }
     }
     catch(Exception connectionError)
     {
-      connectionError.printStackTrace();
-      System.out.println();
-      System.out.println("Error: Could not connect to MongoDB data store...");
-      System.out.println();
+        connectionError.printStackTrace();
     }
 
     return connection;
   }
   
-  public void executeQueriesForDataPipeline(Connection connection, String collectionName)
+  public void executeQueriesForDataPipeline()
   {
     // in progress ... add remaining codes later ....
     System.out.println("Drilling in progress.........Just a test of interface: add actual 'drillling/queries'... later...");
@@ -164,52 +161,43 @@ public class ShaleReservoirApacheDrill
     String url = "url";
     int port = 27017;
     String databasebName = "dbName";
-    String collectionName = "collectionName";
         
     //start test
+    System.out.println();
+    separator();
+    //connect to mongodb store
+    Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
+    separator();
+    //confirm beginning of test
+    System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
+    reservoirDrill.executeQueriesForDataPipeline();
+    separator();
+    //close connection after drilling
+    System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
+    separator();
+    
     try
     {
-      //connect to mongodb store
-      separator();
-      Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
-   
-      if(connection instanceof Connection)
+      if(connection != null)
       {
-        //start test
-        System.out.println();
-        separator();
-        
-        //confirm beginning of test and then drill
-        System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
-        reservoirDrill.executeQueriesForDataPipeline(connection, collectionName);
-        separator();
-        
-        //close connection after drilling
-        System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
-        separator();
         connection.close();
         System.out.println("Connection closed....");
         separator();
-        
         //confirm reservoir keys
         System.out.print("Reservoir keys: ");
         System.out.println(Arrays.toString(keys));
         System.out.print("Confirm reservoir keys: ");
         System.out.println(reservoirDrill.combinedKeys(keys));
         separator();
-        
         //build data pipeline
         System.out.println(reservoirDrill.reservoirDataPipelineForAnalytics());
         separator();
         System.out.println();
       }
     }
-    catch(Exception closeConnectionError)
+    catch(Exception closeConnectionCError)
     {
-      closeConnectionError.printStackTrace();
-      System.out.println();
-      System.out.println("Error: Could not drill into MongoDB data store...");
-      System.out.println();
+        closeConnectionCError.printStackTrace();
     }
   }
 }
