@@ -830,4 +830,4 @@ class ShaleDNNTest(TestCase):
 # End ShaleDNNTest() Class()
 
 # invoke test
-main(verbosity=2)
+#main(verbosity=2)
