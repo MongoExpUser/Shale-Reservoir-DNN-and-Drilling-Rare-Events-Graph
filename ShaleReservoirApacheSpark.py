@@ -153,7 +153,7 @@ class ShaleReservoirApacheSpark():
   
   
 class ShaleReservoirApacheSparkTest(TestCase):
-  """ Test ShaleReservoirApacheSparkDemo() class """
+  """ Test ShaleReservoirApacheSpark() class """
   
   def setUp(self):
     self.sras_demo = ShaleReservoirApacheSpark()
@@ -179,6 +179,9 @@ class ShaleReservoirApacheSparkTest(TestCase):
   def tearDown(self):
     print()
     self.sras_demo = None
+    self.total_number_of_reservoirs = None
+    self.spark_engine_yes = None
+    self.spark_engine_no = None
   # End tearDown() method
 #End ShaleReservoirApacheSparkTest() class
     
