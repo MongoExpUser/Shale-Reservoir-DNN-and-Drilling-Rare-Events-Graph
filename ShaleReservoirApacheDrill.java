@@ -72,7 +72,7 @@ public class ShaleReservoirApacheDrill
       String connectionString = "jdbc:mongodb://" + user + ":" + password + "@" + url + ":" + String.valueOf(port) + "/" + databasebName;
       connection = DriverManager.getConnection(connectionString);
       
-      if(connection != null)
+      if(connection instanceof Connection)
       {
         System.out.println("Successfully connected to MongoDB data store...");
       }
@@ -163,42 +163,47 @@ public class ShaleReservoirApacheDrill
     String databasebName = "dbName";
         
     //start test
-    System.out.println();
-    separator();
-    //connect to mongodb store
-    Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
-    separator();
-    //confirm beginning of test
-    System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
-    reservoirDrill.executeQueriesForDataPipeline();
-    separator();
-    //close connection after drilling
-    System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
-    separator();
-    
     try
     {
-      if(connection != null)
+      Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
+   
+      if(connection instanceof Connection)
       {
+        //start test
+        System.out.println();
+        separator();
+        
+        //connect to mongodb store
+        separator();
+        
+        //confirm beginning of test and then drill
+        System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
+        reservoirDrill.executeQueriesForDataPipeline();
+        separator();
+        
+        //close connection after drilling
+        System.out.println("Stopped drilling Reservoir 'Table/Collection' with Apache Drill....");
+        separator();
         connection.close();
         System.out.println("Connection closed....");
         separator();
+        
+        //confirm reservoir keys
+        System.out.print("Reservoir keys: ");
+        System.out.println(Arrays.toString(keys));
+        System.out.print("Confirm reservoir keys: ");
+        System.out.println(reservoirDrill.combinedKeys(keys));
+        separator();
+        
+        //build data pipeline
+        System.out.println(reservoirDrill.reservoirDataPipelineForAnalytics());
+        separator();
+        System.out.println();
       }
     }
-    catch(Exception closeConnectionCError)
+    catch(Exception closeConnectionError)
     {
-        closeConnectionCError.printStackTrace();
+        closeConnectionError.printStackTrace();
     }
-    
-    //confirm reservoir keys
-    System.out.print("Reservoir keys: ");
-    System.out.println(Arrays.toString(keys));
-    System.out.print("Confirm reservoir keys: ");
-    System.out.println(reservoirDrill.combinedKeys(keys));
-    separator();
-    //build data pipeline
-    System.out.println(reservoirDrill.reservoirDataPipelineForAnalytics());
-    separator();
-    System.out.println();
   }
 }
