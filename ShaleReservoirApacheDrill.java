@@ -79,7 +79,10 @@ public class ShaleReservoirApacheDrill
     }
     catch(Exception connectionError)
     {
-        connectionError.printStackTrace();
+      connectionError.printStackTrace();
+      System.out.println();
+      System.out.println("Error: Could not connect to MongoDB data store...");
+      System.out.println();
     }
 
     return connection;
@@ -203,7 +206,10 @@ public class ShaleReservoirApacheDrill
     }
     catch(Exception closeConnectionError)
     {
-        closeConnectionError.printStackTrace();
+      closeConnectionError.printStackTrace();
+      System.out.println();
+      System.out.println("Error: Could not drill into MongoDB data store...");
+      System.out.println();
     }
   }
 }
