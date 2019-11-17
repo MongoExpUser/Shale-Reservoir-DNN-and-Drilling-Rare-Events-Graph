@@ -85,7 +85,7 @@ public class ShaleReservoirApacheDrill
     return connection;
   }
   
-  public void executeQueriesForDataPipeline()
+  public void executeQueriesForDataPipeline(Connection connection, String collectionName)
   {
     // in progress ... add remaining codes later ....
     System.out.println("Drilling in progress.........Just a test of interface: add actual 'drillling/queries'... later...");
@@ -161,6 +161,7 @@ public class ShaleReservoirApacheDrill
     String url = "url";
     int port = 27017;
     String databasebName = "dbName";
+    String collectionName = "collectionName";
         
     //start test
     try
