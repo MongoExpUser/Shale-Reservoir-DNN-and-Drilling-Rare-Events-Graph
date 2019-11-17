@@ -11,7 +11,11 @@
 #
 #  ...Ecotert's ShaleReservoirApacheSpark.py  (released as open-source under MIT License) implements:
 #
-#  Two simple classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to calculate reservoir STOOIP
+#  Two simple classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to:
+#
+#  1) calculate reservoir STOOIP and
+#
+#  2) classify images with Tensorflow CNN
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
@@ -34,6 +38,7 @@ try:
   from unittest import TestCase, main
   from random import random, randint, randrange
   from pyspark.sql import SparkSession, DataFrame, types
+  from ShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -79,12 +84,14 @@ class ShaleReservoirApacheSpark():
       #note: STOOIP_bbls = 7758 * Area_acres * Net_pay_ft * Porosity_frac * Oil_sat_frac * (1/Bo) * (1/10E+6)
       stooip_bbls = 7758 * (3200 + randint(20, 80)) * (120 + randint(10, 30))  * (0.18*randint(1, 2)) * (0.7681 + random()*0.1) * (1/1.001) * (1/10E+6)
     print("STOOIP value for reservoir no.", each_number_of_reservoirs+1, "(MM bbls) = ", '{0:.4f}'.format(stooip_bbls))
+    self.duration_separator()
     print("{}{}{}".format(engine_name, "-based STOOIP computation time (seconds):", '{0:.4f}'.format(time.time() - t0)))
+    self.duration_separator()
     print("STOOIP computation successfully completed.")
     self.separator(separator_type="long")
   # End calculate_stooip() method
       
-  def sample_one(self, total_number_of_reservoirs=None, spark_engine=True):
+  def sample_one_stooip_calculation(self, total_number_of_reservoirs=None, spark_engine=True):
     #to demo speed-up due to spark engine, calculate and print simple reservoir STOOIP (in bbls) in a loop
     #up to nth number of reservoirs across several fields, with or without spark engine and time the results
     if spark_engine:
@@ -97,7 +104,41 @@ class ShaleReservoirApacheSpark():
     else:
         #invoke stooip calculation without spike engine
         self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
-  # End sample_one() method
+  # End sample_one_stooip_calculation() method
+  
+  def sample_two_machine_learning_with_tensorflow(self, spark_engine=True):
+    #to demo 2nd speed-up due to spark engine, run "TensorFlow" image classification example in "ShaleReservoir.py"
+    if spark_engine:
+      #start spark
+      engine_name = "Spark engine"
+      spark = SparkSession.builder.appName("Tensorflow-Based Image Classification Demonstration").getOrCreate()
+      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" with spike engine
+      print("")
+      print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
+      t0 = time.time()
+      sfc =  ShaleDNN()
+      cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
+      sfc.cnn_images_classification(cnn_options=cnn_options)
+      self.duration_separator()
+      print("{}{}{}".format(engine_name, "-based 'TensorFlow' image classification time (seconds):", '{0:.4f}'.format(time.time() - t0)))
+      self.duration_separator()
+      print("'TensorFlow' image classification successfully completed.")
+      #stop spark
+      spark.stop()
+    else:
+      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" without spike engine
+      engine_name = "Regular VM engine"
+      print("")
+      print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
+      t0 = time.time()
+      sfc =  ShaleDNN()
+      cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
+      sfc.cnn_images_classification(cnn_options=cnn_options)
+      self.duration_separator()
+      print("{}{}{}".format(engine_name, "-based 'TensorFlow' image classification time (seconds):", '{0:.4f}'.format(time.time() - t0)))
+      self.duration_separator()
+      print("'TensorFlow' image classification successfully completed.")
+  # End sample_two_machine_learning_with_tensorflow() method
   
   def separator(self, separator_type=None):
     if separator_type == "long":
@@ -105,7 +146,10 @@ class ShaleReservoirApacheSpark():
     else:
       print("----------------------------")
   # End separator method()
-#End ShaleReservoirApacheSpark() class
+  
+  def duration_separator(self):
+    print("<=================================================>")
+  # End duration_separator method()
   
   
 class ShaleReservoirApacheSparkTest(TestCase):
@@ -118,12 +162,19 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_no = False
   # End setUp() method
     
-  def test_sample_one(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
-    self.sras_demo.sample_one(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
-    self.sras_demo.sample_one(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_no)
-  #End test_sample_one() method
+    self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
+    self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_no)
+  #End test_sample_one_stooip_calculation() method
+  
+  def test_sample_two_machine_learning_with_tensorflow(self):
+    print()
+    #run "TensorFlow" image classification example in "ShaleReservoir.py"
+    self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
+    self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_no)
+  #End _test_sample_two_machine_learning_with_tensorflow() method
   
   def tearDown(self):
     print()
