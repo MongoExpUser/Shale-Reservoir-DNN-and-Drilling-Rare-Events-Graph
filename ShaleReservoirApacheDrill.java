@@ -22,9 +22,7 @@
  *     The advantage of implementing the above actions in this Java class is that they allow interaction
  *     with MongoDB data store programmatically from within an application.
  */
- 
- /*
-   
+  
 import java.sql.Time;
 import java.sql.Date;
 import java.util.List;
@@ -89,7 +87,7 @@ public class ShaleReservoirApacheDrill
     return connection;
   }
   
-  public void executeQueriesForDataPipeline(Connection connect, String collectionName)
+  public void executeQueriesForDataPipeline(Connection connection, String collectionName)
   {
     // in progress ... add remaining codes later ....
     System.out.println("Drilling in progress.........Just a test of interface: add actual 'drillling/queries'... later...");
