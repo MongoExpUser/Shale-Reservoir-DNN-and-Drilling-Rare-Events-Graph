@@ -22,10 +22,9 @@
  *     The advantage of implementing the above actions in this Java class is that they allow interaction
  *     with MongoDB data store programmatically from within an application.
  */
+ 
+ /*
    
-   
-   
-
 import java.sql.Time;
 import java.sql.Date;
 import java.util.List;
@@ -150,7 +149,6 @@ public class ShaleReservoirApacheDrill
     //testing
     
     // in progress ... add remaining codes later ....
-    
     String [] keys = new String[10];
     int keysLength =  keys.length;
     
@@ -170,7 +168,6 @@ public class ShaleReservoirApacheDrill
     
     try
     {
-      
       //connect to mongodb store
       separator();
       Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
@@ -205,7 +202,6 @@ public class ShaleReservoirApacheDrill
         separator();
         System.out.println();
       }
-      
     }
     catch(Exception closeConnectionError)
     {
