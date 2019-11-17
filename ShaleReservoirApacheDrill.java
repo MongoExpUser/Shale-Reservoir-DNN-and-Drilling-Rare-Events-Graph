@@ -165,6 +165,8 @@ public class ShaleReservoirApacheDrill
     //start test
     try
     {
+      //connect to mongodb store
+      separator();
       Connection connection = reservoirDrill.connectToMongoDB(user, password, url, port, databasebName);
    
       if(connection instanceof Connection)
@@ -173,12 +175,9 @@ public class ShaleReservoirApacheDrill
         System.out.println();
         separator();
         
-        //connect to mongodb store
-        separator();
-        
         //confirm beginning of test and then drill
         System.out.println("Start drilling Reservoir 'Table/Collection' with Apache Drill....");
-        reservoirDrill.executeQueriesForDataPipeline();
+        reservoirDrill.executeQueriesForDataPipeline(connection, collectionName);
         separator();
         
         //close connection after drilling
