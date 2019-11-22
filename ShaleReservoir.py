@@ -830,4 +830,6 @@ class ShaleDNNTest(TestCase):
 # End ShaleDNNTest() Class()
 
 # invoke test
+# to test default image classification examples in this file, uncomment the statement below (i.e. main(verbosity=2)
+# and run the file with python interpreter as: exec(open("/../path_to_file/ShaleReservoir.py").read())
 #main(verbosity=2)
