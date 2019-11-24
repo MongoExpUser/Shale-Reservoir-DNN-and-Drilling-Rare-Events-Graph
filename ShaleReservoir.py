@@ -7,7 +7,7 @@
 # *
 # * @License Ends
 # *
-# ***********************************************************************************************************************************
+# ******************************************************************************************************************************************
 #
 #  ...Ecotert's ShaleReservoir.py  (released as open-source under MIT License) implements:
 #
@@ -28,13 +28,48 @@
 #
 #
 #  Applications:
+#  =============
 #
 #  i)   Shale reservoir images classification
-#  ii)  Shale reservoir non-image properties classification (rock-types/formations/facies/zones/geo-bodies/any-discrete-property)
+#  ii)  Shale reservoir non-image properties  classification (rock-types/formations/facies/zones/geo-bodies/any-discrete-property)
 #  iii) Shale reservoir production regression (continuous cumulative production volumes or rates)
 #
-# ***********************************************************************************************************************************
-# ***********************************************************************************************************************************
+#
+# Objectives for images (CNN) and non-images (standard-FFNN) "Classification"
+# ===========================================================================
+# 1) Given a set of labels/categories/classes (output) for images or non-images (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.)
+# 2) Train the output and input data (images or non-images) for classification.
+# 3) a) For non-images classification, input data include: continuous log properties: e.g. sp, gr (spectral and/or total), resistivity, neutron-density,
+#       sonic-travel-time, NMR-T1, NMR-T2, Rs, Tmax, S1, S2, geomech properties, etc.)
+#    b) For images classification, input data include: known images datasets (converted to numerical datasets) or "continuous log properties" as listed in 3(a) above.
+# 4) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (CNNClassification [images] and standard-FFNNClassification [non-images] )
+#    for the images and non-mages (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.), evaluate and save model.
+# 5) Based on saved model, then predict classifications for unseen dataset field-wide for images and non-images.
+# 6) Classification helps to map (per field/section(DA)/pad) images and non-images (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.)
+#    as direct or indirect indicator for reservoir fluid content and quality that can be used for optimal well placement, hydraulic fracture design and
+#    production optimization.
+#
+#
+#  Objectives for "Production Performance i.e. Production Function Regression"
+#  ===========================================================================
+#  1) Obtain a set of hyper-parameters for the DNN architecture per: well, pad and section/DA.
+#  2) Then: (a) compare across field-wide production and (b) generate type curves per: well, pad and section/DA.
+#  3) Target output: Cumulative production @ time, t (30 180, 365, 720, 1095, .... 1825.....n days)
+#     a) BOE in MBoe
+#     b) Gas in MMScf
+#     c) Oil in Mbbls
+#  4) Target inputs:
+#     a) Richness/OHIP-Related: so, phi, h, TOC
+#     b) Reservoir Flow Capacity-Related: Permeability and pore size (micro, nano and pico)
+#     c) Drive-Related: TVD/pressure,
+#     d) Well Completion-Related: Well lateral length, No. of stages, proppant per ft, well spacing (for multi-wells)
+#     e) Fluid Type-Related: SG/Density/API, Ro/maturity level,
+#     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
+#        Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
+#        Note: Hence, fracture directional disparity = Sm - Sw (well direction), correct to maximum degree of 90.
+#
+# *******************************************************************************************************************************************
+# *******************************************************************************************************************************************
 
 
 try:
