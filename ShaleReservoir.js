@@ -47,7 +47,7 @@
  * 1) Given a set of labels/categories/classes (output) for images or non-images (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.)
  * 2) Train the output and input data (images or non-images) for classification.
  *    a) For non-images classification, input data include: continuous log properties: e.g. sp, gr (spectral and/or total), resistivity, neutron-density,
- *       sonic-travel-time, NMR-T1, NMR-T2, Rs, Tmax, S1, S2, geomech properties, etc.)
+ *       sonic-travel-time, NMR-T1, NMR-T2, Rs, Tmax, S1, S2, geomech properties, seismic attributes/properties etc.)
  *    b) For images classification, input data include: known images datasets (converted to numerical datasets) or "continuous log properties" as listed in 3(a) above.
  * 4) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (CNNClassification [images] and standard-FFNNClassification [non-images] )
  *    for the images and non-mages (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.), evaluate and save model.
