@@ -35,8 +35,9 @@ try:
   from pprint import pprint
   from json import dumps, loads
   import matplotlib.pyplot as plt
+  from random import random, randint
   from unittest import TestCase, main
-  from random import random, randint, randrange
+  from pyspark import SparkConf, SparkContext
   from pyspark.sql import SparkSession, DataFrame, types
   from ShaleReservoir import ShaleDNN
   #
@@ -83,48 +84,53 @@ class ShaleReservoirApacheSpark():
     for each_number_of_reservoirs in range(total_number_of_reservoirs):
       #note: STOOIP_bbls = 7758 * Area_acres * Net_pay_ft * Porosity_frac * Oil_sat_frac * (1/Bo) * (1/10E+6)
       stooip_bbls = 7758 * (3200 + randint(20, 80)) * (120 + randint(10, 30))  * (0.18*randint(1, 2)) * (0.7681 + random()*0.1) * (1/1.001) * (1/10E+6)
+    duration = time.time() - t0
     print("STOOIP value for reservoir no.", each_number_of_reservoirs+1, "(MM bbls) = ", '{0:.4f}'.format(stooip_bbls))
     self.duration_separator()
-    print("{}{}{}".format(engine_name, "-based STOOIP computation time (seconds):", '{0:.4f}'.format(time.time() - t0)))
+    print("{}{}{}".format(engine_name, "-based STOOIP computation time (seconds):", '{0:.4f}'.format(duration)))
     self.duration_separator()
     print("STOOIP computation successfully completed.")
     self.separator(separator_type="long")
   # End calculate_stooip() method
       
   def sample_one_stooip_calculation(self, total_number_of_reservoirs=None, spark_engine=True):
-    #to demo speed-up due to spark engine, calculate and print simple reservoir STOOIP (in bbls) in a loop
+    #to demo speed-up due to spark engine, calculate reservoir STOOIP (in bbls) in a loop
     #up to nth number of reservoirs across several fields, with or without spark engine and time the results
     if spark_engine:
-      #start spark
-      spark = SparkSession.builder.appName("Reservoir STOOIP Demonstration").getOrCreate()
-      #invoke stooip calculation with spike engine
-      self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")
+      #start spark by invoking SparkContext()
+      spark_conf = SparkConf().setMaster("local").setAppName("Reservoir STOOIP Demonstration")
+      spark_context = SparkContext(conf = spark_conf)
+      #apply spark_context.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
+      spark_context.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
       #stop spark
-      spark.stop()
+      spark_context.stop()
     else:
-        #invoke stooip calculation without spike engine
-        self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
+      # invoke stooip calculation without spike engine
+      self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
   # End sample_one_stooip_calculation() method
   
   def sample_two_machine_learning_with_tensorflow(self, spark_engine=True):
     #to demo 2nd speed-up due to spark engine, run "TensorFlow" image classification example in "ShaleReservoir.py"
     if spark_engine:
-      #start spark
-      engine_name = "Spark engine"
-      spark = SparkSession.builder.appName("Tensorflow-Based Image Classification Demonstration").getOrCreate()
       #invoke "TensorFlow" image classification example in "ShaleReservoir.py" with spike engine
+      engine_name = "Spark engine"
       print("")
       print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
-      t0 = time.time()
       sfc =  ShaleDNN()
       cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
-      sfc.cnn_images_classification(cnn_options=cnn_options)
+      #start spark by invoking SparkContext()
+      spark_conf = SparkConf().setMaster("local").setAppName("Tensorflow-Based Image Classification Demonstration")
+      spark_context = SparkContext(conf = spark_conf)
+      #apply spark_context.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
+      t0 = time.time()
+      spark_context.parallelize([sfc.cnn_images_classification(cnn_options=cnn_options)])
+      duration = time.time() - t0
       self.duration_separator()
-      print("{}{}{}".format(engine_name, "-based 'TensorFlow' image classification time (seconds):", '{0:.4f}'.format(time.time() - t0)))
+      print("{}{}{}".format(engine_name, "-based 'TensorFlow' image classification time (seconds):", '{0:.4f}'.format(duration)))
       self.duration_separator()
       print("'TensorFlow' image classification successfully completed.")
       #stop spark
-      spark.stop()
+      spark_context.stop()
     else:
       #invoke "TensorFlow" image classification example in "ShaleReservoir.py" without spike engine
       engine_name = "Regular VM engine"
