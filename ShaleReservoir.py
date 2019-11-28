@@ -699,11 +699,13 @@ class ShaleDNN():
   #End cnn_images_classification() method
      
   def ffnn_non_images_classification(self, ffnn_options=None):
-    print("Implementation of ffnn_non_images_classification() method is pending: add later")
+    print("Implementation of ffnn_non_images_classification() method in Python is pending: add later")
+    print("Note that this has been implemented in the JavaScript/Node.js version of this module (ShaleReservoir.js).")
   # End ffnn_non_images_classification() method
   
   def ffnn_production_regression(self, ffnn_options=None):
-    print("Implementation of ffnn_production_regression() method is pending: add later")
+    print("Implementation of ffnn_production_regression() method in Python is pending: add later")
+    print("Note that this has been implemented in the JavaScript/Node.js version of this module (ShaleReservoir.js).")
   #End ffnn_production_regression() method
   
   def test_dataset_ffnn_images_classification(self, test=True, data_option="digits"):
