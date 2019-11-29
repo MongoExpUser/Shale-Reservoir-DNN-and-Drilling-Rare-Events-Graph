@@ -97,13 +97,12 @@ class ShaleReservoirApacheSpark():
     #to demo speed-up due to spark engine, calculate reservoir STOOIP (in bbls) in a loop
     #up to nth number of reservoirs across several fields, with or without spark engine and time the results
     if spark_engine:
-      #start spark by invoking SparkContext()
-      spark_conf = SparkConf().setMaster("local").setAppName("Reservoir STOOIP Demonstration")
-      spark_context = SparkContext(conf = spark_conf)
-      #apply spark_context.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
-      spark_context.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
+      #start spark by invoking SparkSession()
+      spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
+      #apply spark.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
+      spark.sparkContext.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
       #stop spark
-      spark_context.stop()
+      spark.stop()
     else:
       # invoke stooip calculation without spike engine
       self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
@@ -118,19 +117,18 @@ class ShaleReservoirApacheSpark():
       print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
       sfc =  ShaleDNN()
       cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
-      #start spark by invoking SparkContext()
-      spark_conf = SparkConf().setMaster("local").setAppName("Tensorflow-Based Image Classification Demonstration")
-      spark_context = SparkContext(conf = spark_conf)
-      #apply spark_context.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
+      #start spark by invoking SparkSession()
+      spark = SparkSession.builder.master("local").appName("Tensorflow-Based Image Classification Demonstration").getOrCreate()
+      #apply spark.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
       t0 = time.time()
-      spark_context.parallelize([sfc.cnn_images_classification(cnn_options=cnn_options)])
+      spark.sparkContext.parallelize([sfc.cnn_images_classification(cnn_options=cnn_options)])
       duration = time.time() - t0
       self.duration_separator()
       print("{}{}{}".format(engine_name, "-based 'TensorFlow' image classification time (seconds):", '{0:.4f}'.format(duration)))
       self.duration_separator()
       print("'TensorFlow' image classification successfully completed.")
       #stop spark
-      spark_context.stop()
+      spark.stop()
     else:
       #invoke "TensorFlow" image classification example in "ShaleReservoir.py" without spike engine
       engine_name = "Regular VM engine"
