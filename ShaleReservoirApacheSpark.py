@@ -272,7 +272,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo = None
     self.total_number_of_reservoirs = None
     self.spark_engine_yes = None
-    self.spark_engine_no = None
+    self.spark_engine_non = None
   # End tearDown() method
 #End ShaleReservoirApacheSparkTest() class
 
