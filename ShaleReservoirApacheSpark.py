@@ -20,7 +20,6 @@
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
 
-
 try:
   """  import commonly used modules; print pyspark, networkx, tensorflow
        and keras version; and then check for import error
@@ -231,7 +230,6 @@ class ShaleReservoirApacheSpark():
       pprint(python_dataframe_data.head())
       self.separator()
       print("Loading of  'JSON' data in a loop successfully completed.")
-      pass
   # End test_sample_three_read_json_reservoir_data_to_dataframe() method
 #End ShaleReservoirApacheSpark() class
 
