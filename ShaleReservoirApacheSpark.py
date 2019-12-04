@@ -44,7 +44,7 @@ try:
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -84,11 +84,11 @@ class ShaleReservoirApacheSpark():
   
   
   def separator(self):
-    print("------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------")
   # End separator method()
   
   def duration_separator(self):
-    print("<===========================================================>")
+    print("<==============================================================================>")
   # End duration_separator method()
   
   def get_spark_dataframe_shape(self, spark_dataframe_data):
@@ -166,6 +166,15 @@ class ShaleReservoirApacheSpark():
   # End sample_two_machine_learning_with_tensorflow() method
   
   def sample_three_read_json_reservoir_data_to_dataframe(self, read_from_file = None, json_data_file=None, nth_time=10, spark_engine=True):
+    if not read_from_file:
+      #define a dictionary containing reservoir data
+      data = {  'FIELD_NAME' : ['Yoho', 'Salabe', 'Agbabu', 'Owopele-north'],
+                'RESERVOIR_DEPTH_FT' : [12000.04, 1489.34, 400, 12567.43],
+                'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light oil'],
+                'FLUID_API' : [35.1, 45.3, 10.4, 34.4],
+                'FIELD_LOCATION' : ['Offshore', 'Swamp', 'Land', 'Land']
+      }
+    
     #to demo 3rd speed-up due to spark engine, load "JSON" data in a loop nth_time
     if spark_engine:
       #invoke loading of'JSON' data in a loop with spike engine
@@ -188,17 +197,10 @@ class ShaleReservoirApacheSpark():
           spark_dataframe_data = spark.read.json(json_data)
       else:
         #read from created dictionary
-        # 1. define a dictionary/string containing reservoir data
-        data = { 'FIELD_NAME' : ['Yoho', 'Salabe', 'Agbabu', 'Owopele-north'],
-               'RESERVOIR_DEPTH_FT' : [12000.04, 1489.34, 400, 12567.43],
-               'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light oil'],
-               'FLUID_API' : [35.1, 45.3, 10.4, 34.4],
-               'FIELD_LOCATION' : ['Offshore', 'Swamp', 'Land', 'Land']
-        }
-        # 2. load: ensure data is in (or convert data to) json format
+        # 1. load: ensure data is in (or convert data to) json format
         json_data = dumps(data)
         t0 = time.time()
-        #3. read
+        #2. read
         for index in range(nth_time):
           spark_dataframe_data = spark.read.json(spark.sparkContext.parallelize([json_data]))
       duration = time.time() - t0
@@ -235,32 +237,25 @@ class ShaleReservoirApacheSpark():
           python_dataframe_data = PythonDataFrame(read_json(json_data))
       else:
         #read from created dictionary
-        #1. define a dictionary/string containing reservoir data
-        data = { 'FIELD_NAME' : ['Yoho', 'Salabe', 'Agbabu', 'Owopele-north'],
-               'RESERVOIR_DEPTH_FT' : [12000.04, 1489.34, 400, 12567.43],
-               'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light oil'],
-               'FLUID_API' : [35.1, 45.3, 10.4, 34.4],
-               'FIELD_LOCATION' : ['Offshore', 'Swamp', 'Land', 'Land']
-        }
-        # 2. load: ensure data is in (or convert data to) json format
+        # 1. load: ensure data is in (or convert data to) json format
         json_data = dumps(data)
-        #3. read
+        # 2. read
         t0 = time.time()
         for index in range(nth_time):
           python_dataframe_data = PythonDataFrame(read_json(json_data))
-        duration = time.time() - t0
-        #
-        self.duration_separator()
-        print("{}{}{}".format(engine_name, "-based loading of  'JSON' data in a loop time (seconds):", '{0:.4f}'.format(duration)))
-        self.duration_separator()
-        print("Printing Contents of Pure Python DataFrame Representation:")
-        print("Data type .....", type(python_dataframe_data))
-        print("All Data Rows with Shape:", python_dataframe_data.head().shape)
-        self.separator()
-        pprint(python_dataframe_data.head())
-        self.separator()
-        print("Loading of  'JSON' data in a loop successfully completed.")
-  # End test_sample_three_read_json_reservoir_data_to_dataframe() method
+      duration = time.time() - t0
+      #
+      self.duration_separator()
+      print("{}{}{}".format(engine_name, "-based loading of  'JSON' data in a loop time (seconds):", '{0:.4f}'.format(duration)))
+      self.duration_separator()
+      print("Printing Contents of Pure Python DataFrame Representation:")
+      print("Data type .....", type(python_dataframe_data))
+      print("All Data Rows with Shape:", python_dataframe_data.head().shape)
+      self.separator()
+      pprint(python_dataframe_data.head())
+      self.separator()
+      print("Loading of  'JSON' data in a loop successfully completed.")
+  # End sample_three_read_json_reservoir_data_to_dataframe() method
 #End ShaleReservoirApacheSpark() class
 
   
@@ -294,9 +289,10 @@ class ShaleReservoirApacheSparkTest(TestCase):
     file = True
     if file:
       read_from_file = True
+      json_file_name = "data.json"
     else:
       read_from_file = False
-    json_file_name = "data.json"
+      json_file_name = None
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=50, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=50, spark_engine=self.spark_engine_non)
   #End test_sample_three_read_json_reservoir_data_to_dataframe() method
