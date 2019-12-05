@@ -57,11 +57,10 @@
 #
 # 13) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
 #
-# 14) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
+# 14) After the computations run: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
-
 
 try:
   """  import commonly used modules; print pyspark, networkx, tensorflow
