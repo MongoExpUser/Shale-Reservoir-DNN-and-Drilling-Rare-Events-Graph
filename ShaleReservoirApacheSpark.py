@@ -33,30 +33,35 @@
 # 2) Install Java 11 - Java-11-openjdk: sudo apt-get install openjdk-11-jdk
 #
 # 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
-
-# 4) Install Apache Spark v2.4.4 (https://spark.apache.org/)
 #
-# 5) Install Scala: sudo apt-get install scala
+# 4) Download Apache Spark v2.4.4 from: https://spark.apache.org/downloads.html -  a .tgz file
 #
-# 6) Install Python v3.7: sudo apt-get install python3.7
+# 5) Install Apache Spark v2.4.4:
+#    - transfer .tgz file to home or desired folder/directory and 'cd' to the home or desired directory/folder
+#    - extract file to the directory by typing: tar xvf spark-2.4.4-bin-hadoop2.7.tgz
 #
-# 7) Install PIP3: sudo apt-get install python3-pip
+# 6) Install Scala: sudo apt-get install scala
 #
-# 8) Install relevant Python packages with pip or conda (if using conda/ananconda):
+# 7) Install Python v3.7: sudo apt-get install python3.7
+#
+# 8) Install PIP3: sudo apt-get install python3-pip
+#
+# 9) Install relevant Python packages with pip or conda (if using conda/ananconda):
 #    python3.7 -m pip install numpy scipy matplotlib pandas scikit-learn scikit-image statsmodels networkx pyspark keras cython jupyter tensorflow==2.0.0b1
 #
-# 9) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
+# 10) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
 #
-# 10) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
+# 11) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
 #
-# 11) On Ubuntu Shell invoke 'Python3' by typing: Python3
+# 12) On Ubuntu Shell invoke 'Python3' by typing: Python3
 #
-# 12) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
+# 13) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
 #
-# 13) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
+# 14) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
+
 
 try:
   """  import commonly used modules; print pyspark, networkx, tensorflow
