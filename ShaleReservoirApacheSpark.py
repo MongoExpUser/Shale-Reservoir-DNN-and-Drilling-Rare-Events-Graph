@@ -34,7 +34,7 @@
 #
 # 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 
-# 4) Apache Spark v2.4.4 (https://spark.apache.org/)
+# 4) Install Apache Spark v2.4.4 (https://spark.apache.org/)
 #
 # 5) Install Scala: sudo apt-get install scala
 #
