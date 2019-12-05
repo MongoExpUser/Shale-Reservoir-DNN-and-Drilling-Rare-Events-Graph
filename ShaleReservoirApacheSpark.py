@@ -289,7 +289,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     file = True
     if file:
       read_from_file = True
-      json_file_name = "data.json"
+      json_file_name = "reservoir_data.json"
     else:
       read_from_file = False
       json_file_name = None
