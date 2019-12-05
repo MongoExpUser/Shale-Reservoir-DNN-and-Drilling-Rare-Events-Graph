@@ -44,7 +44,7 @@ try:
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -95,7 +95,7 @@ class ShaleReservoirApacheSpark():
     count = 0
     for index, item in enumerate(spark_dataframe_data):
       count = index
-    return (count, len(spark_dataframe_data.columns))
+    return (count+1, len(spark_dataframe_data.columns))
   # End get_spark_dataframe_shape() method
   
   def calculate_stooip(self, total_number_of_reservoirs=None, engine_name=None):
@@ -168,13 +168,13 @@ class ShaleReservoirApacheSpark():
   def sample_three_read_json_reservoir_data_to_dataframe(self, read_from_file = None, json_data_file=None, nth_time=10, spark_engine=True):
     if not read_from_file:
       #define a dictionary containing reservoir data
-      data = {  'FIELD_NAME' : ['Yoho', 'Salabe', 'Agbabu', 'Owopele-north'],
-                'RESERVOIR_DEPTH_FT' : [12000.04, 1489.34, 400, 12567.43],
-                'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light oil'],
-                'FLUID_API' : [35.1, 45.3, 10.4, 34.4],
-                'FIELD_LOCATION' : ['Offshore', 'Swamp', 'Land', 'Land']
+      data =  {'FIELD_NAME' : ['Yoho', 'Oso', 'Agbabu', 'Owopele-North', 'Grosmont', 'Wilshire Ellenburger'],
+               'RESERVOIR_DEPTH_FT' : [12000.04, 14897.34, 400.04, 16149.56, 1297.43, 12506.89],
+               'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light Oil', 'Bitumen', 'Light Oil'],
+               'FLUID_API' : [35.1, 46.3, 10.4, 34.4, 5.01, 40.1],
+               'FIELD_BASIN' : ['Niger Delta', 'Niger Delta', 'Benin/Dahomey', 'Niger Delta', 'WCSB', 'Permian Midland']
       }
-    
+      
     #to demo 3rd speed-up due to spark engine, load "JSON" data in a loop nth_time
     if spark_engine:
       #invoke loading of'JSON' data in a loop with spike engine
@@ -214,6 +214,8 @@ class ShaleReservoirApacheSpark():
       spark_dataframe_data.printSchema()
       print("All Data Rows with Shape:", self.get_spark_dataframe_shape(spark_dataframe_data))
       self.separator()
+      print("Pyspark DataFrame Format:")
+      print("-------------------------")
       spark_dataframe_data.show()
       self.separator()
       print("Loading of  'JSON' data in a loop successfully completed.")
@@ -252,7 +254,9 @@ class ShaleReservoirApacheSpark():
       print("Data type .....", type(python_dataframe_data))
       print("All Data Rows with Shape:", python_dataframe_data.head().shape)
       self.separator()
-      pprint(python_dataframe_data.head())
+      print("Pandas DataFrame Format:")
+      print("------------------------")
+      pprint(python_dataframe_data)
       self.separator()
       print("Loading of  'JSON' data in a loop successfully completed.")
   # End sample_three_read_json_reservoir_data_to_dataframe() method
