@@ -19,6 +19,40 @@
 #
 #  3) read and load reservoir data, in json format, into DataFrame
 #
+#
+#
+# ***********************************************************************************************************************************
+#
+# To run and test the speed-up samples/examples (Spark/Pyspark vs. Python) presented in this module, do the followings:
+#
+#
+# 1) Install Ubuntu (minimum of Ubuntu 18.04.1 LTS) on a cluster of VMs (3+ CPUs) using any of the following cloud plaforms:
+#
+#    Linode, AWS, GPC, Azure, Oracle, DO, Vultr or any other public cloud platform provider.
+#
+# 2) Install Java 11 - Java-11-openjdk: sudo apt-get install openjdk-11-jdk
+#
+# 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+#
+# 4) Install Scala: sudo apt-get install scala
+#
+# 5) Install Python v3.7: sudo apt-get install python3.7
+#
+# 6) Install PIP3: sudo apt-get install python3-pip
+#
+# 7) Install relevant Python packages with pip or conda (if using conda/ananconda):
+#    python3.7 -m pip install numpy scipy matplotlib pandas scikit-learn scikit-image statsmodels networkx pyspark keras cython jupyter tensorflow==2.0.0b1
+#
+# 8) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
+#
+# 9) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
+#
+# 10) On Ubuntu Shell invoke 'Python3' by typing: Python3
+
+# 11) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
+
+# 12) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
+#
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
 
