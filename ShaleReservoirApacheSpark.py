@@ -33,25 +33,27 @@
 # 2) Install Java 11 - Java-11-openjdk: sudo apt-get install openjdk-11-jdk
 #
 # 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+
+# 4) Apache Spark v2.4.4 (https://spark.apache.org/)
 #
-# 4) Install Scala: sudo apt-get install scala
+# 5) Install Scala: sudo apt-get install scala
 #
-# 5) Install Python v3.7: sudo apt-get install python3.7
+# 6) Install Python v3.7: sudo apt-get install python3.7
 #
-# 6) Install PIP3: sudo apt-get install python3-pip
+# 7) Install PIP3: sudo apt-get install python3-pip
 #
-# 7) Install relevant Python packages with pip or conda (if using conda/ananconda):
+# 8) Install relevant Python packages with pip or conda (if using conda/ananconda):
 #    python3.7 -m pip install numpy scipy matplotlib pandas scikit-learn scikit-image statsmodels networkx pyspark keras cython jupyter tensorflow==2.0.0b1
 #
-# 8) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
+# 9) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
 #
-# 9) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
+# 10) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
 #
-# 10) On Ubuntu Shell invoke 'Python3' by typing: Python3
-
-# 11) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
-
-# 12) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
+# 11) On Ubuntu Shell invoke 'Python3' by typing: Python3
+#
+# 12) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
+#
+# 13) After the computations: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
