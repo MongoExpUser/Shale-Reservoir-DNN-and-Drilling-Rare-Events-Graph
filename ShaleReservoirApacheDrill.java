@@ -12,8 +12,8 @@
  *  A class (ShaleReservoirApacheDrill()) that uses Apache Drill (schema-free SQL engine) for:
  *
  *  a) Accessing reservoir data from MongoDB using SQL
- *  a) Writing SQL queries against MongoDB document store
- *  b) ETL/building data pipeline from MongoDB with SQL
+ *  b) Writing SQL queries against MongoDB document store
+ *  c) ETL/building data pipeline from MongoDB with SQL
  *
  *  Note: The actions in (a), (b) and (c) above can be carried out interactively on an active (i.e. running or deployed):
  *       (1) Apache Drill Shell  - see: https://drill.apache.org/docs/configuring-the-drill-shell/
