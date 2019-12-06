@@ -111,7 +111,7 @@ try:
 except(ImportError) as err:
   print(str(err))
   
-  
+
 class ShaleReservoirApacheSpark():
   """ A simple class to demonstate usage of Apache Spark™ with Python API (Pyspark)"""
   
@@ -119,7 +119,7 @@ class ShaleReservoirApacheSpark():
     print()
     print()
     self.separator()
-    print("Initiating Pyspike Engine.")
+    print("                 Initiating Pyspark Engine                 ")
     self.separator()
   # End  __init__() method
   
@@ -161,6 +161,9 @@ class ShaleReservoirApacheSpark():
     if spark_engine:
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
+      self.separator()
+      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      self.separator()
       #apply spark.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
       spark.sparkContext.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
       #stop spark
@@ -181,6 +184,9 @@ class ShaleReservoirApacheSpark():
       cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Tensorflow-Based Image Classification Demonstration").getOrCreate()
+      self.separator()
+      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      self.separator()
       #apply spark.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
       t0 = time.time()
       spark.sparkContext.parallelize([sfc.cnn_images_classification(cnn_options=cnn_options)])
@@ -214,6 +220,7 @@ class ShaleReservoirApacheSpark():
                'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light Oil', 'Bitumen', 'Light Oil'],
                'FLUID_API' : [35.1, 46.3, 10.4, 34.4, 5.01, 40.1],
                'FIELD_BASIN' : ['Niger Delta', 'Niger Delta', 'Benin/Dahomey', 'Niger Delta', 'WCSB', 'Permian Midland']
+        
       }
       
     #to demo 3rd speed-up due to spark engine, load "JSON" data in a loop nth_time
@@ -225,6 +232,9 @@ class ShaleReservoirApacheSpark():
       #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
+      self.separator()
+      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      self.separator()
       #
       # read data and create a spark dataframe from jSON data in a loop nth_times and print/pprint/show afterwards
       t0 = None
@@ -258,6 +268,10 @@ class ShaleReservoirApacheSpark():
       print("Pyspark DataFrame Format:")
       print("-------------------------")
       spark_dataframe_data.show()
+      # print("Pandas DataFrame Format:")
+      # print("------------------------")
+      # pandas_dataframe_data = spark_dataframe_data.toPandas()
+      # pprint(pandas_dataframe_data)
       self.separator()
       print("Loading of  'JSON' data in a loop successfully completed.")
       #stop spark
@@ -314,14 +328,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def _test_sample_two_machine_learning_with_tensorflow(self):
+  def test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
@@ -331,7 +345,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
   def test_sample_three_read_json_reservoir_data_to_dataframe(self):
     print()
     #run read_json_reservoir_data
-    file = True
+    file = False
     if file:
       read_from_file = True
       json_file_name = "reservoir_data.json"
