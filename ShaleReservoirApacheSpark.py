@@ -1,6 +1,6 @@
 # ***********************************************************************************************************************************
 # * @License Starts
-# *
+# * 
 # * Copyright © 2015 - present. MongoExpUser
 # *
 # * License: MIT - See: https://github.com/MongoExpUser/Shale-Reservoir-DNN-and-Drilling-Rare-Events-Graph/blob/master/README.md
@@ -110,7 +110,7 @@ try:
 except(ImportError) as err:
   print(str(err))
   
-
+  
 class ShaleReservoirApacheSpark():
   """ A simple class to demonstate usage of Apache Spark™ with Python API (Pyspark)"""
   
