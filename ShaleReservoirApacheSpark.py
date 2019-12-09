@@ -26,7 +26,7 @@
 # To run and test the speed-up samples/examples (Spark/Pyspark vs. Python) presented in this module, do the followings:
 #
 #
-# 1) Install Ubuntu (minimum of Ubuntu 18.04.1 LTS) on a cluster of VMs (3+ CPUs) using any of the following cloud plaforms:
+# 1) Install Ubuntu (minimum of Ubuntu 18.04.3 LTS) on a cluster of VMs (3+ CPUs) using any of the following cloud plaforms:
 #
 #    Linode, AWS, GPC, Azure, Oracle, DO, Vultr or any other public cloud platform provider.
 #
@@ -51,13 +51,13 @@
 #
 # 10) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
 #
-# 11) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
+# 11) Include both files (ShaleReservoirApacheSpark.py and ShaleReservoir.py) in the same directory
 #
 # 12) On Ubuntu Shell invoke 'Python3' by typing: Python3
 #
 # 13) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
 #
-# 14) After the computations run: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
+# 14) After the computations run: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementations
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
