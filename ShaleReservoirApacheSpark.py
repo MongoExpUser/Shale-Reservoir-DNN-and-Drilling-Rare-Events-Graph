@@ -85,7 +85,7 @@ try:
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
   from pandas import read_json, DataFrame as PythonDataFrame
-  from EcotertShaleReservoir import ShaleDNN
+  from ShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
