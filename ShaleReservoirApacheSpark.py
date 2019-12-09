@@ -155,14 +155,17 @@ class ShaleReservoirApacheSpark():
     self.separator()
   # End calculate_stooip() method
       
-  def sample_one_stooip_calculation(self, total_number_of_reservoirs=None, spark_engine=True):
+  def sample_one_stooip_calculation(self, total_number_of_reservoirs=None, number_of_cpus=None, spark_engine=True):
     #to demo speed-up due to spark engine, calculate reservoir STOOIP (in bbls) in a loop
     #up to nth number of reservoirs across several fields, with or without spark engine and time the results
     if spark_engine:
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
+      # sleep for a little while, to enable all workers connect to driver
+      time.sleep(10)
       self.separator()
-      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
+      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
       self.separator()
       #apply spark.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
       spark.sparkContext.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
@@ -173,7 +176,7 @@ class ShaleReservoirApacheSpark():
       self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
   # End sample_one_stooip_calculation() method
   
-  def sample_two_machine_learning_with_tensorflow(self, spark_engine=True):
+  def sample_two_machine_learning_with_tensorflow(self, number_of_cpus=None, spark_engine=True):
     #to demo 2nd speed-up due to spark engine, run "TensorFlow" image classification example in "ShaleReservoir.py"
     if spark_engine:
       #invoke "TensorFlow" image classification example in "ShaleReservoir.py" with spike engine
@@ -183,9 +186,12 @@ class ShaleReservoirApacheSpark():
       sfc =  ShaleDNN()
       cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
       #start spark by invoking SparkSession()
-      spark = SparkSession.builder.master("local").appName("Tensorflow-Based Image Classification Demonstration").getOrCreate()
+      spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
+      # sleep for a little while, to enable all workers connect to driver
+      time.sleep(10)
       self.separator()
-      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
+      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
       self.separator()
       #apply spark.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
       t0 = time.time()
@@ -212,7 +218,7 @@ class ShaleReservoirApacheSpark():
       print("'TensorFlow' image classification successfully completed.")
   # End sample_two_machine_learning_with_tensorflow() method
   
-  def sample_three_read_json_reservoir_data_to_dataframe(self, read_from_file = None, json_data_file=None, nth_time=10, spark_engine=True):
+  def sample_three_read_json_reservoir_data_to_dataframe(self, read_from_file = None, json_data_file=None, nth_time=10, number_of_cpus=None, spark_engine=True):
     if not read_from_file:
       #define a dictionary containing reservoir data
       data =  {'FIELD_NAME' : ['Yoho', 'Oso', 'Agbabu', 'Owopele-North', 'Grosmont', 'Wilshire Ellenburger'],
@@ -231,9 +237,13 @@ class ShaleReservoirApacheSpark():
       print("{}{}".format(engine_name, "-based loading of  'JSON' data in a loop started and in progress ....."))
       #
       #start spark by invoking SparkSession()
-      spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
+      #spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
+      spark = SparkSession.builder.appName("Parallel and Distributed Data Demonstration").getOrCreate()
+      # sleep for a little while, to enable all workers connect to driver
+      time.sleep(10)
       self.separator()
-      print("               Number of CPUS for Parallelism: ", spark.sparkContext.defaultParallelism)
+      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
+      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
       self.separator()
       #
       # read data and create a spark dataframe from jSON data in a loop nth_times and print/pprint/show afterwards
@@ -255,6 +265,11 @@ class ShaleReservoirApacheSpark():
         for index in range(nth_time):
           spark_dataframe_data = spark.read.json(spark.sparkContext.parallelize([json_data]))
       duration = time.time() - t0
+      self.duration_separator()
+      default_number_of_partition_for_parallelism = spark.sparkContext.defaultParallelism
+      acttive_number_of_cpus_for_parallelism = spark._jsc.sc().getExecutorMemoryStatus().size()
+      print("               Default Number Partitions  : ", default_number_of_partition_for_parallelism)
+      print("               Active Number of CPUS for Parallelism : ", acttive_number_of_cpus_for_parallelism)
       #
       self.duration_separator()
       print("{}{}{}".format(engine_name, "-based loading of  'JSON' data in a loop time (seconds):", '{0:.4f}'.format(duration)))
@@ -345,15 +360,15 @@ class ShaleReservoirApacheSparkTest(TestCase):
   def test_sample_three_read_json_reservoir_data_to_dataframe(self):
     print()
     #run read_json_reservoir_data
-    file = False
+    file = True
     if file:
       read_from_file = True
       json_file_name = "reservoir_data.json"
     else:
       read_from_file = False
       json_file_name = None
-    self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=50, spark_engine=self.spark_engine_yes)
-    self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=50, spark_engine=self.spark_engine_non)
+    self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_yes)
+    self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_non)
   #End test_sample_three_read_json_reservoir_data_to_dataframe() method
   
   def tearDown(self):
