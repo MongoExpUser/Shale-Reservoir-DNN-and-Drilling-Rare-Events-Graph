@@ -85,7 +85,7 @@ try:
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -162,7 +162,7 @@ class ShaleReservoirApacheSpark():
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
-      time.sleep(10)
+      time.sleep(50)
       self.separator()
       print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
       print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
@@ -188,7 +188,7 @@ class ShaleReservoirApacheSpark():
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
-      time.sleep(10)
+      time.sleep(50)
       self.separator()
       print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
       print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
