@@ -26,7 +26,7 @@
 # To run and test the speed-up samples/examples (Spark/Pyspark vs. Python) presented in this module, do the followings:
 #
 #
-# 1) Install Ubuntu (minimum of Ubuntu 18.04.3 LTS) on a cluster of VMs (3+ CPUs) using any of the following cloud plaforms:
+# 1) Install Ubuntu (minimum of Ubuntu 18.04.1 LTS) on a cluster of VMs (3+ CPUs) using any of the following cloud plaforms:
 #
 #    Linode, AWS, GPC, Azure, Oracle, DO, Vultr or any other public cloud platform provider.
 #
@@ -51,13 +51,13 @@
 #
 # 10) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
 #
-# 11) Include both files (ShaleReservoirApacheSpark.py and ShaleReservoir.py) in the same directory
+# 11) Include both files (ShaleReservoirApacheSpark.py andShaleReservoir.py) in the same directory
 #
 # 12) On Ubuntu Shell invoke 'Python3' by typing: Python3
 #
 # 13) At Python prompt, invoke the Python script by typing: exec(open("/path_to_file/ShaleReservoirApacheSpark.py").read())
 #
-# 14) After the computations run: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementations
+# 14) After the computations run: the results will be displayed with run-times for "Pyspark" vs. "Pure Python" implementions
 #
 # ***********************************************************************************************************************************
 # ***********************************************************************************************************************************
@@ -237,8 +237,7 @@ class ShaleReservoirApacheSpark():
       print("{}{}".format(engine_name, "-based loading of  'JSON' data in a loop started and in progress ....."))
       #
       #start spark by invoking SparkSession()
-      #spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
-      spark = SparkSession.builder.appName("Parallel and Distributed Data Demonstration").getOrCreate()
+      spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
       time.sleep(10)
       self.separator()
@@ -265,13 +264,6 @@ class ShaleReservoirApacheSpark():
         for index in range(nth_time):
           spark_dataframe_data = spark.read.json(spark.sparkContext.parallelize([json_data]))
       duration = time.time() - t0
-      self.duration_separator()
-      default_number_of_partition_for_parallelism = spark.sparkContext.defaultParallelism
-      acttive_number_of_cpus_for_parallelism = spark._jsc.sc().getExecutorMemoryStatus().size()
-      print("               Default Number Partitions  : ", default_number_of_partition_for_parallelism)
-      print("               Active Number of CPUS for Parallelism : ", acttive_number_of_cpus_for_parallelism)
-      #
-      self.duration_separator()
       print("{}{}{}".format(engine_name, "-based loading of  'JSON' data in a loop time (seconds):", '{0:.4f}'.format(duration)))
       self.duration_separator()
       print("Printing Contents of the Spark DataFrame Representation:")
@@ -283,10 +275,13 @@ class ShaleReservoirApacheSpark():
       print("Pyspark DataFrame Format:")
       print("-------------------------")
       spark_dataframe_data.show()
-      # print("Pandas DataFrame Format:")
-      # print("------------------------")
-      # pandas_dataframe_data = spark_dataframe_data.toPandas()
-      # pprint(pandas_dataframe_data)
+      self.separator()
+      #
+      #issue SQL query against the last "spark_dataframe_data" in the range: the dataframe is like a TABLE
+      sql_query_result = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
+      print("Pyspark QUERY Result Against DataFrame/TABLE:")
+      print("---------------------------------------------")
+      sql_query_result.show()
       self.separator()
       print("Loading of  'JSON' data in a loop successfully completed.")
       #stop spark
@@ -343,14 +338,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def test_sample_two_machine_learning_with_tensorflow(self):
+  def _test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
