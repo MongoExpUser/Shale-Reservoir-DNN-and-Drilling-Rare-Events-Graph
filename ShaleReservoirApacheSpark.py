@@ -159,14 +159,18 @@ class ShaleReservoirApacheSpark():
     #to demo speed-up due to spark engine, calculate reservoir STOOIP (in bbls) in a loop
     #up to nth number of reservoirs across several fields, with or without spark engine and time the results
     if spark_engine:
+      #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
       time.sleep(50)
       self.separator()
-      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
-      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
+      default_number_partitions = spark.sparkContext.defaultParallelism
+      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
+      print("               Default Number of Partitions  : ", default_number_partitions)
+      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
       self.separator()
+      #
       #apply spark.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
       spark.sparkContext.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
       #stop spark
@@ -185,14 +189,18 @@ class ShaleReservoirApacheSpark():
       print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
       sfc =  ShaleDNN()
       cnn_options = sfc.test_dataset_cnn_images_classification(test=True, data_option="fashion")
+      #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
       time.sleep(50)
       self.separator()
-      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
-      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
+      default_number_partitions = spark.sparkContext.defaultParallelism
+      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
+      print("               Default Number of Partitions  : ", default_number_partitions)
+      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
       self.separator()
+      #
       #apply spark.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
       t0 = time.time()
       spark.sparkContext.parallelize([sfc.cnn_images_classification(cnn_options=cnn_options)])
@@ -239,10 +247,12 @@ class ShaleReservoirApacheSpark():
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
       # sleep for a little while, to enable all workers connect to driver
-      time.sleep(10)
+      time.sleep(50)
       self.separator()
-      print("               Default Number Partitions  : ", spark.sparkContext.defaultParallelism)
-      print("               Active Number of CPUS for Parallelism : ", spark._jsc.sc().getExecutorMemoryStatus().size())
+      default_number_partitions = spark.sparkContext.defaultParallelism
+      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
+      print("               Default Number of Partitions  : ", default_number_partitions)
+      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
       self.separator()
       #
       # read data and create a spark dataframe from jSON data in a loop nth_times and print/pprint/show afterwards
@@ -338,14 +348,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def _test_sample_two_machine_learning_with_tensorflow(self):
+  def test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
