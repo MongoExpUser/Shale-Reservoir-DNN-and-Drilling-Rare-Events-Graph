@@ -169,14 +169,14 @@ class ShaleReservoirApacheSpark():
       #stop spark
       spark.stop()
     else:
-      # invoke stooip calculation without spike engine
+      # invoke stooip calculation without spark engine
       self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Regular VM engine")
   # End sample_one_stooip_calculation() method
   
   def sample_two_machine_learning_with_tensorflow(self, number_of_cpus=None, spark_engine=True):
     #to demo 2nd speed-up due to spark engine, run "TensorFlow" image classification example in "ShaleReservoir.py"
     if spark_engine:
-      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" with spike engine
+      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" with spark engine
       engine_name = "Spark engine"
       print("")
       print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
@@ -197,7 +197,7 @@ class ShaleReservoirApacheSpark():
       #stop spark
       spark.stop()
     else:
-      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" without spike engine
+      #invoke "TensorFlow" image classification example in "ShaleReservoir.py" without spark engine
       engine_name = "Regular VM engine"
       print("")
       print("{}{}".format(engine_name, "-based 'TensorFlow' image classification started and in progress ....."))
@@ -219,12 +219,11 @@ class ShaleReservoirApacheSpark():
                'FLUID_TYPE' : ['Light Oil', 'Condensate', 'Bitumen', 'Light Oil', 'Bitumen', 'Light Oil'],
                'FLUID_API' : [35.1, 46.3, 10.4, 34.4, 5.01, 40.1],
                'FIELD_BASIN' : ['Niger Delta', 'Niger Delta', 'Benin/Dahomey', 'Niger Delta', 'WCSB', 'Permian Midland']
-        
       }
       
     #to demo 3rd speed-up due to spark engine, load "JSON" data in a loop nth_time
     if spark_engine:
-      #invoke loading of'JSON' data in a loop with spike engine
+      #invoke loading of'JSON' data in a loop with spark engine
       engine_name = "Spark engine"
       print("")
       print("{}{}".format(engine_name, "-based loading of  'JSON' data in a loop started and in progress ....."))
@@ -290,7 +289,7 @@ class ShaleReservoirApacheSpark():
       #stop spark
       spark.stop()
     else:
-      #invoke loading of  'JSON' data in a loop without spike engine
+      #invoke loading of  'JSON' data in a loop without spark engine
       engine_name = "Regular VM engine"
       print("")
       print("{}{}".format(engine_name, "-based loading of  'JSON' data in a loop started and in progress ....."))
