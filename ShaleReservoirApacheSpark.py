@@ -84,6 +84,7 @@ try:
   from pyspark import SparkConf, SparkContext
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
+  from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
   from ShaleReservoir import ShaleDNN
   #
@@ -162,14 +163,6 @@ class ShaleReservoirApacheSpark():
       #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
-      # sleep for a little while, to enable all workers connect to driver
-      time.sleep(50)
-      self.separator()
-      default_number_partitions = spark.sparkContext.defaultParallelism
-      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
-      print("               Default Number of Partitions  : ", default_number_partitions)
-      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
-      self.separator()
       #
       #apply spark.parallelize() to the stooip calculation method and time the run: ensure method is supply as a  list of argument
       spark.sparkContext.parallelize([self.calculate_stooip(total_number_of_reservoirs=total_number_of_reservoirs, engine_name="Spark engine")])
@@ -192,14 +185,6 @@ class ShaleReservoirApacheSpark():
       #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Reservoir STOOIP Demonstration").getOrCreate()
-      # sleep for a little while, to enable all workers connect to driver
-      time.sleep(50)
-      self.separator()
-      default_number_partitions = spark.sparkContext.defaultParallelism
-      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
-      print("               Default Number of Partitions  : ", default_number_partitions)
-      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
-      self.separator()
       #
       #apply spark.parallelize() to the classification method and time the run: ensure method is supply as a list of argument
       t0 = time.time()
@@ -246,18 +231,9 @@ class ShaleReservoirApacheSpark():
       #
       #start spark by invoking SparkSession()
       spark = SparkSession.builder.master("local").appName("Parallel and Distributed Data Demonstration").getOrCreate()
-      # sleep for a little while, to enable all workers connect to driver
-      time.sleep(50)
-      self.separator()
-      default_number_partitions = spark.sparkContext.defaultParallelism
-      active_number_of_cpus = spark._jsc.sc().getExecutorMemoryStatus().size()
-      print("               Default Number of Partitions  : ", default_number_partitions)
-      print("               Active Number of CPUS for Parallelism : ",  active_number_of_cpus)
-      self.separator()
       #
-      # read data and create a spark dataframe from jSON data in a loop nth_times and print/pprint/show afterwards
+      #read data and create a spark dataframe from jSON data in a loop nth_times and print/pprint/show afterwards
       t0 = None
-      #
       if read_from_file:
         # 1. load
         json_data = join(getcwd(), json_data_file)  # assumed file in CWD - current working directory
@@ -287,13 +263,23 @@ class ShaleReservoirApacheSpark():
       spark_dataframe_data.show()
       self.separator()
       #
-      #issue SQL query against the last "spark_dataframe_data" in the range: the dataframe is like a TABLE
-      sql_query_result = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
-      print("Pyspark QUERY Result Against DataFrame/TABLE:")
-      print("---------------------------------------------")
-      sql_query_result.show()
-      self.separator()
+      #issue SQL queries against the last "spark_dataframe_data" in the range: the dataframe is like a TABLE
+      sql_query_result_df1 = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
+      sql_query_result_df = spark_dataframe_data.select("FLUID_TYPE")
+      print("Printing Pyspark QUERIES' Result Against DataFrame/TABLE:")
+      print("------------------------------------------------------")
+      print("Data type of sql_query_result_df1 i.e. - basin and fluid info  .....", type(sql_query_result_df1))
+      print("Data type of sql_query_result_df i.e. - only fluid info .....", type(sql_query_result_df))
+      sql_query_result_df1.show(truncate=False)
+      sql_query_result_df.show(truncate=False)
+      print("------------------------------------------------------")
+      pprint("Printing Pyspark QUERY Result Against DataFrame/TABLE in JSON Format:")
+      print("----------------------------------------------------------------------")
+      #convert the entire row of data frame into one new column in "JSON Format",
+      result_in_json = sql_query_result_df.withColumn("JSON_FORMAT", to_json(struct([sql_query_result_df[item] for item in sql_query_result_df.columns])))
+      result_in_json.show(truncate=False)
       print("Loading of  'JSON' data in a loop successfully completed.")
+      self.separator()
       #stop spark
       spark.stop()
     else:
@@ -348,14 +334,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def test_sample_two_machine_learning_with_tensorflow(self):
+  def _test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
