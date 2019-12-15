@@ -334,14 +334,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def _test_sample_two_machine_learning_with_tensorflow(self):
+  def test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
