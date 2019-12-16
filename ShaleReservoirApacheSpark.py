@@ -11,7 +11,7 @@
 #
 #  ...Ecotert's ShaleReservoirApacheSpark.py  (released as open-source under MIT License) implements:
 #
-#  Two simple classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to:
+#  Three simple classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to:
 #
 #  1) calculate reservoir STOOIP and
 #
