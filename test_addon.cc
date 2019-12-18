@@ -161,7 +161,7 @@ class TestNAPI
     }
     
 };
-//.... implementation of the above pure C functions and other functions within C++ class i.s. as OOP.......... ends
+//.... implementation of the above pure C functions and other functions within C++ class i.e. as OOP.......... ends
 
 
 //.... implementation of C++ function to invoke methods on the above TestNAPI class .......................... starts
