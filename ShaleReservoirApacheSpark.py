@@ -86,7 +86,7 @@ try:
   from pyspark.sql import SparkSession, DataFrame, types
   from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -262,7 +262,8 @@ class ShaleReservoirApacheSpark():
       spark_dataframe_data.show()
       self.separator()
       #
-      #issue SQL queries against the last "spark_dataframe_data" in the range: the dataframe is like a TABLE
+      # ..................................  testing some SQL operation starts   .......................................................
+      #issue SQL queries against the last "spark_dataframe_data" in the range: the data_frame 1s equivalent to a RDBMS TABLE in Spark SQL
       sql_query_result_df1 = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
       sql_query_result_df2 = spark_dataframe_data.select("FLUID_TYPE")
       sql_query_result_df3 = spark_dataframe_data.select("FLUID_API", "RESERVOIR_DEPTH_FT")
@@ -274,9 +275,9 @@ class ShaleReservoirApacheSpark():
       sql_query_result_df1.show(truncate=False)
       sql_query_result_df2.show(truncate=False)
       sql_query_result_df3.show(truncate=False)
-      print("------------------------------------------------------")
-      pprint("Printing Pyspark QUERIES Result Against DataFrame/TABLE in JSON Format:")
-      print("----------------------------------------------------------------------")
+      print("-----------------------------------------------------------------------")
+      print("Printing Pyspark QUERIES Result Against DataFrame/TABLE in JSON Format:")
+      print("-----------------------------------------------------------------------")
       #convert the entire row of data frame into one new column in "JSON Format",
       result_in_json1 = sql_query_result_df1.withColumn("JSON_FORMAT", to_json(struct([sql_query_result_df1[item] for item in sql_query_result_df1.columns])))
       result_in_json2 = sql_query_result_df2.withColumn("JSON_FORMAT", to_json(struct([sql_query_result_df2[item] for item in sql_query_result_df2.columns])))
@@ -286,6 +287,19 @@ class ShaleReservoirApacheSpark():
       result_in_json3.show(truncate=False)
       print("Loading of  'JSON' data in a loop successfully completed.")
       self.separator()
+      #
+      print("------------------------------------------------------------------------------------")
+      print("Printing Pyspark QUERIES Result Against TEMP TABLE VIEW Created From DATAFRAME:")
+      print("------------------------------------------------------------------------------------")
+      #
+      # create a temporary view/table of the  "spark_dataframe_data"
+      spark_dataframe_data.createTempView("dataframe_temp_table_view")
+      #issue standard SQL queries in "STRING concatenation FORMAT" against the "dataframe_temp_table_view"
+      sql_query_result_fluid_api_and_fluid_type = spark.sql("SELECT FLUID_API, FLUID_TYPE FROM dataframe_temp_table_view")
+      sql_query_result_fluid_api_and_fluid_type.show()
+      print("Printing of  TEMP TABLE VIEW Created From DATAFRAME successfully completed.")
+      self.separator()
+      # ..................................  testing some SQL operation starts   .......................................................
       #stop spark
       spark.stop()
     else:
@@ -340,14 +354,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def test_sample_two_machine_learning_with_tensorflow(self):
+  def _test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
