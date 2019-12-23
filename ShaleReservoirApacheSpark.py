@@ -324,7 +324,7 @@ class ShaleReservoirApacheSpark():
       sql_query = "{}{}{}{}".format("SELECT FLUID_API FROM parquet.", "`", saved_path, "`")
       sql_query_result_fluid_api_df = spark.sql(sql_query)
       print()
-      print("Fluid API and Fluid Type")
+      print("Fluid API")
       sql_query_result_fluid_api_df.show()
       self.separator()
       self.separator()
