@@ -30,9 +30,13 @@
 #
 #    Linode, AWS, GPC, Azure, Oracle, DO, Vultr or any other public cloud platform provider.
 #
-# 2) Install Java 11 - Java-11-openjdk: sudo apt-get install openjdk-11-jdk
+# 2) Install Java 8  - Java-8-openjdk:  sudo apt-get install openjdk-8-jdk (preferable)
 #
-# 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+#         or Java 11 - Java-11-openjdk: sudo apt-get install openjdk-11-jdk
+#
+# 3) Set: JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" (preferable)
+#
+#      or JAVA_HOME="path" as JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 #
 # 4) Download Apache Spark v2.4.4 from: https://spark.apache.org/downloads.html -  a .tgz file
 #
@@ -81,12 +85,14 @@ try:
   import matplotlib.pyplot as plt
   from random import random, randint
   from unittest import TestCase, main
+  from pyspark.context import SparkContext
   from pyspark import SparkConf, SparkContext
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
   from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
+  
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -263,18 +269,21 @@ class ShaleReservoirApacheSpark():
       self.separator()
       #
       # ..................................  testing some SQL operation starts   .......................................................
+      #
       #issue SQL queries against the last "spark_dataframe_data" in the range: the data_frame 1s equivalent to a RDBMS TABLE in Spark SQL
       sql_query_result_df1 = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
       sql_query_result_df2 = spark_dataframe_data.select("FLUID_TYPE")
       sql_query_result_df3 = spark_dataframe_data.select("FLUID_API", "RESERVOIR_DEPTH_FT")
+      print("-----------------------------------------------------------------------")
       print("Printing Pyspark QUERIES' Result Against DataFrame/TABLE:")
-      print("------------------------------------------------------")
+      print("-----------------------------------------------------------------------")
       print("Data type of sql_query_result_df1 i.e. - basin and fluid info  .....", type(sql_query_result_df1))
       print("Data type of sql_query_result_df i.e. - only fluid info .....", type(sql_query_result_df2))
       print("Data type of sql_query_result_df i.e. - fluid api and reservoir depth .....", type(sql_query_result_df3))
       sql_query_result_df1.show(truncate=False)
       sql_query_result_df2.show(truncate=False)
       sql_query_result_df3.show(truncate=False)
+      
       print("-----------------------------------------------------------------------")
       print("Printing Pyspark QUERIES Result Against DataFrame/TABLE in JSON Format:")
       print("-----------------------------------------------------------------------")
@@ -288,18 +297,41 @@ class ShaleReservoirApacheSpark():
       print("Loading of  'JSON' data in a loop successfully completed.")
       self.separator()
       #
+      print()
       print("------------------------------------------------------------------------------------")
-      print("Printing Pyspark QUERIES Result Against TEMP TABLE VIEW Created From DATAFRAME:")
+      print("Printing Pyspark QUERIES Result Against DataFrame/TABLE Created From PARQUET File:  ")
       print("------------------------------------------------------------------------------------")
+      #save the last "spark_dataframe_data" as parquet file: this ensures he schema information is maintained
+      #note: overwrite, if name exist
+      saved_path = "/home/ecotert1/parquet_files/reservoir_data.parquet" # from ssd/hdd/bv/ebs # or s3 bucket/block storage --> "s3://path-to-location-within-bucket.parquet"
+      mode = "overwrite"
+      compression = "gzip"
+      spark_dataframe_data.write.parquet(saved_path, mode=mode, compression=compression) # or spark_dataframe_data.write.mode("overwrite").parquet(saved_path)
+      #read the parquet file: loaded file is now a data_frame and a table
+      parquet_dataframe_table = spark.read.parquet(saved_path)
+      #create a temporary view/table of the  "parquet_dataframe_table"
+      parquet_dataframe_table.createTempView("parquet_dataframe_temp_table_view")
+      #issue standard SQL query against the "parquet_dataframe_temp_table_view"
+      sql_query_result_fluid_api_and_fluid_type_df = spark.sql("SELECT FLUID_API, FLUID_TYPE FROM parquet_dataframe_temp_table_view")
+      print()
+      print("Fluid API and Fluid Type")
+      sql_query_result_fluid_api_and_fluid_type_df.show()
       #
-      # create a temporary view/table of the  "spark_dataframe_data"
-      spark_dataframe_data.createTempView("dataframe_temp_table_view")
-      #issue standard SQL queries in "STRING concatenation FORMAT" against the "dataframe_temp_table_view"
-      sql_query_result_fluid_api_and_fluid_type = spark.sql("SELECT FLUID_API, FLUID_TYPE FROM dataframe_temp_table_view")
-      sql_query_result_fluid_api_and_fluid_type.show()
-      print("Printing of  TEMP TABLE VIEW Created From DATAFRAME successfully completed.")
+      print()
+      print("----------------------------------------------------------------")
+      print("Printing Pyspark QUERIES Result Against PARQUET File Directly:  ")
+      print("----------------------------------------------------------------")
+      #issue standard SQL query against the "parquet file" directly, instead of using read API to load a file into data_frame/table/view
+      sql_query = "{}{}{}{}".format("SELECT FLUID_API FROM parquet.", "`", saved_path, "`")
+      sql_query_result_fluid_api_df = spark.sql(sql_query)
+      print()
+      print("Fluid API and Fluid Type")
+      sql_query_result_fluid_api_df.show()
       self.separator()
-      # ..................................  testing some SQL operation starts   .......................................................
+      self.separator()
+      print()
+      #
+      # ..................................  testing some SQL operation ends   .........................................................
       #stop spark
       spark.stop()
     else:
@@ -354,14 +386,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def _test_sample_two_machine_learning_with_tensorflow(self):
+  def test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
