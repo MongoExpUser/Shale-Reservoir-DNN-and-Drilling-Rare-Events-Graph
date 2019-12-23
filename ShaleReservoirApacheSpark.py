@@ -85,7 +85,6 @@ try:
   import matplotlib.pyplot as plt
   from random import random, randint
   from unittest import TestCase, main
-  from pyspark.context import SparkContext
   from pyspark import SparkConf, SparkContext
   from pyspark.ml.feature import VectorAssembler
   from pyspark.sql import SparkSession, DataFrame, types
