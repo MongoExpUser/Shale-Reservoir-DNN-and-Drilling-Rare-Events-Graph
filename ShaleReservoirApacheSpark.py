@@ -302,7 +302,7 @@ class ShaleReservoirApacheSpark():
       print("------------------------------------------------------------------------------------")
       #save the last "spark_dataframe_data" as parquet file: this ensures he schema information is maintained
       #note: overwrite, if name exist
-      saved_path = "/home/ecotert1/parquet_files/reservoir_data.parquet" # from ssd/hdd/bv/ebs # or s3 bucket/block storage --> "s3://path-to-location-within-bucket.parquet"
+      saved_path = "/home/parquet_files/reservoir_data.parquet" # from ssd/hdd/bv/ebs # or s3 bucket/block storage --> "s3://path-to-location-within-bucket.parquet"
       mode = "overwrite"
       compression = "gzip"
       spark_dataframe_data.write.parquet(saved_path, mode=mode, compression=compression) # or spark_dataframe_data.write.mode("overwrite").parquet(saved_path)
