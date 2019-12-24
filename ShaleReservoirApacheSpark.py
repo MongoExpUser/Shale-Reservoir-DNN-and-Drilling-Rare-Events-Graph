@@ -330,7 +330,7 @@ class ShaleReservoirApacheSpark():
       #issue standard SQL query against the "parquet file" directly, instead of using read API to load a file into data_frame/table/view
       #note: the disadvantage of standard SQL query against the "parquet file" directly is that data is not available in "distributed memory",
       #    : data has to be read everytime query is issued by Spark-SQL, making query and/or any associated streaming operation slower,
-      #    : but less memory is required
+      #    : but less memory is required: this is like reading data from regular RDBMS TABLE 
       sql_query = "{}{}{}{}".format("SELECT FLUID_API FROM parquet.", "`", saved_path, "`")
       sql_query_result_fluid_api_df = spark.sql(sql_query)
       print()
