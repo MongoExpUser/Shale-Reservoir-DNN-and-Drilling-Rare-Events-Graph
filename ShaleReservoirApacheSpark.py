@@ -273,9 +273,9 @@ class ShaleReservoirApacheSpark():
       sql_query_result_df1 = spark_dataframe_data.select("FIELD_BASIN", "FLUID_TYPE")
       sql_query_result_df2 = spark_dataframe_data.select("FLUID_TYPE")
       sql_query_result_df3 = spark_dataframe_data.select("FLUID_API", "RESERVOIR_DEPTH_FT")
-      print("---------------------------------------------------------")
-      print("Printing Pyspark QUERIES' Result Against DataFrame/TABLE:")
-      print("---------------------------------------------------------")
+      print("-----------------------------------------------------------")
+      print("Printing Pyspark QUERIES' Result Against DataFrame/TABLE:  ")
+      print("-----------------------------------------------------------")
       print("Data type of sql_query_result_df1 i.e. - basin and fluid info  .....", type(sql_query_result_df1))
       print("Data type of sql_query_result_df i.e. - only fluid info .....", type(sql_query_result_df2))
       print("Data type of sql_query_result_df i.e. - fluid api and reservoir depth .....", type(sql_query_result_df3))
@@ -283,9 +283,9 @@ class ShaleReservoirApacheSpark():
       sql_query_result_df2.show(truncate=False)
       sql_query_result_df3.show(truncate=False)
       
-      print("-----------------------------------------------------------------------")
-      print("Printing Pyspark QUERIES Result Against DataFrame/TABLE in JSON Format:")
-      print("-----------------------------------------------------------------------")
+      print("-------------------------------------------------------------------------")
+      print("Printing Pyspark QUERIES Result Against DataFrame/TABLE in JSON Format  :")
+      print("-------------------------------------------------------------------------")
       #convert the entire row of data frame into one new column in "JSON Format",
       result_in_json1 = sql_query_result_df1.withColumn("JSON_FORMAT", to_json(struct([sql_query_result_df1[item] for item in sql_query_result_df1.columns])))
       result_in_json2 = sql_query_result_df2.withColumn("JSON_FORMAT", to_json(struct([sql_query_result_df2[item] for item in sql_query_result_df2.columns])))
@@ -300,10 +300,15 @@ class ShaleReservoirApacheSpark():
       print("------------------------------------------------------------------------------------")
       print("Printing Pyspark QUERIES Result Against DataFrame/TABLE Created From PARQUET File:  ")
       print("------------------------------------------------------------------------------------")
-      #save the last "spark_dataframe_data" as parquet file: this ensures he schema information is maintained
+      #save the last "spark_dataframe_data" as parquet file: this ensures that the schema information is maintained
       #note 1: overwrite, if name exist
       #note 2: file is saved in folder (reservoir_data.parquet) in the CWD on:
       #      : SSD/HDD/BV/EBS or bucket/block storage/S3 --> "s3://path-to-location-within-bucket/"
+      #note 3: advantage of DataFrame/TABLE read or created from PARQUET File is that once read into
+      #      : "distributed memory", it can be queried with Spark-SQL like regular TABLE in a RDBMS
+      #      : within the spark session anytime without re-loading from disk, making query and/or any
+      #      : associated streaming operation faster, but more memory is required, especially if TABLE
+      #      : is too large or big
       saved_path = "reservoir_data.parquet"
       mode = "overwrite"
       compression = "gzip"
@@ -323,6 +328,9 @@ class ShaleReservoirApacheSpark():
       print("Printing Pyspark QUERIES Result Against PARQUET File Directly:  ")
       print("----------------------------------------------------------------")
       #issue standard SQL query against the "parquet file" directly, instead of using read API to load a file into data_frame/table/view
+      #note: the disadvantage of standard SQL query against the "parquet file" directly is that data is not available in "distributed memory",
+      #    : data has to be read everytime query is issued by Spark-SQL, making query and/or any associated streaming operation slower,
+      #    : but less memory is required
       sql_query = "{}{}{}{}".format("SELECT FLUID_API FROM parquet.", "`", saved_path, "`")
       sql_query_result_fluid_api_df = spark.sql(sql_query)
       print()
