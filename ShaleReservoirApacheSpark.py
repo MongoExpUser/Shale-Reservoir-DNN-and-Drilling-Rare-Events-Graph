@@ -301,8 +301,10 @@ class ShaleReservoirApacheSpark():
       print("Printing Pyspark QUERIES Result Against DataFrame/TABLE Created From PARQUET File:  ")
       print("------------------------------------------------------------------------------------")
       #save the last "spark_dataframe_data" as parquet file: this ensures he schema information is maintained
-      #note: overwrite, if name exist
-      saved_path = "/home/parquet_files/reservoir_data.parquet" # from ssd/hdd/bv/ebs # or s3 bucket/block storage --> "s3://path-to-location-within-bucket.parquet"
+      #note 1: overwrite, if name exist
+      #note 2: file is saved in folder (reservoir_data.parquet) in the CWD on:
+      #      : SSD/HDD/BV/EBS or bucket/block storage/S3 --> "s3://path-to-location-within-bucket/"
+      saved_path = "reservoir_data.parquet"
       mode = "overwrite"
       compression = "gzip"
       spark_dataframe_data.write.parquet(saved_path, mode=mode, compression=compression) # or spark_dataframe_data.write.mode("overwrite").parquet(saved_path)
