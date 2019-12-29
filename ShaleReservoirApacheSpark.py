@@ -51,7 +51,7 @@
 # 8) Install PIP3: sudo apt-get install python3-pip
 #
 # 9) Install relevant Python packages with pip or conda (if using conda/ananconda):
-#    python3.7 -m pip install numpy scipy matplotlib pandas scikit-learn scikit-image statsmodels networkx pyspark keras cython jupyter tensorflow==2.0.0b1
+#    python3.7 -m pip install numpy scipy matplotlib pandas scikit-learn scikit-image statsmodels networkx graphframes pyspark keras cython jupyter tensorflow==2.0.0b1
 #
 # 10) Install other python packages -  see import sections on top of this file (ShaleReservoirApacheSike.py) and the 2nd file (ShaleReservoir.py)
 #
@@ -72,16 +72,15 @@ try:
        and keras version; and then check for import error
   """
   #import
-  
   import time
   import pyspark
   from os import getcwd
   import networkx as nx
-  from csv import writer
   import tensorflow as tf
   from os.path import join
   from pprint import pprint
   from json import dumps, loads
+  from csv import writer, reader
   import matplotlib.pyplot as plt
   from random import random, randint
   from unittest import TestCase, main
@@ -90,8 +89,7 @@ try:
   from pyspark.sql import SparkSession, DataFrame, types
   from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
-  
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -100,18 +98,18 @@ try:
   #import pyspark.ml
   #import pyspark.mllib
   #note: pyspark's graphx API is NOT yet available:
-  #    : but can use "networkx" python module for Graph-Based Analysis (see: https://networkx.github.io/)
-  #    : On UbuntU Linux: install "networkx" as:
-  #      (1) conda: "conda install -c anaconda networkx" or
-  #      (2) pip: "sudo python3.7 -m pip install networkx"
-  #print version of pyspark, tensorflow, keras and networkx
+  #    : but can use one of the following python module for Graph-Based Analysis:
+  #    : (1) "graphframes" (https://graphframes.github.io/graphframes/docs/_site/index.html)
+  #          "graphframes" is tightly integrated with spark/pyspark DataFrame
+  #    : (2) "networkx" (see: https://networkx.github.io) or
+  #print version of pyspark, tensorflow, keras, graphframes, networkx
   print()
-  print("------------------------------------------------------------")
+  print("-------------------------------------------------------------")
   print("Using Pyspark version", pyspark.__version__, "on this system.")
-  print("Using TensorFlow version", tf.__version__, "on this system. ")
-  print("Using Keras version", tf.keras.__version__, "on this system.")
-  print("Using Networkx version", nx.__version__, "on this system.")
-  print("------------------------------------------------------------")
+  print("Using TensorFlow version", tf.__version__, "on this system.  ")
+  print("Using Keras version", tf.keras.__version__, "on this system. ")
+  print("Using Networkx version", nx.__version__, "on this system.    ")
+  print("------------------------------------------------------------ ")
   print("")
   #check for error
 except(ImportError) as err:
@@ -128,8 +126,7 @@ class ShaleReservoirApacheSpark():
     print("                 Initiating Pyspark Engine                 ")
     self.separator()
   # End  __init__() method
-  
-  
+
   def separator(self):
     print("-------------------------------------------------------------------------------")
   # End separator method()
@@ -330,7 +327,7 @@ class ShaleReservoirApacheSpark():
       #issue standard SQL query against the "parquet file" directly, instead of using read API to load a file into data_frame/table/view
       #note: the disadvantage of standard SQL query against the "parquet file" directly is that data is not available in "distributed memory",
       #    : data has to be read everytime query is issued by Spark-SQL, making query and/or any associated streaming operation slower,
-      #    : but less memory is required: this is like reading data from regular RDBMS TABLE 
+      #    : but less memory is required: this is like reading data from regular RDBMS TABLE
       sql_query = "{}{}{}{}".format("SELECT FLUID_API FROM parquet.", "`", saved_path, "`")
       sql_query_result_fluid_api_df = spark.sql(sql_query)
       print()
@@ -395,14 +392,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def test_sample_two_machine_learning_with_tensorflow(self):
+  def _test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
