@@ -102,7 +102,7 @@ try:
   #    : (1) "graphframes" (https://graphframes.github.io/graphframes/docs/_site/index.html)
   #          "graphframes" is tightly integrated with spark/pyspark DataFrame
   #    : (2) "networkx" (see: https://networkx.github.io) or
-  #print version of pyspark, tensorflow, keras, graphframes, networkx
+  #print version of pyspark, tensorflow, keras and networkx
   print()
   print("-------------------------------------------------------------")
   print("Using Pyspark version", pyspark.__version__, "on this system.")
