@@ -77,6 +77,7 @@ try:
   from os import getcwd
   import networkx as nx
   import tensorflow as tf
+  from requests import get
   from os.path import join
   from pprint import pprint
   from json import dumps, loads
@@ -89,7 +90,7 @@ try:
   from pyspark.sql import SparkSession, DataFrame, types
   from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
-  from EcotertShaleReservoir import ShaleDNN
+  from ShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -421,26 +422,25 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_non)
   #End test_sample_three_read_json_reservoir_data_to_dataframe() method
   
-  def show_weather_result(self, url):
-      if url:
-        from requests import get
-        response = get(url)
-        response.raise_for_status()
-        json_output = response.text
-        # convert "json_output" of weather forecast to "python_values" and pprint
-        python_values = loads(json_output)
-        print()
-        print("----------------------------------------------------------")
-        pprint(python_values)
-        print("----------------------------------------------------------")
-        print()
-    # End print_weather_forecast_result() method
+  def show_weather_result(self, loaded_data):
+    if loaded_data:
+      response = get(loaded_data)
+      response.raise_for_status()
+      json_output = response.text
+      # convert "json_output" of weather forecast to "python_values" and show with pprint
+      python_values = loads(json_output)
+      print()
+      print("----------------------------------------------------------")
+      pprint(python_values)
+      print("----------------------------------------------------------")
+      print()
+    # End show_weather_result() method
     
-  def test_stream_current_or_forecated_weather_in_metric_unit(self, json_mode="JSON", forecast_type=None, option=None, app_id=None):
+  def test_stream_current_or_forecated_5day_3hr_weather_in_metric_unit(self, json_mode="JSON", forecast_type=None, option=None, app_id=None):
     #option = "zip_code"
     #option = "city_id"
-    #option = "city_name"
-    option = "geographic_coordinates"
+    option = "city_name"
+    #option = "geographic_coordinates"
     
     # zip code
     zip_code1 = "77494,US"  # zip code in Katy, US
@@ -470,7 +470,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
         self.show_weather_result(load_data)
     elif app_id and option == "city_id":
       for index, city_id in enumerate(city_ids):
-        load_data = "{}{}{}{}{}{}{}{}".format(data_source, "id=", city_ids, "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
+        load_data = "{}{}{}{}{}{}{}{}".format(data_source, "id=", city_id, "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
         self.show_weather_result(load_data)
     elif app_id and option == "city_name":
       for index, city_name in enumerate(city_names):
