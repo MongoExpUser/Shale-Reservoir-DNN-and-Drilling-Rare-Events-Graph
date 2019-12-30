@@ -393,21 +393,21 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def _test_sample_two_machine_learning_with_tensorflow(self):
+  def test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_non)
   #End test_sample_two_machine_learning_with_tensorflow() method
   
-  def _test_sample_three_read_json_reservoir_data_to_dataframe(self):
+  def test_sample_three_read_json_reservoir_data_to_dataframe(self):
     # see: https://openweathermap.org/forecast5
     print()
     #run read_json_reservoir_data
@@ -441,6 +441,9 @@ class ShaleReservoirApacheSparkTest(TestCase):
     #option = "city_id"
     option = "city_name"
     #option = "geographic_coordinates"
+    
+    #note: app_id = app_key - https://home.openweathermap.org/api_keys
+    app_id = "register_to_get_app_id_from_https://home.openweathermap.org/users/sign_up" 
     
     # zip code
     zip_code1 = "77494,US"  # zip code in Katy, US
