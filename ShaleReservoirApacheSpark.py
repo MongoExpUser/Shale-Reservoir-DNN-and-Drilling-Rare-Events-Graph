@@ -89,7 +89,7 @@ try:
   from pyspark.sql import SparkSession, DataFrame, types
   from pyspark.sql.functions import struct, to_json, when
   from pandas import read_json, DataFrame as PythonDataFrame
-  from ShaleReservoir import ShaleDNN
+  from EcotertShaleReservoir import ShaleDNN
   #
   #all pyspark sub-modules: commment out - only here for referencing
   #import modules and sub modules, when necesary or required
@@ -102,7 +102,7 @@ try:
   #    : (1) "graphframes" (https://graphframes.github.io/graphframes/docs/_site/index.html)
   #          "graphframes" is tightly integrated with spark/pyspark DataFrame
   #    : (2) "networkx" (see: https://networkx.github.io) or
-  #print version of pyspark, tensorflow, keras and networkx
+  #print version of pyspark, tensorflow and networkx
   print()
   print("-------------------------------------------------------------")
   print("Using Pyspark version", pyspark.__version__, "on this system.")
@@ -392,21 +392,22 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_non)
   #End test_sample_one_stooip_calculation() method
   
-  def test_sample_two_machine_learning_with_tensorflow(self):
+  def _test_sample_two_machine_learning_with_tensorflow(self):
     print()
     #run "TensorFlow" image classification example in "ShaleReservoir.py"
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_non)
   #End test_sample_two_machine_learning_with_tensorflow() method
   
-  def test_sample_three_read_json_reservoir_data_to_dataframe(self):
+  def _test_sample_three_read_json_reservoir_data_to_dataframe(self):
+    # see: https://openweathermap.org/forecast5
     print()
     #run read_json_reservoir_data
     file = True
@@ -419,6 +420,117 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_non)
   #End test_sample_three_read_json_reservoir_data_to_dataframe() method
+  
+  def show_weather_result(self, url):
+      if url:
+        from requests import get
+        response = get(url)
+        response.raise_for_status()
+        json_output = response.text
+        # convert "json_output" of weather forecast to "python_values" and pprint
+        python_values = loads(json_output)
+        print()
+        print("----------------------------------------------------------")
+        pprint(python_values)
+        print("----------------------------------------------------------")
+        print()
+    # End print_weather_forecast_result() method
+    
+  def test_stream_current_or_forecated_weather_in_metric_unit(self, json_mode="JSON", forecast_type=None, option=None, app_id=None):
+    #option = "zip_code"
+    #option = "city_id"
+    #option = "city_name"
+    option = "geographic_coordinates"
+    
+    # zip code
+    zip_code1 = "77494,US"  # zip code in Katy, US
+    zip_code2 = "77002,US"  # zip code in Houston, US
+    zip_codes = [zip_code1, zip_code2]
+    # city id
+    city_id1 = 2346734   #Brass, Nigeria
+    city_id2 = 4699066   #Houston, US
+    city_ids = [city_id1, city_id2]
+    # city name
+    city_names = ["Houston,US", "San Francisco,US", "Akure,NG", "Katy,US", "Delhi, IN", "Sydney,AU", "San Rafael ,AR"]
+    # geographic coordinates
+    lat_1 = 4; lon_1 = 5     #location in Brass, Nigeria
+    lat_2 = 50; lon_2 = 130  #location in Novobureyskiy, Russia
+    coords = [[lat_1, lon_1], [lat_2, lon_2]]
+    
+    if forecast_type == "current":
+      # current weather
+      data_source = "http://api.openweathermap.org/data/2.5/weather?"
+    else:
+      # 5-day, 3-hour weather forecast data
+      data_source =  "http://api.openweathermap.org/data/2.5/forecast?"
+
+    if app_id and option == "zip_code":
+      for index, zip_code in enumerate(zip_codes):
+        load_data = "{}{}{}{}{}{}{}{}".format(data_source, "zip=", zip_code, "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
+        self.show_weather_result(load_data)
+    elif app_id and option == "city_id":
+      for index, city_id in enumerate(city_ids):
+        load_data = "{}{}{}{}{}{}{}{}".format(data_source, "id=", city_ids, "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
+        self.show_weather_result(load_data)
+    elif app_id and option == "city_name":
+      for index, city_name in enumerate(city_names):
+        load_data = "{}{}{}{}{}{}{}{}".format(data_source, "q=", city_name, "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
+        self.show_weather_result(load_data)
+    elif app_id and option == "geographic_coordinates":
+      for index, coord in enumerate(coords):
+        load_data = "{}{}{}{}{}{}{}{}{}{}".format(data_source, "lat=", coord[0], "&lon=", coord[1], "&APPID=", app_id, "&mode=", json_mode, "&units=metric")
+        self.show_weather_result(load_data)
+    
+    
+      """
+      (1) Reference: https://openweathermap.org/forecast5  - parameters - cited December 29 2019.
+      -------------------------------------------------------------------------------------------
+      Parameters:
+        code - Internal parameter
+        message - Internal parameter
+        city
+        city.id City ID
+        city.name City name
+        city.coord
+        city.coord.lat City geo location, latitude
+        city.coord.lon City geo location, longitude
+        city.country Country code (GB, JP etc.)
+        city.timezone Shift in seconds from UTC
+        cnt Number of lines returned by this API call
+        list
+        list.dt Time of data forecasted, unix, UTC
+        list.main
+        list.main.temp Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
+        list.main.temp_min Minimum temperature at the moment of calculation. This is deviation from 'temp' that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
+        list.main.temp_max Maximum temperature at the moment of calculation. This is deviation from 'temp' that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
+        list.main.pressure Atmospheric pressure on the sea level by default, hPa
+        list.main.sea_level Atmospheric pressure on the sea level, hPa
+        list.main.grnd_level Atmospheric pressure on the ground level, hPa
+        list.main.humidity Humidity, %
+        list.main.temp_kf Internal parameter
+        list.weather (more info Weather condition codes)
+        list.weather.id Weather condition id
+        list.weather.main Group of weather parameters (Rain, Snow, Extreme etc.)
+        list.weather.description Weather condition within the group
+        list.weather.icon Weather icon id
+        list.clouds
+        list.clouds.all Cloudiness, %
+        list.wind
+        list.wind.speed Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.
+        list.wind.deg Wind direction, degrees (meteorological)
+        list.rain
+        list.rain.3h Rain volume for last 3 hours, mm
+        list.snow
+        list.snow.3h Snow volume for last 3 hours
+        list.dt_txt Data/time of calculation, UTC
+        
+        
+        2) Reference: https://openweathermap.org/weather-data  - units -  cited December 29 2019.
+        ----------------------------------------------------------------------------------------
+        List of all API parameters with units.
+      """
+  # End test_weather_forecast_for_cities_for_5_days_every_3_hours() method
+  
   
   def tearDown(self):
     print()
