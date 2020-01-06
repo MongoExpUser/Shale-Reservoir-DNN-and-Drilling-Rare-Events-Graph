@@ -590,7 +590,6 @@ class ShaleReservoirApacheSparkTest(TestCase):
     #
     #note: app_id = app_key - https://home.openweathermap.org/api_keys
     app_id = "register_to_get_app_id_from_https://home.openweathermap.org/users/sign_up"
-    app_id = "51ea2591ee60dc0e10bdc946ee698ba9"
     
     with_spark = self.sras_demo.sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit(json_mode=json_mode, forecast_type=forecast_type, option=option, app_id=app_id, spark_engine=self.spark_engine_yes)
     without_spark = self.sras_demo.sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit(json_mode=json_mode, forecast_type=forecast_type, option=option, app_id=app_id, spark_engine=self.spark_engine_non)
