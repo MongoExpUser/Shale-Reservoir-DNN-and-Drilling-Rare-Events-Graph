@@ -16,7 +16,7 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v13.3.0
+Node.js v13.5.0
 
 Tensorflow.js v1.5.1 - @tensorflow/tfjs@1.5.1  (Pure JavaScript Version)
 
@@ -44,7 +44,7 @@ MongoDB Server v4.0.13 on Ubuntu 18.04.1 (https://www.mongodb.com/download-cente
 
 MongoDB Node.js Native Driver v3.4.0 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.8.2 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.8.5 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.18 on Ubuntu 18.04.1 (https://dev.mysql.com/downloads/mysql/)
 
