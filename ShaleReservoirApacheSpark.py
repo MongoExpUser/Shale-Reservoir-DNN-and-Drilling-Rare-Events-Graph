@@ -11,7 +11,7 @@
 #
 #  ...Ecotert's ShaleReservoirApacheSpark.py  (released as open-source under MIT License) implements:
 #
-#  Three simple classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to:
+#  Two classes to demonstate and test usage of Apache Spark with Python API (Pyspark) to:
 #
 #  1) calculate reservoir STOOIP and
 #
@@ -193,9 +193,10 @@ class ShaleReservoirApacheSpark():
     city_ids = [city_id1, city_id2]
     # city name
     city_names = [
-                  "Houston,US", "San Antonio,US", "Akure,NG", "Katy,US", "Delhi, IN", "Sydney,AU", "San Rafael ,AR",
-                  "Austin,US", "New York,US", "Los Angeles,US", "London,GB", "Cape Town, ZA", "Taipei,TW", "Helsinki ,FI",
-                  "Abuja,NG", "Edmonton,CA", "Lagos, NG", "Gaborone, BW", "Cairo, EG", "Moscow, RU", "Muscat, OM"
+                  "Houston,US", "San Antonio,US", "Akure,NG", "Katy,US", "Delhi,IN", "Sydney,AU", "San Rafael,AR",
+                  "Austin,US", "New York,US", "Los Angeles,US", "London,GB", "Cape Town,ZA", "Taipei,TW", "Helsinki,FI",
+                  "Abuja,NG", "Edmonton,CA", "Lagos,NG", "Gaborone,BW", "Cairo,EG", "Moscow,RU", "Muscat,OM", "Beijing,CN"
+                  "Bahir Dar,ET", "Casablanca,MA", "Toronto,CA", "Dubai,AE", "Dhaka,BD", "Rijswijk,NL", "Tokyo,JP", "Bangui,CF"
                  ]
     # geographic coordinates
     lat_1 = 4; lon_1 = 5     #location in Brass, Nigeria
@@ -549,7 +550,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def test_sample_one_stooip_calculation(self):
+  def _test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
@@ -603,24 +604,13 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.separator()
   # End test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
   
-  def _test_drilling_rare_events(self):
-    """Simple prelimianry demo with drilling rare events with graph/network analysis - under development
-      ===========
-      data dtypes
-      ===========
-      M__DEPTH    float64
-      SP          float64
-      GR          float64
-      CALI        float64
-      BitSize     float64
-      LL8         float64
-      ILM         float64
-      ILD         float64
-      RHOB        float64
-      NPHI        float64
-      DT          float64
-      MudWgt      float64
-      dtype: object
+  def test_drilling_rare_events(self):
+    """
+      Simple prelimianry demo with drilling rare events with graph/network analysis -
+      
+      Under Active Development
+      ------------------------
+      Code samples below are just test codes: to test internal mapping is consistent and okay...
     """
       
     #assumed data has been cleaned and properly formatted with nodes and edges identified
@@ -628,29 +618,67 @@ class ShaleReservoirApacheSparkTest(TestCase):
     def text_to_csv(inputFileName, outputFileName):
       df = pandas.read_fwf(inputFileName)
       df.to_csv(outputFileName)
+    #End text_to_csv() method
       
-    inputFileName = "drg_pp_re_dataset.txt"
-    outputFileName = "drg_pp_re_dataset.csv"
+    def drilling_event_key_value_pair():
+      key_value_pair = {}
+      #data from regular drilling operation (drillstring-related)
+      key_value_pair["ROP_fph"] = "ROP_fph"
+      key_value_pair["RPM_rpm"] = "RPM_rpm"
+      key_value_pair["SPP_psi"] = "SPP_psi"
+      key_value_pair["DWOB_lb"] = "DWOB_lb"
+      key_value_pair["SWOB_lb"] = "SWOB_lb"
+      key_value_pair["TQR_Ibft"] = "TQR_Ibft"
+      key_value_pair["BHA_TYPE_no_unit"] = "BHA_TYPE_no_unit"
+                
+      #data from regular drilling operation (mud-related)
+      key_value_pair["MUD_WEIGHT_sg"] = "MUD_WEIGHT_sg"
+      key_value_pair["MUD_PLASTIC_VISC_cp"] = "MUD_PLASTIC_VISC_cp"
+      key_value_pair["MUD_YIELD_POINT_lb_per_100ft_sq"] = "MUD_YIELD_POINT_lb_per_100ft_sq"
+      key_value_pair["MUD_FLOW_RATE_gpm"] = "MUD_FLOW_RATE_gpm"
+      #data (measured or calculated) from downhole MWD/LWD tool measurements
+      key_value_pair["TVD_ft"] = "TVD_ft"
+      key_value_pair["MD_ft"] = "MD_ft"
+      key_value_pair["INC_deg"] = "INC_deg"
+      key_value_pair["AZIM_deg"] = "AZIM_deg"
+      key_value_pair["Dogleg_deg_per_100ft"] = "Dogleg_deg_per_100ft"
+      key_value_pair["CALIPER_HOLE_SIZE_inches"] = "CALIPER_HOLE_SIZE_inches"
+      key_value_pair["GR_api"] = "GR_api"
+      key_value_pair["DEEP_RESISTIVITY_ohm_m"] = "DEEP_RESISTIVITY_ohm_m"
+      key_value_pair["SHOCK_g"] = ["SHOCK_g"]
+      #event data from MWD/LWD tool measurements and other sources
+      key_value_pair["IS_VIBRATION_boolean_0_or_1"] = "IS_VIBRATION_boolean_0_or_1"
+      key_value_pair["IS_KICK_boolean_0_or_1"] = "IS_KICK_boolean_0_or_1"
+      key_value_pair["IS_STUCKPIPE_boolean_0_or_1"] = "IS_STUCKPIPE_boolean_0_or_1"
+      #time data
+      key_value_pair["TIME_ymd_hms"] = "TIME_ymd_hms"
       
+      return key_value_pair
+    #End drilling_event_key_value_pair() method
+      
+    inputFileName = "WA1.txt"    # "drg_pp_re_dataset.txt"
+    outputFileName = "WA15.csv"  # "drg_pp_re_dataset.csv"
     #text_to_csv(inputFileName, outputFileName) # if necessary
+    outputFileName = "WA1.csv"
     data = pandas.read_csv(outputFileName)
     
-      
     #source/target pairing test
-    source = "ILD"
-    target = "GR"
+    key_value = drilling_event_key_value_pair()
+    
+    source = key_value["DEEP_RESISTIVITY_ohm_m"]
+    target = key_value["GR_api"]
       
-    source = "MudWgt"
-    target = "GR"
+    source = key_value["MUD_WEIGHT_sg"]
+    target = key_value["GR_api"]
       
-    source = "MudWgt"
-    target = "M__DEPTH"
+    source = key_value["MUD_WEIGHT_sg"]
+    target = key_value["MD_ft"]
       
-    source = "GR"
-    target = "ILD"
+    source = key_value["MUD_WEIGHT_sg"]
+    target = key_value["DEEP_RESISTIVITY_ohm_m"]
       
-    source = "M__DEPTH"
-    target = "MudWgt"
+    source = key_value["SPP_psi"]
+    target = key_value["IS_STUCKPIPE_boolean_0_or_1"]
       
     print("")
     print("............................................")
