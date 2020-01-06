@@ -604,7 +604,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.separator()
   # End test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
   
-  def _test_drilling_rare_events(self):
+  def _test_drilling_rare_events(self, input_csv_file=None):
     """
       Simple prelimianry demo of drilling rare events with graph/network analysis -
       
@@ -612,14 +612,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
       ------------------------
       Code samples below are just test codes: to test internal mapping is consistent and okay...
     """
-      
-    #assumed data has been cleaned and properly formatted with nodes and edges identified
     
-    def text_to_csv(inputFileName, outputFileName):
-      df = pandas.read_fwf(inputFileName)
-      df.to_csv(outputFileName)
-    #End text_to_csv() method
-      
     def drilling_event_key_value_pair():
       key_value_pair = {}
       #data from regular drilling operation (drillstring-related)
@@ -630,7 +623,6 @@ class ShaleReservoirApacheSparkTest(TestCase):
       key_value_pair["SWOB_lb"] = "SWOB_lb"
       key_value_pair["TQR_Ibft"] = "TQR_Ibft"
       key_value_pair["BHA_TYPE_no_unit"] = "BHA_TYPE_no_unit"
-                
       #data from regular drilling operation (mud-related)
       key_value_pair["MUD_WEIGHT_sg"] = "MUD_WEIGHT_sg"
       key_value_pair["MUD_PLASTIC_VISC_cp"] = "MUD_PLASTIC_VISC_cp"
@@ -652,15 +644,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
       key_value_pair["IS_STUCKPIPE_boolean_0_or_1"] = "IS_STUCKPIPE_boolean_0_or_1"
       #time data
       key_value_pair["TIME_ymd_hms"] = "TIME_ymd_hms"
-      
+      #
       return key_value_pair
     #End drilling_event_key_value_pair() method
       
-    inputFileName = "WA1.txt"    # "drg_pp_re_dataset.txt"
-    outputFileName = "WA15.csv"  # "drg_pp_re_dataset.csv"
-    #text_to_csv(inputFileName, outputFileName) # if necessary
-    outputFileName = "WA1.csv"
-    data = pandas.read_csv(outputFileName)
+    input_csv_file = "drg_pp_re_dataset.csv"
+    
+    #read a csv file into pandas DataFrame
+    data = pandas.read_csv(outputFileName)  
     
     #source/target pairing test
     key_value = drilling_event_key_value_pair()
@@ -690,7 +681,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     print("............................................")
     print("")
       
-    #import the dataset using the networkx function that ingests a pandas dataframe directly.
+    #import the dataset using the networkx function that ingest a pandas DataFrame directly
     #there are multiple ways data can be ingested into a Graph from multiple formats: this is just one of them
     FG = nx.from_pandas_edgelist(data, source=source, target=target, edge_attr=True)
       
