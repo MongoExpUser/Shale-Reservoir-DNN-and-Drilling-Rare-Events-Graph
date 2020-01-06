@@ -550,7 +550,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.spark_engine_non = False
   # End setUp() method
     
-  def _test_sample_one_stooip_calculation(self):
+  def test_sample_one_stooip_calculation(self):
     print()
     #calculate stooip with and without spark engine
     self.sras_demo.sample_one_stooip_calculation(total_number_of_reservoirs=self.total_number_of_reservoirs, spark_engine=self.spark_engine_yes)
@@ -604,9 +604,9 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.separator()
   # End test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
   
-  def test_drilling_rare_events(self):
+  def _test_drilling_rare_events(self):
     """
-      Simple prelimianry demo with drilling rare events with graph/network analysis -
+      Simple prelimianry demo of drilling rare events with graph/network analysis -
       
       Under Active Development
       ------------------------
