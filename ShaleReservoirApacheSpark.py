@@ -630,8 +630,8 @@ class ShaleReservoirApacheSparkTest(TestCase):
       df = pandas.read_fwf(inputFileName)
       df.to_csv(outputFileName)
       
-    inputFileName = "WA1.txt"
-    outputFileName = "WA15.csv"
+    inputFileName = "drg_pp_re_dataset.txt"
+    outputFileName = "drg_pp_re_dataset.csv"
       
     #text_to_csv(inputFileName, outputFileName) # if necessary
     data = pandas.read_csv(outputFileName)
