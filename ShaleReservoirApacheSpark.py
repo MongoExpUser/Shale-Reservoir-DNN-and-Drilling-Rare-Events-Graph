@@ -648,10 +648,10 @@ class ShaleReservoirApacheSparkTest(TestCase):
       return key_value_pair
     #End drilling_event_key_value_pair() method
       
-    input_csv_file = "drg_pp_re_dataset.csv"
+    input_csv_file = "drg_pp_re_dataset.csv" 
     
     #read a csv file into pandas DataFrame
-    data = pandas.read_csv(outputFileName)  
+    data = pandas.read_csv(input_csv_file)  
     
     #source/target pairing test
     key_value = drilling_event_key_value_pair()
