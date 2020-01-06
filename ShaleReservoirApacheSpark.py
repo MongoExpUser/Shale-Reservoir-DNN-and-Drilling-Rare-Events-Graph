@@ -75,7 +75,6 @@ try:
   """
   #import
   import time
-  import pandas
   import pyspark
   from os import getcwd
   import networkx as nx
@@ -83,6 +82,7 @@ try:
   from requests import get
   from os.path import join
   from pprint import pprint
+  from pandas import read_csv
   from json import dumps, loads
   from csv import writer, reader
   import matplotlib.pyplot as plt
@@ -651,7 +651,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     input_csv_file = "drg_pp_re_dataset.csv" 
     
     #read a csv file into pandas DataFrame
-    data = pandas.read_csv(input_csv_file)  
+    data = read_csv(input_csv_file)  
     
     #source/target pairing test
     key_value = drilling_event_key_value_pair()
