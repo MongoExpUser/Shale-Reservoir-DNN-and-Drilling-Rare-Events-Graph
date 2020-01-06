@@ -603,7 +603,107 @@ class ShaleReservoirApacheSparkTest(TestCase):
     print("{}{}".format("Current or forecasted weather duration without spark (seconds): ", '{0:.4f}'.format(without_spark)))
     self.sras_demo.separator()
   # End test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
-
+  
+  def _test_drilling_rare_events(self):
+    """Simple prelimianry demo with drilling rare events with graph/network analysis - under development
+      ===========
+      data dtypes
+      ===========
+      M__DEPTH    float64
+      SP          float64
+      GR          float64
+      CALI        float64
+      BitSize     float64
+      LL8         float64
+      ILM         float64
+      ILD         float64
+      RHOB        float64
+      NPHI        float64
+      DT          float64
+      MudWgt      float64
+      dtype: object
+    """
+      
+    #assumed data has been cleaned and properly formatted with nodes and edges identified
+    
+    def text_to_csv(inputFileName, outputFileName):
+      df = pandas.read_fwf(inputFileName)
+      df.to_csv(outputFileName)
+      
+    inputFileName = "WA1.txt"
+    outputFileName = "WA15.csv"
+      
+    #text_to_csv(inputFileName, outputFileName) # if necessary
+    data = pandas.read_csv(outputFileName)
+    
+      
+    #source/target pairing test
+    source = "ILD"
+    target = "GR"
+      
+    source = "MudWgt"
+    target = "GR"
+      
+    source = "MudWgt"
+    target = "M__DEPTH"
+      
+    source = "GR"
+    target = "ILD"
+      
+    source = "M__DEPTH"
+    target = "MudWgt"
+      
+    print("")
+    print("............................................")
+    print("data shape")
+    print(data.shape)
+    print("............................................")
+    print("data dtypes")
+    print(data.dtypes)
+    print("............................................")
+    print("")
+      
+    #import the dataset using the networkx function that ingests a pandas dataframe directly.
+    #there are multiple ways data can be ingested into a Graph from multiple formats: this is just one of them
+    FG = nx.from_pandas_edgelist(data, source=source, target=target, edge_attr=True)
+      
+    #view data
+    print("")
+    print("............................................")
+    print("FG.nodes()")
+    pprint(FG.nodes())
+    print("............................................")
+    print("FG.edges()")
+    pprint(FG.edges())
+    print("............................................")
+    print("")
+      
+    #draw/plot
+    print("............................................")
+    nx.draw_networkx(FG, with_labels=True)                                      # quick view of graph
+    plt.savefig("fg.png", format="PNG")                                         # save the graph as image
+    
+    # analyze
+    print("degree_centrality", nx.algorithms.degree_centrality(FG))
+    print("density", nx.density(FG))                                            # average edge density of the Graphs
+    print("average_degree_connectivity", nx.average_degree_connectivity(FG))    # for a node of degree k - the avg of its neighbours' degree?
+    # find all the paths available
+    try:
+      for path in nx.all_simple_paths(FG, source=source, target=target):
+        print(path)
+    except(nx.exception.NodeNotFound) as err:
+      print(str(err))
+    # find the dijkstra path
+    try:
+      dijpath = nx.dijkstra_path(FG, source=source, target=target)
+      print("dijpath", dijpath)
+    except(nx.exception.NodeNotFound) as err:
+      print(str(err))
+        
+    print("............................................")
+    print("")
+  # End test_drilling_rare_events() method
+  
   def tearDown(self):
     print()
     self.sras_demo = None
