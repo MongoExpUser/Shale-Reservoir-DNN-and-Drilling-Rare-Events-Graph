@@ -19,7 +19,9 @@
 #
 #  3) read and load reservoir data, in json format, into DataFrame
 #
-#  4) current weather or forecasted weather (for 5-day and 3-hrs interval)
+#  4) read and load drilling event data, from sqlite3 database, into DataFrame
+#
+#  5) read and show current weather or forecasted weather (for 5-day and 3-hrs interval)
 #
 #
 #
@@ -75,6 +77,7 @@ try:
   """
   #import
   import time
+  import sqlite3
   import pyspark
   from os import getcwd
   import networkx as nx
@@ -147,6 +150,7 @@ class ShaleReservoirApacheSpark():
   # End get_spark_dataframe_shape() method
   
   def create_spark_session(self, app_name=None, config_options=None):
+    #start spark by invoking SparkSession()
     return SparkSession.builder.master("local").appName(app_name).config("spark.some.config.option", config_options).getOrCreate()
   # End create_spark_session() method
   
@@ -501,7 +505,113 @@ class ShaleReservoirApacheSpark():
       print("Loading of  'JSON' data in a loop successfully completed.")
   # End sample_three_read_json_reservoir_data_to_dataframe() method
   
-  def sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit(self, json_mode="JSON", forecast_type=None, option=None, app_id=None, spark_engine=True):
+  def sample_four_read_sqlite3_drilling_event_data_to_dataframe(self, spark_engine=True):
+
+    def connect_to_sqlite_db(db_name):
+      conn = None
+      try:
+        dbn = str(db_name)
+        conn = sqlite3.connect(dbn)
+        print()
+        print()
+        print("{}{}{}".format("Connection to database (", dbn, ") is established."))
+      except(sqlite3.Error) as err:
+        print(str(err))
+      return conn
+    # End connect_to_sqlite_db() method
+        
+    def sqlite3_query_result_table_as_dict(record, row):
+      data_dict = {}
+      for index, col in enumerate(record.description):
+        data_dict[col[0]] = row[index]
+      return data_dict
+    # End sqlite3_query_result_table_as_dict() method
+      
+    #connect to data source (sqlite database): contains a TABLE with drilling and formation parameters
+    table_name = "Drilling_and_Formation_Parameters"
+    database_name = 'drilling_events.db'
+    connection = connect_to_sqlite_db(database_name)
+    connection.row_factory = sqlite3_query_result_table_as_dict
+    cursor = connection.cursor()
+    #
+    #query the database located in SSD/HDD/BV/EBS or bucket/block storage/S3 --> "s3://path-to-location-within-bucket/"
+    print("Both headers + record values")
+    print("=================================================================================")
+    cursor.execute("""SELECT ROWID, ROP_fph, RPM_rpm, MUD_WEIGHT_sg, MUD_PLASTIC_VISC_cp,
+                      MUD_FLOW_RATE_gpm, GR_api, SHOCK_g, IS_VIBRATION_boolean_0_or_1 FROM """ +
+                      table_name
+                  )
+    # this query result and is thesame as view/table in dictionary format
+    sql_query_result = cursor.fetchall()
+    print("=================================================================================")
+    print("Results in DICT/STRING Format")
+    pprint(sql_query_result)
+    print("=================================================================================")
+    #
+    #close sqlite database
+    connection.close()
+    
+    #read the created dictionary into dataFrames
+    #1. load: ensure data is in (or convert data to) json format
+    json_data = dumps(sql_query_result)
+    print("=================================================================================")
+    print("Results in JSON Format")
+    pprint(json_data)
+    print("=================================================================================")
+    print()
+    
+    #2. read into pandas DataFrame or spark dataFrame and view/print result
+    if spark_engine:
+      #b. spark DataFrame
+      #start spark by invoking SparkSession()
+      engine_name = "Spark engine"
+      session_app_name = "Drilling Data Demonstration"
+      spark = self.create_spark_session(app_name=session_app_name, config_options=None)
+      print("")
+      print("{}{}".format(engine_name, "-based reading of sqlite3 drilling event data started and in progress ....."))
+      #apply spark.parallelize() to load json_data: ensure method is supply as a list of argument
+      t0 = time.time()
+      spark_dataframe_data = spark.read.json(spark.sparkContext.parallelize([json_data]))
+      duration = time.time() - t0
+      self.duration_separator()
+      print("{}{}{}".format(engine_name, "-based reading of sqlite3 drilling event data time (seconds):", '{0:.4f}'.format(duration)))
+      self.duration_separator()
+      print("'Reading' of sqlite3 drilling event data successfully completed.")
+      print()
+      print("Printing Contents of the Spark DataFrame Representation:")
+      print("Check Data Type .....", type(spark_dataframe_data))
+      print("Schema .....")
+      spark_dataframe_data.printSchema()
+      print("All Data Rows with Shape:", self.get_spark_dataframe_shape(spark_dataframe_data))
+      self.separator()
+      print("Pyspark DataFrame Format:")
+      print("-------------------------")
+      spark_dataframe_data.show()
+      self.separator()
+      #
+      #stop spark
+      spark.stop()
+    else:
+      engine_name = "Regular VM engine"
+      print("")
+      print("{}{}".format(engine_name, "-based reading of sqlite3 drilling event data started and in progress ....."))
+      #a. pandas DataFrame
+      t0 = time.time()
+      python_dataframe_data = PythonDataFrame(read_json(json_data))
+      duration = time.time() - t0
+      self.duration_separator()
+      print("{}{}{}".format(engine_name, "-based reading of sqlite3 drilling event data time (seconds):", '{0:.4f}'.format(duration)))
+      self.duration_separator()
+      print("'Reading' of sqlite3 drilling event data successfully completed.")
+      print()
+      print("=================================================================================")
+      print("Results in Pandas/Python Data Frame Format")
+      pprint(python_dataframe_data)
+      print("=================================================================================")
+      print()
+  # End sample_four_read_sqlite3_drilling_event_data_to_dataframe() method
+  
+  def sample_five_read_and_show_current_or_forecated_5day_3hr_weather_in_metric_unit(self, json_mode="JSON", forecast_type=None, option=None, app_id=None, spark_engine=True):
     #to demo 4th speed-up due to spark engine, show current or forecasted weather (for 5-day and 3-hrs interval)
     duration = None
     if spark_engine:
@@ -536,7 +646,8 @@ class ShaleReservoirApacheSpark():
       self.duration_separator()
       print("'Current or forecasted weather (for 5-day and 3-hrs interval)' successfully completed.")
     return duration
-  # End sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
+  # End sample_five_read_and_show_current_or_forecated_5day_3hr_weather_in_metric_unit() method
+ 
 #End ShaleReservoirApacheSpark() class
 
   
@@ -559,14 +670,14 @@ class ShaleReservoirApacheSparkTest(TestCase):
   
   def test_sample_two_machine_learning_with_tensorflow(self):
     print()
-    #run "TensorFlow" image classification example in "ShaleReservoir.py"
+    #run "TensorFlow" image classification example in "ShaleReservoir.py" with and without spark engine
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_yes)
     self.sras_demo.sample_two_machine_learning_with_tensorflow(spark_engine=self.spark_engine_non)
   #End test_sample_two_machine_learning_with_tensorflow() method
   
   def test_sample_three_read_json_reservoir_data_to_dataframe(self):
     print()
-    #run read_json_reservoir_data
+    #run read_json_reservoir_data with and without spark engine
     file = True
     if file:
       read_from_file = True
@@ -578,7 +689,13 @@ class ShaleReservoirApacheSparkTest(TestCase):
     self.sras_demo.sample_three_read_json_reservoir_data_to_dataframe(read_from_file=read_from_file, json_data_file=json_file_name, nth_time=70, spark_engine=self.spark_engine_non)
   #End test_sample_three_read_json_reservoir_data_to_dataframe() method
   
-  def test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit(self):
+  def test_sample_four_read_sqlite3_drilling_event_data_to_dataframe(self):
+    #run read_sqlite3_drilling_event_data with and without spark engine
+    self.sras_demo.sample_four_read_sqlite3_drilling_event_data_to_dataframe(spark_engine=self.spark_engine_yes)
+    self.sras_demo.sample_four_read_sqlite3_drilling_event_data_to_dataframe(spark_engine=self.spark_engine_non)
+  # End test_sample_four_read_sqlite3_drilling_event_data_to_dataframe() method
+  
+  def test_sample_five_read_and_show_current_or_forecated_5day_3hr_weather_in_metric_unit(self):
     json_mode = "JSON"
     #
     #forecast_type = "current"
@@ -602,8 +719,8 @@ class ShaleReservoirApacheSparkTest(TestCase):
     print("{}{}".format("Current or forecasted weather duration with spark (seconds): ", '{0:.4f}'.format(with_spark)))
     print("{}{}".format("Current or forecasted weather duration without spark (seconds): ", '{0:.4f}'.format(without_spark)))
     self.sras_demo.separator()
-  # End test_sample_four_current_or_forecated_5day_3hr_weather_in_metric_unit() method
-  
+  # End test_sample_five_read_and_show_current_or_forecated_5day_3hr_weather_in_metric_unit() method
+
   def _test_drilling_rare_events(self, input_csv_file=None):
     """
       Simple prelimianry demo of drilling rare events with graph/network analysis -
@@ -651,7 +768,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     input_csv_file = "drg_pp_re_dataset.csv" 
     
     #read a csv file into pandas DataFrame
-    data = read_csv(input_csv_file)  
+    data = read_csv(input_csv_file)
     
     #source/target pairing test
     key_value = drilling_event_key_value_pair()
@@ -681,7 +798,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     print("............................................")
     print("")
       
-    #import the dataset using the networkx function that ingest a pandas DataFrame directly
+     #import the dataset using the networkx function that ingest a pandas DataFrame directly.
     #there are multiple ways data can be ingested into a Graph from multiple formats: this is just one of them
     FG = nx.from_pandas_edgelist(data, source=source, target=target, edge_attr=True)
       
@@ -721,6 +838,7 @@ class ShaleReservoirApacheSparkTest(TestCase):
     print("............................................")
     print("")
   # End test_drilling_rare_events() method
+  #End test_sample_five_spark_connect_to_sqlite() method
   
   def tearDown(self):
     print()
