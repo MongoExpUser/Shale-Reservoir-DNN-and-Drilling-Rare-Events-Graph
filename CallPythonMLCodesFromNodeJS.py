@@ -448,6 +448,7 @@ class CallPythonMLCodesFromNodeJS(TestCase):
         print()
       
       # 13 finally, close connection to the database
+      py_connection.close()
       connection.close()
       
       self.count = 4
