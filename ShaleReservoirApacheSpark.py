@@ -549,6 +549,7 @@ class ShaleReservoirApacheSpark():
     print("=================================================================================")
     #
     #close sqlite database
+    cursor.close()
     connection.close()
     
     #read the created dictionary into dataFrames
