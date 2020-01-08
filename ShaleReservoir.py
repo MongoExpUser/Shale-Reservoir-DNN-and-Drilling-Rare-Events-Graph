@@ -223,6 +223,7 @@ class ShaleDNN():
     except(pymysql.err.MySQLError) as sql_queries_err:
       print(str(sql_queries_err))
     finally:
+      cursor.close()
       connection.close()
       print("{}{}{}".format("Connection to database (", db, ") is closed."))
   # End execute_some_queries_for_data_pipeline() method
