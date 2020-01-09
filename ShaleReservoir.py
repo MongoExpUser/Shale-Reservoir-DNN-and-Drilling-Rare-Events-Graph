@@ -314,7 +314,7 @@ class ShaleDNN():
           reservoir_values_two.append(values_two)
   
       return [reservoir_values_one, reservoir_values_two]
-  # End multi_reservoir_datasets() method
+  # End reservoir_datasets() method
 
   def reservoir_data_pipeline_for_analytics(self, nth_limit=None, reservoir_zone=None, option=None):
     sql_query = "";
