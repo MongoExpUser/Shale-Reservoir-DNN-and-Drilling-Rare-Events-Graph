@@ -14,11 +14,11 @@
 #
 #  1) AccessMySQL() class for:
 #
-#    a) Connecting/disconnecting to a MySQL data store using 'pymysql' connector/driver library.
+#    a) Connecting/disconnecting to a MySQL data store with'pymysql' connector/driver library.
 #
-#    b) Populating/(inserting into) a MySQL data store with data using pymysql connector/driver.
+#    b) Populating/(inserting into) a MySQL data store  with 'pymysql' connector/driver library.
 #
-#    c) Running queries against MySQL data store.
+#    c) Running queries against MySQL data store with 'pymysql' connector/driver library.
 #
 #  2) AccessMySQLTest() class for testing AccessMySQL() class.
 #
