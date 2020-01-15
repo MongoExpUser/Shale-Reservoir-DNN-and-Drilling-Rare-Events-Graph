@@ -338,7 +338,6 @@ class AccessMySQLTest(TestCase):
     inserted_reservoir_data = self.access_mysql.insert_data_to_reservoir_table(number_of_datapoints=number_of_datapoints, table_name=table_name, connection=connection_for_insert, db=db)
     # connect to mysql, execute queries, against Reservoir table and disconnect (within a single method)
     connection_for_query = self.access_mysql.connect_to_mysql_from_python(mysql_connection_options=mysql_connection_options, ssl_certificates=ssl_certificates, required_ssl=required_ssl)
-
     executed_query = self.access_mysql.execute_some_queries_for_data_pipeline(connection=connection_for_query, db=db)
     self.count = "{}{}".format("accessing mysql : ",  1)
   #End test_acccess_mysql() method
