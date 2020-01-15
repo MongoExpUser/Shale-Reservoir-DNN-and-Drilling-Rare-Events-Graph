@@ -1,0 +1,3 @@
+{"FIELD_NAME" : "Yoho", "RESERVOIR_DEPTH_FT" : 12000.04, "FLUID_TYPE" : "Light-Oil", "FLUID_API" : 35.1,"FIELD_BASIN" : "N. Delta"}
+{"FIELD_NAME" : "W. Ellenburger", "RESERVOIR_DEPTH_FT" : 12506.89, "FLUID_TYPE" : "Light-Oil", "FLUID_API" :40.1,"FIELD_BASIN" : "Midland"}
+{"FIELD_NAME" : "Grosmont", "RESERVOIR_DEPTH_FT" : 1297.43, "FLUID_TYPE" : "Bitumen", "FLUID_API" : 5.01,"FIELD_BASIN" : "WCSB"}
