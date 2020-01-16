@@ -1,9 +1,9 @@
-Sample Template Reference: Converted to JSON from YARN
-Reference for YARN Template: https://github.com/aws-samples/specialty-practice-code-samples/blob/master/migrate-delimited-files-to-nosql/cloudformation-dms-migration-s3-dynamodb.yaml
+#Sample Template: Converted to JSON from YARN
+#Reference for YARN Template: https://github.com/aws-samples/specialty-practice-code-samples/blob/master/migrate-delimited-files-to-nosql/cloudformation-dms-migration-s3-dynamodb.yaml
 
 {
   "AWSTemplateFormatVersion": "2010-09-09T00:00:00.000Z",
-  "Description": "CloudFormation template for importing files from S3.",
+  "Description": "CloudFormation template for importing files from S3./",
   "Parameters": {
     "ReplicationInstance": {
       "Default": "dms.c4.large",
