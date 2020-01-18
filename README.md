@@ -40,17 +40,17 @@ C++17
 
 Java 11 - Java-11-openjdk (https://openjdk.java.net/)
 
-MongoDB Server v4.0.13 on Ubuntu 18.04.1 (https://www.mongodb.com/download-center/community)
+MongoDB Server v4.0.13 on Ubuntu 18.04.4 (https://www.mongodb.com/download-center/community)
 
-MongoDB Node.js Native Driver v3.4.0 (https://www.npmjs.com/package/mongodb)
+MongoDB Node.js Native Driver v3.5.1 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.8.7 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.8.9 (https://www.npmjs.com/package/mongoose)
 
-MySQL Server v8.0.18 on Ubuntu 18.04.1 (https://dev.mysql.com/downloads/mysql/)
+MySQL Server v8.0.19 on Ubuntu 18.04.4 (https://dev.mysql.com/downloads/mysql/) 
 
 MySQL Node.js Driver v2.17.1 (https://www.npmjs.com/package/mysql)
 
-MySQL Connector/Node.js v8.0.18 (https://www.npmjs.com/package/@mysql/xdevapi)
+MySQL Connector/Node.js v8.0.19 (https://www.npmjs.com/package/@mysql/xdevapi)
 
 MySQL Connector for Python v0.9.3 (https://github.com/PyMySQL/mysqlclient-python)
 
