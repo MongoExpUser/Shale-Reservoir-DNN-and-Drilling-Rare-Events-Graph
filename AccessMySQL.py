@@ -34,7 +34,7 @@ try:
   import pymysql.cursors
   from csv import writer
   from pprint import pprint
-  from json import dumps, loads
+  from json import dumps, loads, load, dump
   from random import random, randint
   from unittest import TestCase, main
   #check for error
