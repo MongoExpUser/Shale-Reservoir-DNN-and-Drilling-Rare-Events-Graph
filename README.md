@@ -18,11 +18,11 @@ JavaScript ES6+
 
 Node.js v13.7.0
 
-Tensorflow.js v1.5.1 - @tensorflow/tfjs@1.5.1  (Pure JavaScript Version)
+Tensorflow.js v1.5.2 - @tensorflow/tfjs@1.5.1  (Pure JavaScript Version)
 
-Tensorflow.js v1.5.1 - @tensorflow/tfjs-node@1.5.1  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v1.5.2 - @tensorflow/tfjs-node@1.5.1  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v1.5.1 - @tensorflow/tfjs-node-gpu@1.5.1  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v1.5.2 - @tensorflow/tfjs-node-gpu@1.5.1  (Node.js GPU Version - with native C++ bindings)
 
 Python-shell.js v1.0.8
 
@@ -44,7 +44,7 @@ MongoDB Server v4.0.13 on Ubuntu 18.04.4 (https://www.mongodb.com/download-cente
 
 MongoDB Node.js Native Driver v3.5.2 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.8.10 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.8.11 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.19 on Ubuntu 18.04.4 (https://dev.mysql.com/downloads/mysql/) 
 
