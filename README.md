@@ -52,7 +52,9 @@ MySQL Node.js Driver v2.18.1 (https://www.npmjs.com/package/mysql)
 
 MySQL Connector/Node.js v8.0.19 (https://www.npmjs.com/package/@mysql/xdevapi)
 
-MySQL Connector for Python v0.9.3 (https://github.com/PyMySQL/mysqlclient-python)
+MySQL Connector/Python v0.9.3 (https://github.com/PyMySQL/mysqlclient-python)
+
+MySQL Connector/Java (JDBC) v8.0.19 (https://dev.mysql.com/downloads/connector/j/)
 
 SQLite3 within Python v3.7 on Ubuntu 18.04.1 (https://docs.python.org/3.7/library/sqlite3.html)
 
