@@ -16,7 +16,7 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v13.7.0
+Node.js v13.8.0
 
 Tensorflow.js v1.5.2 - @tensorflow/tfjs@1.5.1  (Pure JavaScript Version)
 
@@ -38,7 +38,7 @@ C11
 
 C++17
 
-Java 11 - Java-11-openjdk (https://openjdk.java.net/)
+Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.net/)
 
 MongoDB Server v4.0.13 on Ubuntu 18.04.4 (https://www.mongodb.com/download-center/community)
 
