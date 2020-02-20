@@ -44,7 +44,7 @@ MongoDB Server v4.0.16 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-c
 
 MongoDB Node.js Native Driver v3.5.3 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.8.12 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.9.1 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.19 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
