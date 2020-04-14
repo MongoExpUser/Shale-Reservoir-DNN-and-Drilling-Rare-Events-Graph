@@ -30,7 +30,7 @@ Python v3.7
 
 Tensorflow v2.0.0 (Python Version)
 
-Scikit-learn v0.21.3
+Scikit-learn v0.22
 
 Keras v2.2.4-tf
 
