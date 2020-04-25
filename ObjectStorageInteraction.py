@@ -89,7 +89,8 @@ class ObjectStorageInteraction():
         #    see - https://aws.amazon.com/blogs/storage/querying-data-without-servers-or-databases-using-amazon-s3-select/
         # 2) Alternatively, on S3 and other S3-compatible object storage systems; provided by linode, GCP, etc; PySpark can also
         #    be used to load CSV, JSON and PARQUET files as DataFrames and "PySpark SQL" can then be used to issue SQL expressions
-        #.   against the DataFrames just like "client.select_object_content()".
+        #   against the DataFrames just like "client.select_object_content()".
+        #   see - https://spark.apache.org/docs/latest/api/python/pyspark.sql.html
         return {"bucket": bucket, "client": client}
     # End object_storage_interaction_using_boto3() method
 
