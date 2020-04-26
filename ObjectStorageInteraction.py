@@ -70,7 +70,7 @@ class ObjectStorageInteraction():
             endpoint_url = "{}{}{}".format("https://s3.", REGION_NAME, ".amazonaws.com")
         elif(provider == "linode"):
             endpoint_url = "{}{}{}".format("https://", REGION_NAME, ".linodeobjects.com")
-        elif(provider == "gpc"):
+        elif(provider == "gcp"):
             endpoint_url_in = "https://storage.googleapis.com"
         session = Session(aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION_NAME)
         s3 = session.resource('s3', endpoint_url=endpoint_url, config=Config(signature_version='s3v4'))
@@ -101,7 +101,7 @@ class ObjectStorageInteraction():
             endpoint_url = "{}{}{}".format("https://s3.", REGION_NAME, ".amazonaws.com")
         elif(provider == "linode"):
             endpoint_url = "{}{}{}".format("https://", REGION_NAME, ".linodeobjects.com")
-        elif(provider == "gpc"):
+        elif(provider == "gcp"):
             endpoint_url_in = "https://storage.googleapis.com"
         bucket_name_path =  "{}{}".format(bucket_name, "/")
         fs = s3fs.S3FileSystem(anon=False, key=ACCESS_KEY, secret=SECRET_KEY, client_kwargs={'endpoint_url': endpoint_url})
