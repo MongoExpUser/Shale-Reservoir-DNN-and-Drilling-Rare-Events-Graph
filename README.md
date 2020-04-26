@@ -67,3 +67,9 @@ Apache Spark Python API v2.4.4 (https://spark.apache.org/docs/latest/api/python/
 MongoDB Spark Connector Python API v2.4.4 (https://docs.mongodb.com/spark-connector/current/python-api/)
 
 S3 Python API v3.0.0 (https://pypi.org/project/s3/)
+
+S3fs (https://pypi.org/project/s3fs/)
+
+AWS SDK for Python (Boto3) (https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
+
+AWS SDK for JavaScript in Node.js (https://aws.amazon.com/sdk-for-node-js/)
