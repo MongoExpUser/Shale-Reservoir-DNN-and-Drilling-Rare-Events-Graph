@@ -70,6 +70,6 @@ S3 Python API v3.0.0 (https://pypi.org/project/s3/)
 
 S3fs (https://pypi.org/project/s3fs/)
 
-AWS SDK for Python (Boto3) (https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
+AWS SDK for Python - Boto3 (https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
 
 AWS SDK for JavaScript in Node.js (https://aws.amazon.com/sdk-for-node-js/)
