@@ -9,7 +9,7 @@
 # *
 # ******************************************************************************************************************************************
 #
-#  ...Ecotert's ObjectStorageInteraction.py  (released as open-source under MIT License) implements:
+#  ...ObjectStorageInteraction.py  (released as open-source under MIT License) implements:
 #
 #
 #    ObjectStorageInteraction() class for interacting with public clouds' Object Storage using boto3 and s3f3 library.
