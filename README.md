@@ -24,7 +24,7 @@ Tensorflow.js v1.7.4 - @tensorflow/tfjs-node@1.7.4  (Node.js CPU Version - with 
 
 Tensorflow.js v1.7.4 - @tensorflow/tfjs-node-gpu@1.7.4  (Node.js GPU Version - with native C++ bindings)
 
-Python-shell.js v1.0.8
+Python-shell.js v2.0.0
 
 Python v3.7
 
