@@ -18,7 +18,7 @@ JavaScript ES6+
 
 Node.js v14.0.0
 
-Tensorflow.js v1.7.3 - @tensorflow/tfjs@1.7.3  (Pure JavaScript Version)
+Tensorflow.js v1.7.4 - @tensorflow/tfjs@1.7.4  (Pure JavaScript Version)
 
 Tensorflow.js v1.7.4 - @tensorflow/tfjs-node@1.7.4  (Node.js CPU Version - with native C++ bindings)
 
