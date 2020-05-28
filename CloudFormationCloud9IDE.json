@@ -10,7 +10,7 @@
         "Description": " A cloud IDE for writing, running, and debugging codes.",
         "AutomaticStopTimeMinutes" : "30",
         "InstanceType": "t2.micro",
-        "Tags": [ { "Key": "cloud9-name", "Value": "aws-cloud9-ide-1" } ]
+        "Tags": [ { "Key": "resoure-name", "Value": "aws-cloud9-ide-1" } ]
       }
     }
   }
