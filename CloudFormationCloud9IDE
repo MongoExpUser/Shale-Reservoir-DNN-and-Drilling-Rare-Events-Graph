@@ -1,0 +1,17 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Deploys EC2 Development Environment in AWS Cloud9.",
+  
+  "Resources": {
+    "Instance": {
+      "Type" : "AWS::Cloud9::EnvironmentEC2",
+      "Properties": {
+        "Description": " A cloud IDE for writing, running, and debugging codes.",
+        "AutomaticStopTimeMinutes" : "30",
+        "InstanceType": "t2.micro",
+        "Tags": [ { "Key": "cloud9-name", "Value": "aws-cloud9-ide-1" } ]
+      }
+    }
+  }
+}
