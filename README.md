@@ -16,15 +16,15 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v14.3.0
+Node.js v14.4.0
 
-Tensorflow.js v1.7.4 - @tensorflow/tfjs@1.7.4  (Pure JavaScript Version)
+Tensorflow.js v2.0.0 - @tensorflow/tfjs@2.0.0  (Pure JavaScript Version)
 
-Tensorflow.js v1.7.4 - @tensorflow/tfjs-node@1.7.4  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v2.0.0 - @tensorflow/tfjs-node@2.0.0  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v1.7.4 - @tensorflow/tfjs-node-gpu@1.7.4  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v2.0.0 - @tensorflow/tfjs-node-gpu@2.0.0  (Node.js GPU Version - with native C++ bindings)
 
-Python-shell.js v2.0.0
+Python-shell.js v2.0.7
 
 Python v3.7
 
@@ -40,11 +40,11 @@ C++17
 
 Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.net/)
 
-MongoDB Server v4.2.6 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
+MongoDB Server v4.2.7 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
 
-MongoDB Node.js Native Driver v3.5.7 (https://www.npmjs.com/package/mongodb)
+MongoDB Node.js Native Driver v3.5.8 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.9.14 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.9.17 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.20 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
