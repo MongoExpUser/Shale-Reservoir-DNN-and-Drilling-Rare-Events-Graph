@@ -44,15 +44,15 @@ MongoDB Server v4.2.7 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-ce
 
 MongoDB Node.js Native Driver v3.5.9 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.9.23 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.9.24 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.21 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
 MySQL Node.js Driver v2.18.1 (https://www.npmjs.com/package/mysql)
 
-MySQL Connector/Node.js v8.0.20 (https://www.npmjs.com/package/@mysql/xdevapi)
+MySQL Connector/Node.js v8.0.21 (https://www.npmjs.com/package/@mysql/xdevapi)
 
-MySQL Connector/Java (JDBC) v8.0.20 (https://dev.mysql.com/downloads/connector/j/)
+MySQL Connector/Java (JDBC) v8.0.21 (https://dev.mysql.com/downloads/connector/j/)
 
 MySQL/Python Client v0.9.3 (https://github.com/PyMySQL/mysqlclient-python)
 
