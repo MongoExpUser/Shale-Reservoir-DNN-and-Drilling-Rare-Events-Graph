@@ -40,7 +40,7 @@ C++17
 
 Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.net/)
 
-MongoDB Server v4.2.8 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
+MongoDB Server v4.4.0 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
 
 MongoDB Node.js Native Driver v3.6.0 (https://www.npmjs.com/package/mongodb)
 
