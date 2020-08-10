@@ -108,7 +108,7 @@ try:
   #    : but can use one of the following python module for Graph-Based Analysis:
   #    : (1) "graphframes" (https://graphframes.github.io/graphframes/docs/_site/index.html)
   #          "graphframes" is tightly integrated with spark/pyspark DataFrame
-  #    : (2) "networkx" (see: https://networkx.github.io) or
+  #    : (2) "networkx" (see: https://networkx.github.io)
   #print version of pyspark, tensorflow and networkx
   print()
   print("-------------------------------------------------------------")
