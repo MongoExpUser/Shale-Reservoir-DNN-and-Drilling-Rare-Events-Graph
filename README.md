@@ -18,17 +18,17 @@ JavaScript ES6+
 
 Node.js v14.9.0
 
-Tensorflow.js v2.3.0 - @tensorflow/tfjs@2.3.0  (Pure JavaScript Version)
+Tensorflow.js v2.4.0 - @tensorflow/tfjs@2.4.0  (Pure JavaScript Version)
 
-Tensorflow.js v2.3.0 - @tensorflow/tfjs-node@2.3.0  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v2.4.0 - @tensorflow/tfjs-node@2.4.0  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v2.3.0 - @tensorflow/tfjs-node-gpu@2.3.0  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v2.4.0 - @tensorflow/tfjs-node-gpu@2.4.0  (Node.js GPU Version - with native C++ bindings)
 
 Python-shell.js v2.0.7
 
 Python v3.7
 
-Tensorflow v2.0.0 (Python Version)
+Tensorflow v2.0.2 (Python Version)
 
 Scikit-learn v0.22
 
@@ -42,9 +42,9 @@ Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.ne
 
 MongoDB Server v4.4.0 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
 
-MongoDB Node.js Native Driver v3.6.0 (https://www.npmjs.com/package/mongodb)
+MongoDB Node.js Native Driver v3.6.2 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.10.2 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.10.7 (https://www.npmjs.com/package/mongoose)
 
 MySQL Server v8.0.21 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
