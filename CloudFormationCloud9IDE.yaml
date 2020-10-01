@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Deploys EC2 Development Environment in AWS Cloud9 (A Cloud IDE).
+
+Parameters:
+    # 1. naming and tagging parameters
+    OrgName:
+      Type: String
+      Default: org
+    
+    ProjectName:
+      Type: String
+      Default: db-migration
+      
+    Environment:
+      Type: String
+      Default: dev
+      
+    RegionName:
+      Type: String
+      Default: us-east-1
+    
+    IAMUserName:
+      Type: String
+      Default: root # or user/userName
+      
+    TagKeyName:
+      Type: String
+      Default: name
+    
+    TagValueName:
+      Type: String
+      Default: one
+      
+    # 2. CloudIDE (resource specific) parameters
+    CloudIDEAutomaticStopTimeMinutes:
+      Type: Number
+      Default: 30
+      
+    CloudIDEConnectionType:
+      Type: String
+      Default: CONNECT_SSH
+      
+    CloudIDEDescription:
+      Type: String
+      Default: A cloud IDE for writing, running, and debugging codes
+      
+    CloudIDEInstanceType:
+      Type: String
+      Default: t2.micro
+      
+    CloudIDESubnetId:
+      Type: String
+      Default: subnet-963405ba
+      
+    CloudIDEEnvironmentName:
+      Type: String
+      Default: IDE
+  
+Resources:
+  Cloud9IDE:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      AutomaticStopTimeMinutes: !Ref CloudIDEAutomaticStopTimeMinutes
+      ConnectionType: !Ref CloudIDEConnectionType
+      Description: !Ref CloudIDEDescription
+      InstanceType: !Ref CloudIDEInstanceType
+      SubnetId: !Ref CloudIDESubnetId
+      Name: !Sub ${OrgName}-${ProjectName}-${Environment}-${RegionName}-${CloudIDEEnvironmentName}
+      OwnerArn:  !Sub arn:aws:iam::${AWS::AccountId}:${IAMUserName}
+      Tags:
+        - Key: !Ref TagKeyName
+          Value:  !Sub ${OrgName}-${ProjectName}-${Environment}-${RegionName}-${TagValueName}
+       
+Outputs:
+    Cloud9IDEName:
+      Description: Name of the AWS Cloud9 IDE
+      Value: !Ref Cloud9IDE
+      Export:
+        Name: !Sub ${OrgName}-${ProjectName}-${Environment}-${RegionName}-${CloudIDEEnvironmentName}
+        
+    Cloud9IDEUrl:
+      Description: The url of the AWS Cloud9 IDE environment
+      Value:
+        Fn::Join:
+        - ""
+        - - https://console.aws.amazon.com/cloud9/home/environments/
+          - Ref: Cloud9IDE
