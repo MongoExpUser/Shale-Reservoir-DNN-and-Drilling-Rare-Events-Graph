@@ -44,12 +44,12 @@ import java.sql.ResultSetMetaData;
 public class ShaleReservoirApacheDrill
 {
   public void ShaleReservoirApacheDrill(){}
- 
+
+  
   public Connection connectToMongoDB(String user, String password, String url, int port, String databasebName)
   {
     Connection connection = null;
     
-    //connect
     try
     {
       // load mongodb JDBC driver and connect
@@ -75,7 +75,7 @@ public class ShaleReservoirApacheDrill
   
   public void executeQueriesForDataPipeline(Connection connection, String collectionName)
   {
-    // Add your queries here...
+    // add your queries here
   }
   
   public String combinedKeys(String [] inputKeys)
@@ -117,7 +117,7 @@ public class ShaleReservoirApacheDrill
   
   public String reservoirDataPipelineForAnalytics()
   {
-    String sQLQuery = "add your queries here;
+    String sQLQuery = "add your queries here";
     return sQLQuery;
   }
   
@@ -128,7 +128,6 @@ public class ShaleReservoirApacheDrill
 
   public static void main(String[] args) throws SQLException, ClassNotFoundException
   {
-
     String [] keys = new String[10];
     int keysLength =  keys.length;
     
