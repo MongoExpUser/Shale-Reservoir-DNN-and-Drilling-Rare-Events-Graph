@@ -43,22 +43,8 @@ import java.sql.ResultSetMetaData;
 
 public class ShaleReservoirApacheDrill
 {
-  //constructor
-  public void ShaleReservoirApacheDrill()
-  {
-
-  }
-  
-  public void viewOutputData()
-  {
-    // in progress ... add remaining codes later ....
-  }
-  
-  public void createCsvFileFromJson()
-  {
-    // in progress ... add remaining codes later ....
-  }
-  
+  public void ShaleReservoirApacheDrill(){}
+ 
   public Connection connectToMongoDB(String user, String password, String url, int port, String databasebName)
   {
     Connection connection = null;
@@ -89,8 +75,7 @@ public class ShaleReservoirApacheDrill
   
   public void executeQueriesForDataPipeline(Connection connection, String collectionName)
   {
-    // in progress ... add remaining codes later ....
-    System.out.println("Drilling in progress.........Just a test of interface: add actual 'drillling/queries'... later...");
+    // Add your queries here...
   }
   
   public String combinedKeys(String [] inputKeys)
@@ -132,8 +117,7 @@ public class ShaleReservoirApacheDrill
   
   public String reservoirDataPipelineForAnalytics()
   {
-    // in progress ... add remaining codes later ....
-    String sQLQuery = "Query is okay..!";
+    String sQLQuery = "add your queries here;
     return sQLQuery;
   }
   
@@ -144,9 +128,7 @@ public class ShaleReservoirApacheDrill
 
   public static void main(String[] args) throws SQLException, ClassNotFoundException
   {
-    //testing
-    
-    // in progress ... add remaining codes later ....
+
     String [] keys = new String[10];
     int keysLength =  keys.length;
     
