@@ -16,7 +16,7 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v14.9.0
+Node.js v15.0.1
 
 Tensorflow.js v2.7.0 - @tensorflow/tfjs@2.7.0  (Pure JavaScript Version)
 
