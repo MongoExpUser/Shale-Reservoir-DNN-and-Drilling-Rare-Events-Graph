@@ -18,11 +18,11 @@ JavaScript ES6+
 
 Node.js v15.1.0
 
-Tensorflow.js v2.8.0 - @tensorflow/tfjs@2.8.0  (Pure JavaScript Version)
+Tensorflow.js v2.8.1 - @tensorflow/tfjs@2.8.1  (Pure JavaScript Version)
 
-Tensorflow.js v2.8.0 - @tensorflow/tfjs-node@2.8.0  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v2.8.1 - @tensorflow/tfjs-node@2.8.1  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v2.8.0 - @tensorflow/tfjs-node-gpu@2.8.0  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v2.8.1 - @tensorflow/tfjs-node-gpu@2.8.1  (Node.js GPU Version - with native C++ bindings)
 
 Python-shell.js v2.0.3
 
