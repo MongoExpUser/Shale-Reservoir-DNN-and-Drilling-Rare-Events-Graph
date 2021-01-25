@@ -16,13 +16,13 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v15.1.0
+Node.js v15.4.0
 
-Tensorflow.js v2.8.2 - @tensorflow/tfjs@2.8.2  (Pure JavaScript Version)
+Tensorflow.js v2.8.5 - @tensorflow/tfjs@2.8.5  (Pure JavaScript Version)
 
-Tensorflow.js v2.8.2 - @tensorflow/tfjs-node@2.8.2  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v2.8.5 - @tensorflow/tfjs-node@2.8.5  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v2.8.2 - @tensorflow/tfjs-node-gpu@2.8.2  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v2.8.5 - @tensorflow/tfjs-node-gpu@2.8.5  (Node.js GPU Version - with native C++ bindings)
 
 Python-shell.js v2.0.3
 
@@ -44,15 +44,15 @@ MongoDB Server v4.4.0 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-ce
 
 MongoDB Node.js Native Driver v3.6.3 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.11.10 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.11.13 (https://www.npmjs.com/package/mongoose)
 
-MySQL Server v8.0.22 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
+MySQL Server v8.0.23 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
 MySQL Node.js Driver v2.18.1 (https://www.npmjs.com/package/mysql)
 
-MySQL Connector/Node.js v8.0.22 (https://www.npmjs.com/package/@mysql/xdevapi)
+MySQL Connector/Node.js v8.0.23 (https://www.npmjs.com/package/@mysql/xdevapi)
 
-MySQL Connector/Java (JDBC) v8.0.22 (https://dev.mysql.com/downloads/connector/j/)
+MySQL Connector/Java (JDBC) v8.0.23 (https://dev.mysql.com/downloads/connector/j/)
 
 MySQL Pure Python MySQL Client v0.7.2 (https://github.com/PyMySQL/PyMySQL)
 
