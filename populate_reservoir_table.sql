@@ -1,3 +1,5 @@
+-- -- MySQL Store Procedure for Populating a table (Reservoir) for testing.
+-- -- 
 DROP PROCEDURE IF EXISTS PopulateReservoirTable;
 CREATE PROCEDURE PopulateReservoirTable(IN loop_limit INT)
 BEGIN
@@ -27,3 +29,5 @@ BEGIN
   -- --
   SELECT CONCAT("Run Duration: ", CAST( ROUND(TIMESTAMPDIFF(SECOND, @initial_time, NOW()), 2 ) AS CHAR(22)), " seconds") AS run_duration;
 END;
+-- -- 
+-- --
