@@ -1,14 +1,12 @@
--- -- MySQL Store Procedure for Populating a table (Reservoir) for testing.
--- -- 
+-- MySQL Stored Procedure for Populating a table (Reservoir) for testing.
+
 DROP PROCEDURE IF EXISTS PopulateReservoirTable;
 CREATE PROCEDURE PopulateReservoirTable(IN loop_limit INT)
 BEGIN
   DECLARE counter INT DEFAULT 0;
   DECLARE counter_limit INT DEFAULT loop_limit;
   SET @initial_time = NOW();
-  -- --
   WHILE (counter < counter_limit) DO
-  -- --
     INSERT INTO reservoir (Reservoir_ID,
                            Reservoir_Zone,
                            Avg_Deep_Resis_ohm_m,
@@ -24,10 +22,6 @@ BEGIN
             3001.45 + FLOOR(RAND())
            );
     SET counter = counter + 1;
-  -- --
   END WHILE;
-  -- --
   SELECT CONCAT("Run Duration: ", CAST( ROUND(TIMESTAMPDIFF(SECOND, @initial_time, NOW()), 2 ) AS CHAR(22)), " seconds") AS run_duration;
 END;
--- -- 
--- --
