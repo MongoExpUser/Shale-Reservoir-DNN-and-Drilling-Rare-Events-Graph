@@ -18,13 +18,13 @@ JavaScript ES6+
 
 Node.js v15.7.0
 
-Tensorflow.js v3.2.0 - @tensorflow/tfjs@3.2.0  (Pure JavaScript Version)
+Tensorflow.js v3.4.0 - @tensorflow/tfjs@3.4.0  (Pure JavaScript Version)
 
-Tensorflow.js v3.2.0 - @tensorflow/tfjs-node@3.2.0  (Node.js CPU Version - with native C++ bindings)
+Tensorflow.js v3.4.0 - @tensorflow/tfjs-node@3.4.0  (Node.js CPU Version - with native C++ bindings)
 
-Tensorflow.js v3.2.0 - @tensorflow/tfjs-node-gpu@3.2.0  (Node.js GPU Version - with native C++ bindings)
+Tensorflow.js v3.4.0 - @tensorflow/tfjs-node-gpu@3.4.0  (Node.js GPU Version - with native C++ bindings)
 
-Python-shell.js v2.0.3
+Python-shell.js v3.0.0
 
 Python v3.8
 
@@ -42,17 +42,17 @@ Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.ne
 
 MongoDB Server v4.4.0 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
 
-MongoDB Node.js Native Driver v3.6.4 (https://www.npmjs.com/package/mongodb)
+MongoDB Node.js Native Driver v3.6.6 (https://www.npmjs.com/package/mongodb)
 
-Mongoose ORM v5.11.19 (https://www.npmjs.com/package/mongoose)
+Mongoose ORM v5.12.5 (https://www.npmjs.com/package/mongoose)
 
-MySQL Server v8.0.23 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
+MySQL Server v8.0.24 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
 
 MySQL Node.js Driver v2.18.1 (https://www.npmjs.com/package/mysql)
 
-MySQL Connector/Node.js v8.0.23 (https://www.npmjs.com/package/@mysql/xdevapi)
+MySQL Connector/Node.js v8.0.24 (https://www.npmjs.com/package/@mysql/xdevapi)
 
-MySQL Connector/Java (JDBC) v8.0.23 (https://dev.mysql.com/downloads/connector/j/)
+MySQL Connector/Java (JDBC) v8.0.24 (https://dev.mysql.com/downloads/connector/j/)
 
 MySQL Pure Python MySQL Client v0.7.2 (https://github.com/PyMySQL/PyMySQL)
 
