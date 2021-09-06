@@ -16,7 +16,7 @@ This repo is based on the following languages, frameworks, packages and database
 
 JavaScript ES6+
 
-Node.js v16.0.0
+Node.js v16.8.0
 
 Tensorflow.js v3.4.0 - @tensorflow/tfjs@3.4.0  (Pure JavaScript Version)
 
@@ -40,19 +40,19 @@ C++17
 
 Java 8 and Java 11 - Java-8-openjdk and Java-11-openjdk (https://openjdk.java.net/)
 
-MongoDB Server v4.4.0 on Ubuntu 18.04.4 LTS (https://www.mongodb.com/download-center/community)
+MongoDB Server v5.0.2 on Ubuntu 20.04 LTS (https://www.mongodb.com/download-center/community)
 
-MongoDB Node.js Native Driver v3.6.6 (https://www.npmjs.com/package/mongodb)
+MongoDB Node.js Native Driver v3.7.0 (https://www.npmjs.com/package/mongodb)
 
 Mongoose ORM v5.12.5 (https://www.npmjs.com/package/mongoose)
 
-MySQL Server v8.0.23 on Ubuntu 18.04.4 LTS (https://dev.mysql.com/downloads/mysql/) 
+MySQL Server v8.0.26 on Ubuntu 20.04 LTS (https://dev.mysql.com/downloads/mysql/) 
 
 MySQL Node.js Driver v2.18.1 (https://www.npmjs.com/package/mysql)
 
-MySQL Connector/Node.js v8.0.23 (https://www.npmjs.com/package/@mysql/xdevapi)
+MySQL Connector/Node.js v8.0.26 (https://www.npmjs.com/package/@mysql/xdevapi)
 
-MySQL Connector/Java (JDBC) v8.0.23 (https://dev.mysql.com/downloads/connector/j/)
+MySQL Connector/Java (JDBC) v8.0.26 (https://dev.mysql.com/downloads/connector/j/)
 
 MySQL Pure Python MySQL Client v0.7.2 (https://github.com/PyMySQL/PyMySQL)
 
