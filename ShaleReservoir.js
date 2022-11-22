@@ -39,7 +39,7 @@
  *     e) Fluid Type-Related: SG/Density/API, Ro/maturity level,
  *     f) Stress Field-Related: Direction of minimum principal stress (Sm), fracture directional dispersity (90 deg is best, 0 deg is worst);
  *         Note: Hydraulic fractures tend to propagate in direction perpendicular to the directions of minimum principal stress.
- *         Note: Hence, fracture directional disparity = Sm - Sw (well direction), correct to maximum degree of 90.
+ *         Note: Hence, fracture directional disparity = Sm - Sw (well direction), correlate to maximum degree of 90.
  *
  *
  * Objectives for images (CNN) and non-images (standard-FFNN) "Classification"
