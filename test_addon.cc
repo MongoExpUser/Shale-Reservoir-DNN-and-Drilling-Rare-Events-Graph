@@ -93,7 +93,7 @@ char *PSD()
 //.... simple functions creation in pure C (No C++-related indentifier or syntax) ............................ ends
 
 
-//.... implementation of the above pure C functions and other functions within C++ class i.s. as OOP.......... starts
+//.... implementation of the above pure C functions and other functions within C++ class i.e. as OOP.......... starts
 class TestNAPI
 {
   
