@@ -269,10 +269,10 @@ class Crypto
             
         console.log();
         console.log('------------Testing Crypto Starts--------------------------');
-        const filePath         = "BasicAuthentication.js"
-        const sig1             = "MongoExpUser";               //string to hash
-        const sig2             = fs.readFileSync(filePath);    //file to hash
-        const sigList          = [sig1, sig2];              //array of items to hash
+        const filePath         = "README.md"                   // file in current working directory (CWD)
+        const sig1             = "MongoExpUser";               // string to hash
+        const sig2             = fs.readFileSync(filePath);    // file to hash
+        const sigList          = [sig1, sig2];                 // array of items to hash
         
         //hash algorithm
         const hashAlgorithm1   = 'bcrypt';
