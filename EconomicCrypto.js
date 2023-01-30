@@ -39,6 +39,7 @@
 */
 
 
+
 class Crypto
 {
     constructor()
@@ -70,22 +71,21 @@ class Crypto
         {
             let commonModules = Crypto.commonModules();
             let crypto = commonModules.crypto;
-        }
-        catch(cryptoError)
-        {
-            console.log('crypto support is disabled or not available!');
-            return;
-        }
-        finally
-        {
+
             // print hash (i.e. digest) algorithms in OpenSSL version bundled  with the current Node.js version
             if(showAlgorithm === true)
             {
-              let hashesAlgorithms = crypto.getHashes();
+              let hashesAlgorithms = crypto.getHashes(); 
               console.log(hashesAlgorithms);
             }
-            
+
+            console.log('Is crypto supported: Yes!');
             return true;
+        }
+        catch(cryptoError)
+        {
+            console.log('crypto support is disabled or not available or there is an error!');
+            return false;
         }
     }
     
@@ -118,7 +118,7 @@ class Crypto
 
     isHashConsensus(sig, hashAlgorithm, compareSig, compareSalt, compareHashSig, compareDateNow)
     {
-        let showAlgorithm = false;
+        let showAlgorithm = false; // set this to true to view aall available hash Algorithm in Nodejs' crypto
         let commonModules = Crypto.commonModules();
         let uuid          = commonModules.uuid;
         let bcrypt        = commonModules.bcrypt;
@@ -254,9 +254,9 @@ class Crypto
         console.log();
         console.log('------------Testing Crypto Starts--------------------------');
         const filePath         = "BasicAuthentication.js"
-        const sig1             = "MongoExpUser";               //string to hash
-        const sig2             = fs.readFileSync(filePath);    //file to hash
-        const sigList          = [sig1, sig2];                 //array of items to hash
+        const sig1             = "MongoExpUser";               // string to hash
+        const sig2             = fs.readFileSync(filePath);    // file to hash
+        const sigList          = [sig1, sig2];                 // array of items to hash
         
         //hash algorithm
         const hashAlgorithm1   = 'bcrypt';
@@ -267,14 +267,14 @@ class Crypto
         // prior
         const consensus        = crypto.isHashConsensus(sigList, hashAlgorithm1);    
         //const consensus      = { salt: salt; hash: hash, date: dateNow };          
-        const priorConsensus   = consensus;              // store in a database (n = 1)
-        const priorHash        = priorConsensus.hash;    // store in n-number of databases (1, 2, .. m) 
+        const priorConsensus   = consensus;                   // store in a database (n = 1)
+        const priorHash        = priorConsensus.hash;         // store in n-number of databases (1, 2, .. m) 
         
         // verify now
-        const compareSigList   = sigList;                 // new signal List - should be technically the same as prior
-        const compareSalt      = priorConsensus.salt;     // salt to compare: retrieve from q database (n=1)
-        const compareHashSig   = [priorHash, priorHash];  // hashes to compare: retrieve from n-number of databases, say 2, into a List/Array
-        const compareDateNow   = priorConsensus.date;     // date to compare: retrieve from a database (n=1)
+        const compareSigList   = sigList;                     // new signal List - should be technically the same as prior
+        const compareSalt      = priorConsensus.salt;         // salt to compare retrieve from q database (n=1)
+        const compareHashSig   = [priorHash, priorHash];      // hashes to compare: retrieve from n-number of databases, say 2, into a List/Array
+        const compareDateNow   = priorConsensus.date;         // date to compare retrieve from a database (n=1)
         const validate         = crypto.isHashConsensus(sigList, hashAlgorithm1, compareSigList, compareSalt, compareHashSig, compareDateNow);
         
         //show result
@@ -288,6 +288,7 @@ class Crypto
         console.log();
     }
 }
+
 
 function runTest()
 {
