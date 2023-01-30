@@ -272,9 +272,9 @@ class Crypto
         
         // verify now
         const compareSigList   = sigList;                     // new signal List - should be technically the same as prior
-        const compareSalt      = priorConsensus.salt;         // salt to compare retrieve from q database (n=1)
+        const compareSalt      = priorConsensus.salt;         // salt to compare: retrieve from q database (n=1)
         const compareHashSig   = [priorHash, priorHash];      // hashes to compare: retrieve from n-number of databases, say 2, into a List/Array
-        const compareDateNow   = priorConsensus.date;         // date to compare retrieve from a database (n=1)
+        const compareDateNow   = priorConsensus.date;         // date to compare: retrieve from a database (n=1)
         const validate         = crypto.isHashConsensus(sigList, hashAlgorithm1, compareSigList, compareSalt, compareHashSig, compareDateNow);
         
         //show result
