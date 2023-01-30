@@ -91,31 +91,17 @@ class Crypto
     
     static verifyConsensus(compareHashSig, combinedHashSigx)
     {
-        let count  = 0;
         let hashSigLen = compareHashSig.length; 
-        let hashSigLenx = combinedHashSigx.length; 
-          
-        if(hashSigLen === hashSigLenx)
-        {         
-            for(let index = 0; index <  hashSigLen; index ++)
+                  
+        for(let index = 0; index <  hashSigLen; index ++)
+        {
+            if( (compareHashSig[index] === combinedHashSigx) === false )
             {
-                if(compareHashSig[index] !== combinedHashSigx[index])
-                {
-                    count = count + 1;
-
-                    if(count > 0)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return false;
             }
         }
-        else
-        {
-          return ("Length of compareHashSig and combinedHashSigx must be thesame, check again!")
-        }
+
+        return true;
     }
      
     blockchainHash(sig, hashAlgorithm, compareSig, compareSalt, compareHashSig, compareDateNow)
@@ -160,7 +146,7 @@ class Crypto
 
                 if(areSigArray !== true)
                 {
-                    return console.log('The argument, "sig - i.e. input sig(s)", should be an array. Check, correct and try again!');
+                    return console.log('The argument, "sig" should be an array. Check, correct and try again!');
                 }
                 
                 if(hashAlgorithm === "bcrypt")
@@ -212,11 +198,11 @@ class Crypto
                 let areSigArray        = Array.isArray(sig);
                 let areCompareSigArray = Array.isArray(compareSig);
                 
-                let allTrue = (areSigArray === areSigArray) && (sigLen === compareSigLen);
+                let confirm = (areSigArray === areCompareSigArray);
                 
-                if(allTrue !== true)
+                if(confirm !== true)
                 {
-                    return console.log('The arguments: "sig", and "compareSig" should be Arrays of same length. Check, correct and try again!');
+                     return console.log('The arguments: "sig", and "compareSig" should be Arrays. Check, correct and try again!');
                 }
 
 
@@ -249,9 +235,7 @@ class Crypto
                     
                     combinedHashSigx  = (crypto.scryptSync(combinedSigx + compareDateNow, compareSalt, 64)).toString('hex');
                 }
-             
-                return Crypto.verifyConsensus(compareHashSig, combinedHashSigx);
-
+              
             }
             else
             {
@@ -269,10 +253,10 @@ class Crypto
             
         console.log();
         console.log('------------Testing Crypto Starts--------------------------');
-        const filePath         = "README.md"                   // file in current working directory (CWD)
-        const sig1             = "MongoExpUser";               // string to hash
-        const sig2             = fs.readFileSync(filePath);    // file to hash
-        const sigList          = [sig1, sig2];                 // array of items to hash
+        const filePath         = "BasicAuthentication.js"
+        const sig1             = "MongoExpUser";               //string to hash
+        const sig2             = fs.readFileSync(filePath);    //file to hash
+        const sigList          = [sig1, sig2];                 //array of items to hash
         
         //hash algorithm
         const hashAlgorithm1   = 'bcrypt';
@@ -281,18 +265,19 @@ class Crypto
         const hashAlgorithm4   = 'scrypt';
         
         // prior
-        const consensus        = crypto.isHashConsensus(sigList, hashAlgorithm1);    // store in the databse
-        //const consensus      = { salt: salt; hash: hash, date: dateNow };          // store in the databse
-        const priorConsensus   = consensus;
-
+        const consensus        = crypto.isHashConsensus(sigList, hashAlgorithm1);    
+        //const consensus      = { salt: salt; hash: hash, date: dateNow };          
+        const priorConsensus   = consensus;              // store in a database (n = 1)
+        const priorHash        = priorConsensus.hash;    // store in n-number of databases (1, 2, .. m) 
+        
         // verify now
-        const compareSigList   = sigList;             // new signal List - should be technically the same as prior
-        const compareSalt      = priorConsensus.salt; // salt to comapre
-        const compareHashSig   = priorConsensus.hash; // hash to compare
-        const compareDateNow   = priorConsensus.date; // date to compare
+        const compareSigList   = sigList;                 // new signal List - should be technically the same as prior
+        const compareSalt      = priorConsensus.salt;     // salt to compare: retrieve from q database (n=1)
+        const compareHashSig   = [priorHash, priorHash];  // hashes to compare: retrieve from n-number of databases, say 2, into a List/Array
+        const compareDateNow   = priorConsensus.date;     // date to compare: retrieve from a database (n=1)
         const validate         = crypto.isHashConsensus(sigList, hashAlgorithm1, compareSigList, compareSalt, compareHashSig, compareDateNow);
         
-        //shou result
+        //show result
         console.log("original :");
         console.log(util.inspect(consensus, { showHidden: true, colors: true, depth: 4 }));
         console.log();
@@ -303,7 +288,6 @@ class Crypto
         console.log();
     }
 }
-
 
 function runTest()
 {
