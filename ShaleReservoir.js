@@ -840,4 +840,4 @@ class ShaleReservoir extends BaseAIML
     }
 }
 
-module.exports = {ShaleReservoir};
+module.exports = { ShaleReservoir };
