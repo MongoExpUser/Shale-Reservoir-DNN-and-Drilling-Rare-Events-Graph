@@ -183,4 +183,4 @@ class BaseAIML
     }
 }
     
-module.exports = {ShaleReservoirProductionPerformance};
+module.exports = { BaseAIML };
