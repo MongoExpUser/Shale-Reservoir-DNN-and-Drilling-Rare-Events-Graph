@@ -48,11 +48,11 @@
  * 2) Train the output and input data (images or non-images) for classification.
  *    a) For non-images classification, input data include: continuous log properties: e.g. sp, gr (spectral and/or total), resistivity, neutron-density,
  *       sonic-travel-time, NMR-T1, NMR-T2, Rs, Tmax, S1, S2, geomech properties, seismic attributes/properties etc.)
- *    b) For images classification, input data include: known images datasets (converted to numerical datasets) or "continuous log properties" as listed in 3(a) above.
- * 4) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (CNNClassification [images] and standard-FFNNClassification [non-images] )
+ *    b) For images classification, input data include: known images datasets (converted to numerical datasets) or "continuous log properties" as listed in 2(a) above.
+ * 3) For fitted/trained datasets, obtain a set of hyper-parameters for the DNN architectures (CNNClassification [images] and standard-FFNNClassification [non-images] )
  *    for the images and non-mages (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.), evaluate and save model.
- * 5) Based on saved model, then predict classifications for unseen dataset field-wide for images and non-images.
- * 6) Classification helps to map (per field/section(DA)/pad) images and non-images (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.)
+ * 4) Based on saved model, then predict classifications for unseen dataset field-wide for images and non-images.
+ * 5) Classification helps to map (per field/section(DA)/pad) images and non-images (rock-types/formations/facies/zones/geo-bodies/any-discrete-property/etc.)
  *   as direct or indirect indicator for reservoir fluid content and quality that can be used for optimal well placement, hydraulic fracture design and
  *   production optimization.
  *
