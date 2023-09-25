@@ -199,7 +199,7 @@ class ShaleReservoirApacheSpark():
     city_names = [
                   "Houston,US", "San Antonio,US", "Akure,NG", "Katy,US", "Delhi,IN", "Sydney,AU", "San Rafael,AR",
                   "Austin,US", "New York,US", "Los Angeles,US", "London,GB", "Cape Town,ZA", "Taipei,TW", "Helsinki,FI",
-                  "Abuja,NG", "Edmonton,CA", "Lagos,NG", "Gaborone,BW", "Cairo,EG", "Moscow,RU", "Muscat,OM", "Beijing,CN"
+                  "Abuja,NG", "Edmonton,CA", "Lagos,NG", "Gaborone,BW", "Cairo,EG", "Moscow,RU", "Muscat,OM", "Beijing,CN",
                   "Bahir Dar,ET", "Casablanca,MA", "Toronto,CA", "Dubai,AE", "Dhaka,BD", "Rijswijk,NL", "Tokyo,JP", "Bangui,CF"
                  ]
     # geographic coordinates
