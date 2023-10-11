@@ -39,9 +39,10 @@ double gammaFunction(double a)
 {
   // a function for calculating gamma function
   // Reference: Nemes, G. (2008). New asymptotic expansion for the Γ(x) function (an update).
-  //           In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
+  // In Stan's Library, Ed.S.Sykora, Vol.II. First released December 28, 2008.
   // Link: http://www.ebyte.it/library/docs/math08/GammaApproximationUpdate.html.
-  //      See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
+  // See Nemes' formula & Fig.1 on page 6 of full text: Nemes_6.
+  // Application: Unconventional natural gas production decline analysis (prediction and history-matching)
 
   const double PI = 3.1415926536;
   const double E  = 2.718281828459045;
@@ -53,8 +54,9 @@ double gammaDistFunction(double a, double x)
 {
   // a function for calculating gamma distribution function
   // Reference: NIST/SEMATECH e-Handbook of statistical methods.
-  //          : http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm.
-  //          : Retrieved January 5, 2016.
+  // Link: http://www.itl.nist.gov/div898/handbook/eda/section3/eda366b.htm.
+  // Retrieved January 5, 2016.
+  // Application: Unconventional natural gas production decline analysis (prediction and history-matching)
     
   return (( pow(a, (x - 1)) * exp(-a) ) / gammaFunction(x));
 }
